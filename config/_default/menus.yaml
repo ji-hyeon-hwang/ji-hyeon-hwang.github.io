@@ -50,9 +50,9 @@ main:
     params:
       external: true
 
-  # - name: Experience
-  #   url: /experience/
-  #   weight: 5
+  - name: Experience
+    url: /experience/
+    weight: 5
 
   # - name: News
   #   url: /news/
