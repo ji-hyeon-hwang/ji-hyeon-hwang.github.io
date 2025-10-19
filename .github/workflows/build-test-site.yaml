@@ -1,45 +1,127 @@
+# name: Continuous Integration
+
+# on:
+#   push:
+#     branches:
+#       - main
+#   pull_request:
+#     branches:
+#       - main
+
+# jobs:
+#   build:
+#     runs-on: ${{ matrix.os }}
+
+#     strategy:
+#       matrix:
+#         os: [ubuntu-latest]
+# #        node-version: [18.x]
+
+#     steps:
+#       - uses: actions/checkout@v4
+#         with:
+#           submodules: true  # Fetch any Git submodules (true OR recursive)
+#           fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
+
+# #      - name: Use Node.js ${{ matrix.node-version }}
+# #        uses: actions/setup-node@v3
+# #        with:
+# #          node-version: ${{ matrix.node-version }}
+
+#       - uses: pnpm/action-setup@v2
+#         with:
+#           version: 8
+#           run_install: |
+#             - recursive: false
+#               args: [--frozen-lockfile]
+
+# #      - name: Install JS dependencies
+# #        run: rm -rf node_modules && pnpm install --frozen-lockfile
+
+#       - name: Check for linting errors
+#         run: pnpm run lint:js  # TODO: also lint styles again once new rule errors resolved
+
+#       - name: Setup Hugo
+#         uses: peaceiris/actions-hugo@v2
+#         with:
+#           hugo-version: '0.136.5'
+#           extended: true
+
+#       - name: Build
+#         run: hugo --minify
+#         working-directory: test
+
+# #  format:
+# #    runs-on: ubuntu-latest
+# #
+# #    steps:
+# #      - name: Checkout
+# #        uses: actions/checkout@v2
+# #        with:
+# #          # Make sure the actual branch is checked out when running on pull requests
+# #          ref: ${{ github.head_ref }}
+# #
+# #      - name: Prettify code
+# #        uses: creyD/prettier_action@v3.1
+# #        with:
+# #          prettier_options: '--write blox-tailwind/*.{css,js,json,md,scss} blox-tailwind/**/*.{css,js,json,md,scss}' # Match package.json
+# #          prettier_version: '2.2.1' # Match package.json
+# #          commit_message: 'refactor: format code'
+# #        env:
+# #          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 name: Continuous Integration
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-#        node-version: [18.x]
+    # test/ 아래에서 커맨드가 실행되도록 고정 (package.json, pnpm-lock.yaml, hugo가 test/에 있을 때)
+    defaults:
+      run:
+        working-directory: test
 
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: true  # Fetch any Git submodules (true OR recursive)
-          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
+          submodules: true
+          fetch-depth: 0
 
-#      - name: Use Node.js ${{ matrix.node-version }}
-#        uses: actions/setup-node@v3
-#        with:
-#          node-version: ${{ matrix.node-version }}
-
-      - uses: pnpm/action-setup@v2
+      # Node 설치 (필수)
+      - name: Use Node.js
+        uses: actions/setup-node@v4
         with:
-          version: 8
-          run_install: |
-            - recursive: false
-              args: [--frozen-lockfile]
+          node-version: 20
+          cache: pnpm
+          # lockfile이 test/ 아래 있으면 이렇게 지정
+          cache-dependency-path: test/pnpm-lock.yaml
 
-#      - name: Install JS dependencies
-#        run: rm -rf node_modules && pnpm install --frozen-lockfile
+      # pnpm 최신 액션 사용
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false  # 설치는 아래에서 직접 실행
+
+      # 빠른 진단용(선택) — lockfile/버전 확인
+      - name: Sanity check
+        run: |
+          node -v
+          pnpm -v
+          pwd
+          ls -la
+          test -f pnpm-lock.yaml || (echo "pnpm-lock.yaml not found under $(pwd)" && exit 1)
+
+      - name: Install JS dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Check for linting errors
-        run: pnpm run lint:js  # TODO: also lint styles again once new rule errors resolved
+        run: pnpm run lint:js
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
@@ -49,23 +131,3 @@ jobs:
 
       - name: Build
         run: hugo --minify
-        working-directory: test
-
-#  format:
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v2
-#        with:
-#          # Make sure the actual branch is checked out when running on pull requests
-#          ref: ${{ github.head_ref }}
-#
-#      - name: Prettify code
-#        uses: creyD/prettier_action@v3.1
-#        with:
-#          prettier_options: '--write blox-tailwind/*.{css,js,json,md,scss} blox-tailwind/**/*.{css,js,json,md,scss}' # Match package.json
-#          prettier_version: '2.2.1' # Match package.json
-#          commit_message: 'refactor: format code'
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
