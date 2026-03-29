@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jihyeon Hwang</title>
+  <meta name="description" content="Jihyeon Hwang — Undergrad at UNIST, Electrical Engineering. Research in Systems for ML, HW-SW Acceleration, AI Algorithm-System Co-design.">
+  <meta property="og:title" content="Jihyeon Hwang">
+  <meta property="og:description" content="Undergraduate Researcher at UNIST — Systems for ML, HW-SW Acceleration">
+  <meta property="og:image" content="assets/img/avatar.jpg">
+  <link rel="icon" href="assets/img/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <style>
+    /* ---- Home-specific layout ---- */
+    .home-wrap {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: calc(var(--nav-h) + 3rem) 1.5rem 4rem;
+    }
+
+    /* Hero: text left, photo right */
+    .home-hero {
+      display: grid;
+      grid-template-columns: 1fr 240px;
+      gap: 2.5rem;
+      align-items: start;
+      margin-bottom: 3rem;
+    }
+
+    .home-hero-photo {
+      width: 240px;
+      height: auto;
+      border-radius: 0;
+      object-fit: cover;
+      border: none;
+    }
+
+    .home-hero-text h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .home-affil {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      margin-bottom: 1rem;
+    }
+
+    .home-bio {
+      font-size: 0.93rem;
+      line-height: 1.8;
+      color: var(--text);
+    }
+
+    .home-bio p + p { margin-top: 0.7rem; }
+
+    .home-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1.25rem;
+    }
+
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      padding: 0.25rem 0.65rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .home-link:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* News section */
+    .news-list {
+      list-style: none;
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+
+    .news-item {
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      gap: 0.75rem;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .news-item:first-child { border-top: 1px solid var(--border); }
+
+    .news-date {
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      padding-top: 0.05rem;
+      white-space: nowrap;
+    }
+
+    /* Selected publications on home */
+    .home-pub-list { list-style: none; }
+
+    .home-pub-item {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 1.1rem;
+      align-items: start;
+      padding: 1.25rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .home-pub-item:first-child { border-top: 1px solid var(--border); }
+
+    .home-pub-thumb {
+      width: 150px;
+      aspect-ratio: 4/3;
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .home-pub-thumb img,
+    .home-pub-thumb video {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+
+    .home-pub-placeholder {
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      text-align: center;
+      padding: 0.5rem;
+    }
+
+    .home-pub-title {
+      font-size: 0.92rem;
+      font-weight: 600;
+      line-height: 1.4;
+      margin-bottom: 0.25rem;
+    }
+
+    .home-pub-authors {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .home-pub-authors .me { font-weight: 700; color: var(--text); }
+
+    .home-pub-venue {
+      font-size: 0.82rem;
+      font-style: italic;
+      color: var(--text-muted);
+      margin-bottom: 0.45rem;
+    }
+
+    .home-pub-award {
+      display: inline-block;
+      font-size: 0.73rem;
+      font-weight: 700;
+      font-style: normal;
+      color: var(--award);
+      background: var(--award-bg);
+      padding: 1px 6px;
+      border-radius: 3px;
+      margin-left: 0.35rem;
+    }
+
+    .home-pub-links { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+
+    @media (max-width: 600px) {
+      .home-hero {
+        grid-template-columns: 1fr;
+      }
+      .home-hero-photo {
+        width: 100%;
+        height: auto;
+        margin: 0;
+        display: block;
+      }
+      .home-pub-item {
+        grid-template-columns: 1fr;
+      }
+      .home-pub-thumb {
+        width: 100%;
+        aspect-ratio: 16/9;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="index.html">Jihyeon Hwang</a>
+    <button class="nav-toggle" aria-label="Menu">&#9776;</button>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="publications.html">Publications</a></li>
+      <li><a href="projects.html">Projects</a></li>
+      <li><a href="experience.html">Experience</a></li>
+      <li><a href="cv.html">CV</a></li>
+    </ul>
+    <button class="theme-btn" id="theme-btn" aria-label="Toggle dark mode">◐</button>
+  </div>
+</nav>
+
+<main class="home-wrap">
+
+  <!-- Hero -->
+  <section class="home-hero">
+    <div class="home-hero-text">
+      <h1>Jihyeon Hwang</h1>
+      <p class="home-affil">Undergraduate Researcher · UNIST, Electrical Engineering</p>
+
+      <div class="home-bio">
+        <p>
+          Hello! I am an undergraduate student in Electrical Engineering at
+          <a href="https://www.unist.ac.kr/" target="_blank" rel="noopener">UNIST</a>,
+          working in the <strong>Intelligent Systems Lab (ISL)</strong> under Prof. Kyuho Lee.
+        </p>
+        <p>
+          My research focuses on building efficient hardware accelerators and
+          HW-SW co-designed systems for real-time AI workloads — particularly
+          in autonomous driving perception.
+          I am broadly interested in <strong>Systems for ML</strong>,
+          <strong>AI Algorithm-System Co-design</strong>, and
+          <strong>HW-SW Acceleration</strong>.
+        </p>
+        <p>
+          Recent projects include a real-time 3D LiDAR point cloud segmentation system
+          and a 28nm ASIC accelerator for bird's-eye-view semantic segmentation in
+          multi-camera systems.
+        </p>
+      </div>
+
+      <div class="home-links">
+        <a class="home-link" href="mailto:hjhgreen96@gmail.com">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 7L2 7"/></svg>
+          Email
+        </a>
+        <a class="home-link" href="https://www.linkedin.com/in/jihyeon-hwang-57454231a/" target="_blank" rel="noopener">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          LinkedIn
+        </a>
+        <a class="home-link" href="cv.html">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+          CV
+        </a>
+      </div>
+    </div>
+
+    <img class="home-hero-photo" src="assets/img/avatar.jpg" alt="Jihyeon Hwang">
+  </section>
+
+  <!-- News -->
+  <section style="margin-bottom:3rem;">
+    <h2 class="section-title">News</h2>
+    <ul class="news-list">
+      <li class="news-item">
+        <span class="news-date">Jun 2025</span>
+        <span>Paper accepted to <strong>DAC 2025</strong> — BEVSA: Real-time BEV Segmentation Accelerator.</span>
+      </li>
+      <li class="news-item">
+        <span class="news-date">May 2025</span>
+        <span>Paper accepted to <strong>ISCAS 2025</strong> — Real-time Point Cloud Segmentation System. London, UK.</span>
+      </li>
+      <li class="news-item">
+        <span class="news-date">Jan 2025</span>
+        <span>Received <strong>Outstanding Paper Award 🏆</strong> at ISE Winter Conference 2025.</span>
+      </li>
+    </ul>
+  </section>
+
+  <!-- Selected Publications -->
+  <section>
+    <h2 class="section-title">Selected Publications</h2>
+    <ul class="home-pub-list">
+
+      <li class="home-pub-item">
+        <div class="home-pub-thumb">
+          <!-- Replace with: <img src="assets/img/pub/iscas2025.jpg" alt=""> -->
+          <div class="home-pub-placeholder">Image</div>
+        </div>
+        <div>
+          <h3 class="home-pub-title">A Real-time Point Cloud Segmentation System with Optimized Ground Estimation Algorithm and Selective Neural Network</h3>
+          <p class="home-pub-authors"><span class="me">Jihyeon Hwang</span>, Sangho Lee, Jueun Jung, Kyuho Lee</p>
+          <p class="home-pub-venue"><em>IEEE International Symposium on Circuits and Systems (ISCAS 2025)</em>, London, UK<span class="home-pub-award">🏆 Best Paper Award - Honorable Mention</span></p>
+          <div class="home-pub-links">
+            <a class="btn" href="https://ieeexplore.ieee.org/document/11043343" target="_blank" rel="noopener">Paper</a>
+            <a class="btn" href="https://drive.google.com/file/d/1k5K6V_A6l93efcLpSf8m9Mp_Xnijs21h/view?usp=sharing" target="_blank" rel="noopener">Poster</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="home-pub-item">
+        <div class="home-pub-thumb">
+          <div class="home-pub-placeholder">Image</div>
+        </div>
+        <div>
+          <h3 class="home-pub-title">BEVSA: A Real-Time Bird's-Eye-View Semantic Segmentation Accelerator for Multi-Camera System</h3>
+          <p class="home-pub-authors">Sangho Lee, Jueun Jung, Wuyoung Jang, <span class="me">Jihyeon Hwang</span>, Kyuho Lee</p>
+          <p class="home-pub-venue"><em>IEEE Design Automation Conference (DAC 2025)</em>, San Francisco, USA</p>
+          <div class="home-pub-links">
+            <a class="btn" href="https://ieeexplore.ieee.org/document/11132909" target="_blank" rel="noopener">Paper</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="home-pub-item">
+        <div class="home-pub-thumb">
+          <div class="home-pub-placeholder">Image</div>
+        </div>
+        <div>
+          <h3 class="home-pub-title">Optimized Real-time Point Cloud Segmentation System</h3>
+          <p class="home-pub-authors"><span class="me">Jihyeon Hwang</span>, Kyuho Lee</p>
+          <p class="home-pub-venue">
+            <em>ISE Winter Conference & Advanced Semiconductor Technology Workshop 2025</em>
+            <span class="home-pub-award">🏆 Outstanding Paper Award</span>
+          </p>
+          <div class="home-pub-links">
+            <a class="btn" href="https://drive.google.com/file/d/1fcU3Pg5c1uUd01jeKlnrW3a9G3P7TRXS/view?usp=drive_link" target="_blank" rel="noopener">Paper</a>
+            <a class="btn" href="https://drive.google.com/file/d/1ZU6RdOnkyhF2ZKnLYR0BolzpiE3czsnb/view?usp=drive_link" target="_blank" rel="noopener">Poster</a>
+          </div>
+        </div>
+      </li>
+
+    </ul>
+  </section>
+
+</main>
+
+<footer>
+  <p>© 2025 Jihyeon Hwang &nbsp;·&nbsp; UNIST</p>
+</footer>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>

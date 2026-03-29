@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BEVSA | Jihyeon Hwang</title>
+  <link rel="icon" href="../../assets/img/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/main.css">
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="../../index.html">Jihyeon Hwang</a>
+    <button class="nav-toggle" aria-label="Menu">&#9776;</button>
+    <ul class="nav-links">
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../../publications.html">Publications</a></li>
+      <li><a href="../../projects.html">Projects</a></li>
+      <li><a href="../../experience.html">Experience</a></li>
+      <li><a href="../../cv.html">CV</a></li>
+    </ul>
+    <button class="theme-btn" id="theme-btn" aria-label="Toggle dark mode">◐</button>
+  </div>
+</nav>
+
+<main class="page-wrap">
+
+  <a class="back-link" href="../../projects.html">← Back to Projects</a>
+
+  <section class="proj-page-hero">
+    <div class="proj-tags" style="margin-bottom:0.75rem;">
+      <span class="proj-tag">HW Accelerator</span>
+      <span class="proj-tag">ASIC</span>
+      <span class="proj-tag">Computer Vision</span>
+      <span class="proj-tag">Autonomous Driving</span>
+    </div>
+    <h1>BEVSA: Bird's-Eye-View Semantic Segmentation Accelerator</h1>
+    <p style="color:var(--text-muted); font-size:0.9rem; margin-top:0.5rem;">
+      DAC 2025 · 28nm Technology
+    </p>
+  </section>
+
+  <!-- Main media -->
+  <!--
+  <div class="proj-page-media">
+    <img src="../../assets/img/proj/bevsa-main.jpg" alt="BEVSA Architecture">
+  </div>
+  -->
+
+  <div class="proj-page-links">
+    <a class="btn" href="https://ieeexplore.ieee.org/document/11132909" target="_blank" rel="noopener">Paper (DAC 2025)</a>
+  </div>
+
+  <div class="proj-page-body">
+    <h2>Overview</h2>
+    <p>
+      BEVSA is a hardware accelerator for real-time bird's-eye-view (BEV) semantic segmentation
+      in multi-camera autonomous driving systems. The bottleneck in BEV perception is the
+      view transformation step (BEV pooling), which requires sorting and irregular memory access
+      over a wide search space — consuming 68.3 ms on edge platforms.
+    </p>
+
+    <h2>Key Contributions</h2>
+    <p>
+      <strong>1. Block-decomposed Hierarchical BEV Pooling:</strong>
+      Partitions the camera-to-BEV search space in an MCS-compatible way and supports
+      parallel pooling execution, achieving <strong>43.2× speedup</strong> for BEV pooling
+      over baseline edge computing platforms.
+    </p>
+    <p>
+      <strong>2. Coarse-to-Fine-Grained Zero Skipping Convolution:</strong>
+      Exploits the 69.1% average input activation sparsity in BEV feature maps.
+      Performs coarse-grained all-zero channel skipping and tile-wise fine-grained zero skipping,
+      improving convolution throughput by <strong>1.61×</strong>.
+    </p>
+
+    <h2>Results</h2>
+    <p>
+      Implemented in <strong>28nm technology</strong>. Evaluated on two representative multi-camera
+      autonomous driving datasets. Achieves <strong>23.1 FPS</strong> real-time BEV segmentation
+      with <strong>167.4× higher energy efficiency per frame</strong> over edge computing platforms.
+    </p>
+
+    <!-- Add architecture diagrams, chip photos, results figures here -->
+  </div>
+
+</main>
+
+<footer>
+  <p>© 2025 Jihyeon Hwang &nbsp;·&nbsp; UNIST</p>
+</footer>
+
+<script src="../../assets/js/main.js"></script>
+</body>
+</html>
