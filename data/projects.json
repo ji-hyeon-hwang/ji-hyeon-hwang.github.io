@@ -22,7 +22,7 @@
   {
     "id": "muscle-sync",
     "title": "Muscle SYNC",
-    "short_desc": "AI-based sensorless muscle activation analysis using computer vision. Startup project at UNIST.",
+    "short_desc": "AI-based sensorless muscle activation analysis using computer vision.",
     "tags": ["Startup", "Computer Vision", "HW-SW Co-design", "AI"],
     "thumbnail": null,
     "thumbnail_type": "image",
