@@ -1,0 +1,59 @@
+[
+  {
+    "id": "iscas2025",
+    "title": "A Real-time Point Cloud Segmentation System with Optimized Ground Estimation Algorithm and Selective Neural Network",
+    "authors": ["Jihyeon Hwang", "Sangho Lee", "Jueun Jung", "Kyuho Lee"],
+    "highlight_author": "Jihyeon Hwang",
+    "venue": "IEEE International Symposium on Circuits and Systems (ISCAS 2025), London, UK",
+    "venue_short": "ISCAS 2025",
+    "date": "2025-05-28",
+    "award": null,
+    "thumbnail": null,
+    "thumbnail_type": "image",
+    "links": {
+      "paper": "https://ieeexplore.ieee.org/document/11043343",
+      "code": null,
+      "poster": "https://drive.google.com/file/d/1k5K6V_A6l93efcLpSf8m9Mp_Xnijs21h/view?usp=sharing",
+      "website": null
+    },
+    "abstract": "This paper introduces a fast and accurate point segmentation system for real-time 3D-LiDAR semantic segmentation. A selective point segmentation (SPS) system is proposed with adaptive ground estimation, coarse-grained entropy-and-density-based region skipping, and fine-grained bin skipping. The system achieves 42.24 ms processing time and 90.69% accuracy on the SemanticKITTI dataset."
+  },
+  {
+    "id": "dac2025",
+    "title": "BEVSA: A Real-Time Bird's-Eye-View Semantic Segmentation Accelerator for Multi-Camera System",
+    "authors": ["Sangho Lee", "Jueun Jung", "Wuyoung Jang", "Jihyeon Hwang", "Kyuho Lee"],
+    "highlight_author": "Jihyeon Hwang",
+    "venue": "IEEE Design Automation Conference (DAC 2025), San Francisco, USA",
+    "venue_short": "DAC 2025",
+    "date": "2025-06-22",
+    "award": null,
+    "thumbnail": null,
+    "thumbnail_type": "image",
+    "links": {
+      "paper": "https://ieeexplore.ieee.org/document/11132909",
+      "code": null,
+      "poster": null,
+      "website": null
+    },
+    "abstract": "A bird's-eye-view semantic segmentation accelerator (BEVSA) for real-time 3D space perception in multi-camera systems. Implements block-decomposed hierarchical BEV pooling (43.2× speedup) and coarse-to-fine-grained zero skipping convolution, achieving 23.1 FPS in 28nm technology with 167.4× higher energy efficiency over edge computing platforms."
+  },
+  {
+    "id": "ise2025",
+    "title": "Optimized Real-time Point Cloud Segmentation System",
+    "authors": ["Jihyeon Hwang", "Kyuho Lee"],
+    "highlight_author": "Jihyeon Hwang",
+    "venue": "ISE Winter Conference & Advanced Semiconductor Technology Workshop 2025",
+    "venue_short": "ISE Winter 2025",
+    "date": "2025-01-15",
+    "award": "Outstanding Paper Award",
+    "thumbnail": null,
+    "thumbnail_type": "image",
+    "links": {
+      "paper": "https://drive.google.com/file/d/1fcU3Pg5c1uUd01jeKlnrW3a9G3P7TRXS/view?usp=drive_link",
+      "code": null,
+      "poster": "https://drive.google.com/file/d/1ZU6RdOnkyhF2ZKnLYR0BolzpiE3czsnb/view?usp=drive_link",
+      "website": null
+    },
+    "abstract": null
+  }
+]

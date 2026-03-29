@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Point Cloud Segmentation — Jihyeon Hwang</title>
+  <link rel="icon" href="../../assets/img/avatar.jpg" type="image/jpeg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/main.css">
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="../../index.html">Jihyeon Hwang</a>
+    <button class="nav-toggle" aria-label="Menu">&#9776;</button>
+    <ul class="nav-links">
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../../publications.html">Publications</a></li>
+      <li><a href="../../projects.html">Projects</a></li>
+      <li><a href="../../experience.html">Experience</a></li>
+      <li><a href="../../cv.html">CV</a></li>
+    </ul>
+    <button class="theme-btn" id="theme-btn" aria-label="Toggle dark mode">◐</button>
+  </div>
+</nav>
+
+<main class="page-wrap">
+
+  <a class="back-link" href="../../projects.html">← Back to Projects</a>
+
+  <section class="proj-page-hero">
+    <div class="proj-tags" style="margin-bottom:0.75rem;">
+      <span class="proj-tag">Systems for ML</span>
+      <span class="proj-tag">LiDAR</span>
+      <span class="proj-tag">GPU</span>
+      <span class="proj-tag">FPGA</span>
+    </div>
+    <h1>Real-time Point Cloud Segmentation System</h1>
+    <p style="color:var(--text-muted); font-size:0.9rem; margin-top:0.5rem;">
+      ISCAS 2025 · ISE Winter 2025 (Outstanding Paper Award 🏆)
+    </p>
+  </section>
+
+  <!-- Main media: replace src with your image/video when ready -->
+  <!--
+  <div class="proj-page-media">
+    <img src="../../assets/img/proj/pcs-main.jpg" alt="Point Cloud Segmentation System Overview">
+  </div>
+  -->
+
+  <!-- Project link buttons -->
+  <div class="proj-page-links">
+    <a class="btn" href="https://ieeexplore.ieee.org/document/11043343" target="_blank" rel="noopener">Paper (ISCAS)</a>
+    <a class="btn" href="https://drive.google.com/file/d/1k5K6V_A6l93efcLpSf8m9Mp_Xnijs21h/view?usp=sharing" target="_blank" rel="noopener">Poster (ISCAS)</a>
+    <a class="btn" href="https://drive.google.com/file/d/1fcU3Pg5c1uUd01jeKlnrW3a9G3P7TRXS/view?usp=drive_link" target="_blank" rel="noopener">Paper (ISE)</a>
+    <a class="btn" href="https://drive.google.com/file/d/1ZU6RdOnkyhF2ZKnLYR0BolzpiE3czsnb/view?usp=drive_link" target="_blank" rel="noopener">Poster (ISE)</a>
+  </div>
+
+  <div class="proj-page-body">
+    <h2>Overview</h2>
+    <p>
+      This project presents a fast and accurate point segmentation system for real-time
+      3D-LiDAR semantic segmentation on autonomous driving platforms. The key challenge
+      is deploying large-scale point cloud neural networks under strict latency constraints
+      on edge hardware.
+    </p>
+
+    <h2>Key Contributions</h2>
+    <p>
+      <strong>1. Adaptive Ground Estimation:</strong>
+      Excludes ground points from neural network inference, reducing latency by 46.0%.
+      Uses 2-step bin skipping to avoid accuracy loss from false positives.
+    </p>
+    <p>
+      <strong>2. Coarse-grained Region Skipping (RSK):</strong>
+      Entropy-and-density-based region analysis excludes large empty areas from
+      ground estimation, reducing computation.
+    </p>
+    <p>
+      <strong>3. Fine-grained Bin Skipping (BSK):</strong>
+      Z-distribution analysis skips non-ground bins within remaining areas,
+      further reducing inference overhead.
+    </p>
+
+    <h2>Results</h2>
+    <p>
+      Processing time of <strong>42.24 ms</strong> with <strong>90.69%</strong>
+      3D semantic segmentation accuracy on the SemanticKITTI dataset.
+      Achieved real-time performance (&lt; 50 ms) on GPU platforms.
+    </p>
+
+    <!-- Add figures, diagrams, videos here as you create them -->
+    <!-- Example:
+    <h2>System Architecture</h2>
+    <img src="../../assets/img/proj/pcs-arch.jpg" alt="System Architecture" style="border-radius:6px; margin:1rem 0;">
+    -->
+
+    <!-- Demo embed example (if you have a local web demo):
+    <h2>Demo</h2>
+    <div class="proj-page-media">
+      <iframe src="https://your-demo-url.com" height="500" allowfullscreen></iframe>
+    </div>
+    -->
+  </div>
+
+</main>
+
+<footer>
+  <p>© 2025 Jihyeon Hwang &nbsp;·&nbsp; UNIST</p>
+</footer>
+
+<script src="../../assets/js/main.js"></script>
+</body>
+</html>
