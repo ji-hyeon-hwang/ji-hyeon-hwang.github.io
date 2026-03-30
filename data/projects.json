@@ -24,7 +24,7 @@
     "title": "BEVSA: BEV Segmentation Accelerator",
     "short_desc": "28nm ASIC accelerator for real-time bird's-eye-view semantic segmentation in multi-camera autonomous driving systems.",
     "tags": ["HW Accelerator", "ASIC", "Computer Vision", "Autonomous Driving"],
-    "thumbnail": null,
+    "thumbnail": "assets/img/proj/bevsa/image2.png",
     "thumbnail_type": "image",
     "page": "projects/bevsa/",
     "external_link": null
