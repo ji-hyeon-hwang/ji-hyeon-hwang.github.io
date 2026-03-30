@@ -46,7 +46,7 @@
     "venue_short": "ISE Winter 2025",
     "date": "2025-01-15",
     "award": "Best Paper Award",
-    "thumbnail": null,
+    "thumbnail": "assets/img/proj/ise/image.png",
     "thumbnail_type": "image",
     "links": {
       "paper": "https://drive.google.com/file/d/1fcU3Pg5c1uUd01jeKlnrW3a9G3P7TRXS/view?usp=drive_link",
