@@ -1,5 +1,15 @@
 [
   {
+    "id": "arxiv-trend-agent",
+    "title": "arXiv Trend Agent",
+    "short_desc": "LangGraph-based Multi-Agent service for automated arXiv paper collection, Korean summarization, trend analysis, and RAG Q&A.",
+    "tags": ["LLM", "Multi-Agent", "LangGraph", "RAG", "Full-Stack"],
+    "thumbnail": "assets/img/proj/arxiv-trend-agent/screenshot.png",
+    "thumbnail_type": "image",
+    "page": "projects/arxiv-trend-agent/",
+    "external_link": null
+  },
+  {
     "id": "point-cloud-seg",
     "title": "Real-time Point Cloud Segmentation System",
     "short_desc": "Real-time 3D LiDAR semantic segmentation with adaptive ground estimation and selective neural network inference.",
