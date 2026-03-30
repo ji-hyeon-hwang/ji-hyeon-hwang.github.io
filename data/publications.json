@@ -8,7 +8,7 @@
     "venue_short": "ISCAS 2025",
     "date": "2025-05-28",
     "award": "Best Paper Award - Honorary Mention",
-    "thumbnail": null,
+    "thumbnail": "assets/img/proj/point-cloud-seg/image.png",
     "thumbnail_type": "image",
     "links": {
       "paper": "https://ieeexplore.ieee.org/document/11043343",
