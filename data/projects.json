@@ -14,7 +14,7 @@
     "title": "Real-time Point Cloud Segmentation System",
     "short_desc": "Real-time 3D LiDAR semantic segmentation with adaptive ground estimation and selective neural network inference.",
     "tags": ["Systems for ML", "LiDAR", "FPGA", "GPU"],
-    "thumbnail": null,
+    "thumbnail": "assets/img/proj/point-cloud-seg/image.png",
     "thumbnail_type": "image",
     "page": "projects/point-cloud-seg/",
     "external_link": null
