@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LSPU | Jihyeon Hwang</title>
+  <link rel="icon" href="../../assets/img/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/main.css">
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="../../index.html">Jihyeon Hwang</a>
+    <button class="nav-toggle" aria-label="Menu">&#9776;</button>
+    <ul class="nav-links">
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../../publications.html">Publications</a></li>
+      <li><a href="../../projects.html">Projects</a></li>
+      <li><a href="../../experience.html">Experience</a></li>
+      <li><a href="../../cv.html">CV</a></li>
+    </ul>
+    <button class="theme-btn" id="theme-btn" aria-label="Toggle dark mode">◐</button>
+  </div>
+</nav>
+
+<main class="page-wrap">
+
+  <a class="back-link" href="../../projects.html">← Back to Projects</a>
+
+  <section class="proj-page-hero">
+    <div class="proj-tags" style="margin-bottom:0.75rem;">
+      <span class="proj-tag">HW Accelerator</span>
+      <span class="proj-tag">SoC</span>
+      <span class="proj-tag">LiDAR</span>
+      <span class="proj-tag">SLAM</span>
+      <span class="proj-tag">Demo</span>
+    </div>
+    <h1>LSPU: Real-Time LiDAR-SLAM SoC</h1>
+    <p style="color:var(--text-muted); font-size:0.9rem; margin-top:0.5rem;">
+      ISSCC 2024
+    </p>
+  </section>
+
+  <div class="proj-page-media">
+    <video autoplay muted loop playsinline>
+      <source src="../../assets/img/proj/lspu/demo.mp4" type="video/mp4">
+    </video>
+  </div>
+
+  <div class="proj-page-links">
+    <a class="btn" href="https://ieeexplore.ieee.org/document/10454374" target="_blank" rel="noopener">Paper (ISSCC 2024)</a>
+  </div>
+
+  <div class="proj-page-body">
+    <h2>My Role</h2>
+    <p>
+      I was responsible for building the <strong>real-time demo system</strong> for LSPU.
+      This involved setting up the full demo pipeline — integrating the chip's outputs into
+      a live visualization that could be shown at the conference.
+    </p>
+
+    <h2>Demo</h2>
+    <p>
+      The demo showcases LSPU running LiDAR-SLAM in real time: point cloud segmentation
+      and simultaneous localization and mapping on live LiDAR input, all on-chip without
+      a GPU.
+    </p>
+
+    <div class="proj-page-media" style="margin-top:1rem;">
+      <img src="../../assets/img/proj/lspu/image.png" alt="LSPU Demo Setup">
+    </div>
+    <div class="proj-page-media" style="margin-top:1rem;">
+      <img src="../../assets/img/proj/lspu/image1.png" alt="LSPU Demo Result">
+    </div>
+
+    <h2>About LSPU</h2>
+    <p>
+      LSPU is a fully integrated real-time LiDAR-SLAM SoC fabricated in 28nm CMOS
+      (3.6 × 3.6 mm²). It performs point neural network segmentation and multi-level kNN
+      acceleration entirely on-chip, achieving 20 FPS at 164.9 mW —
+      <strong>1,826× better energy efficiency</strong> than a GPU platform.
+      Published at ISSCC 2024 by UNIST ISL.
+    </p>
+  </div>
+
+</main>
+
+<footer>
+  <p>© 2025 Jihyeon Hwang</p>
+</footer>
+
+<script src="../../assets/js/main.js"></script>
+</body>
+</html>
