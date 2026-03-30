@@ -1,15 +1,5 @@
 [
   {
-    "id": "lspu",
-    "title": "LSPU: Real-Time LiDAR-SLAM SoC",
-    "short_desc": "Demo system for a fully integrated real-time LiDAR-SLAM SoC with point neural network segmentation, presented at ISSCC 2024.",
-    "tags": ["HW Accelerator", "SoC", "LiDAR", "SLAM", "Demo"],
-    "thumbnail": "assets/img/proj/lspu/demo.mp4",
-    "thumbnail_type": "video",
-    "page": "projects/lspu/",
-    "external_link": null
-  },
-  {
     "id": "arxiv-trend-agent",
     "title": "arXiv Trend Agent",
     "short_desc": "LangGraph-based Multi-Agent service for automated arXiv paper collection, Korean summarization, trend analysis, and RAG Q&A.",
@@ -47,6 +37,16 @@
     "thumbnail": "assets/img/proj/muscle-sync/demo.mp4",
     "thumbnail_type": "video",
     "page": "projects/muscle-sync/",
+    "external_link": null
+  },
+  {
+    "id": "lspu",
+    "title": "LSPU: Real-Time LiDAR-SLAM SoC",
+    "short_desc": "Demo system for a fully integrated real-time LiDAR-SLAM SoC with point neural network segmentation, presented at ISSCC 2024.",
+    "tags": ["HW Accelerator", "SoC", "LiDAR", "SLAM", "Demo"],
+    "thumbnail": "assets/img/proj/lspu/demo.mp4",
+    "thumbnail_type": "video",
+    "page": "projects/lspu/",
     "external_link": null
   }
 ]
