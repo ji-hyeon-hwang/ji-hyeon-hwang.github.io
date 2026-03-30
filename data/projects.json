@@ -4,8 +4,8 @@
     "title": "arXiv Trend Agent",
     "short_desc": "LangGraph-based Multi-Agent service for automated arXiv paper collection, Korean summarization, trend analysis, and RAG Q&A.",
     "tags": ["LLM", "Multi-Agent", "LangGraph", "RAG", "Full-Stack"],
-    "thumbnail": "assets/img/proj/arxiv-trend-agent/screenshot.png",
-    "thumbnail_type": "image",
+    "thumbnail": "assets/img/proj/arxiv-trend-agent/demo.mp4",
+    "thumbnail_type": "video",
     "page": "projects/arxiv-trend-agent/",
     "external_link": null
   },
@@ -34,9 +34,9 @@
     "title": "Muscle SYNC",
     "short_desc": "AI-based sensorless muscle activation analysis using computer vision.",
     "tags": ["Startup", "Computer Vision", "HW-SW Co-design", "AI"],
-    "thumbnail": null,
-    "thumbnail_type": "image",
-    "page": null,
-    "external_link": "https://www.musclesync.co.kr/home"
+    "thumbnail": "assets/img/proj/muscle-sync/demo.mp4",
+    "thumbnail_type": "video",
+    "page": "projects/muscle-sync/",
+    "external_link": null
   }
 ]
