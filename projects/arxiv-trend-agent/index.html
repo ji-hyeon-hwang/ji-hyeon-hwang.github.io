@@ -71,34 +71,34 @@
       five specialized workers. Real-time progress is streamed to the browser via
       <strong>Server-Sent Events (SSE)</strong>, and results are presented in a five-tab React UI.
     </p>
-    <div style="display:flex;flex-direction:column;gap:0.5rem;margin:1.25rem 0;font-family:'Inter',sans-serif;font-size:0.88rem;">
-      <div style="background:var(--bg-alt);border:1px solid var(--border);border-radius:8px;padding:0.75rem 1.1rem;text-align:center;">
-        <span style="font-weight:600;">User (Browser)</span>
+    <div style="display:flex;flex-direction:column;gap:0.5rem;margin:1.25rem 0;font-size:0.88rem;">
+      <div style="background:var(--accent-light);border:1.5px solid var(--accent);border-radius:8px;padding:0.75rem 1.1rem;text-align:center;">
+        <span style="font-weight:600;color:var(--accent);">User (Browser)</span>
       </div>
       <div style="text-align:center;color:var(--text-muted);font-size:0.8rem;">POST /api/research ↓ &nbsp;&nbsp;&nbsp; SSE stream ↑</div>
-      <div style="background:var(--bg-alt);border:1px solid var(--border);border-radius:8px;padding:0.75rem 1.1rem;text-align:center;">
-        <span style="font-weight:600;">React Frontend</span>
+      <div style="background:var(--accent-light);border:1.5px solid var(--accent);border-radius:8px;padding:0.75rem 1.1rem;text-align:center;">
+        <span style="font-weight:600;color:var(--accent);">React Frontend</span>
         <span style="color:var(--text-muted);font-size:0.8rem;display:block;margin-top:0.2rem;">GET /api/research/stream/{task_id}</span>
       </div>
       <div style="text-align:center;color:var(--text-muted);font-size:0.8rem;">↓</div>
-      <div style="background:var(--bg-alt);border:1px solid var(--border);border-radius:8px;padding:0.75rem 1.1rem;text-align:center;">
-        <span style="font-weight:600;">FastAPI Backend</span>
+      <div style="background:var(--accent-light);border:1.5px solid var(--accent);border-radius:8px;padding:0.75rem 1.1rem;text-align:center;">
+        <span style="font-weight:600;color:var(--accent);">FastAPI Backend</span>
         <span style="color:var(--text-muted);font-size:0.8rem;display:block;margin-top:0.2rem;">asyncio + ThreadPoolExecutor</span>
       </div>
       <div style="text-align:center;color:var(--text-muted);font-size:0.8rem;">↓</div>
-      <div style="background:var(--bg-alt);border:1px solid var(--border);border-radius:8px;padding:0.85rem 1.1rem;">
-        <div style="font-weight:600;text-align:center;margin-bottom:0.6rem;">LangGraph Supervisor</div>
-        <div style="display:flex;flex-direction:column;gap:0.35rem;padding-left:0.5rem;">
-          <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:0.45rem 0.85rem;font-size:0.82rem;">Search Worker &rarr; arXiv API + Semantic Scholar</div>
-          <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:0.45rem 0.85rem;font-size:0.82rem;">Ingest Worker &rarr; text-embedding-3-large &rarr; FAISS</div>
-          <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:0.45rem 0.85rem;font-size:0.82rem;">Summary Worker &rarr; gpt-4o-mini (Few-shot + CoT, ×5 parallel)</div>
-          <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:0.45rem 0.85rem;font-size:0.82rem;">Trend Worker &rarr; KMeans clustering + RAG context</div>
-          <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:0.45rem 0.85rem;font-size:0.82rem;">Report Worker &rarr; gpt-4o (role prompt + CoT)</div>
+      <div style="background:var(--bg-alt);border:1.5px solid var(--accent);border-radius:8px;padding:0.85rem 1.1rem;">
+        <div style="font-weight:600;text-align:center;margin-bottom:0.6rem;color:var(--accent);">LangGraph Supervisor</div>
+        <div style="display:flex;flex-direction:column;gap:0.35rem;">
+          <div style="background:var(--accent-light);border:1px solid var(--accent);border-radius:6px;padding:0.45rem 0.85rem;font-size:0.82rem;color:var(--accent);font-weight:500;">Search Worker <span style="color:var(--text-muted);font-weight:400;">→ arXiv API + Semantic Scholar</span></div>
+          <div style="background:var(--accent-light);border:1px solid var(--accent);border-radius:6px;padding:0.45rem 0.85rem;font-size:0.82rem;color:var(--accent);font-weight:500;">Ingest Worker <span style="color:var(--text-muted);font-weight:400;">→ text-embedding-3-large → FAISS</span></div>
+          <div style="background:var(--accent-light);border:1px solid var(--accent);border-radius:6px;padding:0.45rem 0.85rem;font-size:0.82rem;color:var(--accent);font-weight:500;">Summary Worker <span style="color:var(--text-muted);font-weight:400;">→ gpt-4o-mini (Few-shot + CoT, ×5 parallel)</span></div>
+          <div style="background:var(--accent-light);border:1px solid var(--accent);border-radius:6px;padding:0.45rem 0.85rem;font-size:0.82rem;color:var(--accent);font-weight:500;">Trend Worker <span style="color:var(--text-muted);font-weight:400;">→ KMeans clustering + RAG context</span></div>
+          <div style="background:var(--accent-light);border:1px solid var(--accent);border-radius:6px;padding:0.45rem 0.85rem;font-size:0.82rem;color:var(--accent);font-weight:500;">Report Worker <span style="color:var(--text-muted);font-weight:400;">→ gpt-4o (role prompt + CoT)</span></div>
         </div>
       </div>
       <div style="text-align:center;color:var(--text-muted);font-size:0.8rem;">↓</div>
-      <div style="background:var(--bg-alt);border:1px solid var(--border);border-radius:8px;padding:0.75rem 1.1rem;text-align:center;">
-        <span style="font-weight:600;">React 5-tab UI</span>
+      <div style="background:var(--accent-light);border:1.5px solid var(--accent);border-radius:8px;padding:0.75rem 1.1rem;text-align:center;">
+        <span style="font-weight:600;color:var(--accent);">React 5-tab UI</span>
         <span style="color:var(--text-muted);font-size:0.8rem;display:block;margin-top:0.2rem;">Papers · Trends · Clusters · Report · Q&amp;A</span>
       </div>
     </div>
