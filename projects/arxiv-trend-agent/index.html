@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>arXiv Trend Agent | Jihyeon Hwang</title>
+  <link rel="icon" href="../../assets/img/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/main.css">
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="../../index.html">Jihyeon Hwang</a>
+    <button class="nav-toggle" aria-label="Menu">&#9776;</button>
+    <ul class="nav-links">
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../../publications.html">Publications</a></li>
+      <li><a href="../../projects.html">Projects</a></li>
+      <li><a href="../../experience.html">Experience</a></li>
+      <li><a href="../../cv.html">CV</a></li>
+    </ul>
+    <button class="theme-btn" id="theme-btn" aria-label="Toggle dark mode">◐</button>
+  </div>
+</nav>
+
+<main class="page-wrap">
+
+  <a class="back-link" href="../../projects.html">← Back to Projects</a>
+
+  <section class="proj-page-hero">
+    <div class="proj-tags" style="margin-bottom:0.75rem;">
+      <span class="proj-tag">LLM</span>
+      <span class="proj-tag">Multi-Agent</span>
+      <span class="proj-tag">LangGraph</span>
+      <span class="proj-tag">RAG</span>
+      <span class="proj-tag">Full-Stack</span>
+    </div>
+    <h1>arXiv Trend Agent</h1>
+    <p style="color:var(--text-muted); font-size:0.9rem; margin-top:0.5rem;">
+      LangGraph-based Multi-Agent service for automated arXiv paper analysis
+    </p>
+  </section>
+
+  <div class="proj-page-media">
+    <video autoplay muted loop playsinline>
+      <source src="../../assets/img/proj/arxiv-trend-agent/demo.mov" type="video/mp4">
+    </video>
+  </div>
+
+  <div class="proj-page-body">
+    <h2>Overview</h2>
+    <p>
+      arXiv Trend Agent is a LangGraph-based Multi-Agent service that automatically collects
+      the latest arXiv papers, generates Korean-language summaries, performs trend analysis,
+      and produces insight reports. Users specify a keyword and the system retrieves
+      citation-ranked papers via arXiv API + Semantic Scholar, then routes them through a
+      Supervisor → Worker pipeline for end-to-end analysis.
+    </p>
+
+    <div class="proj-page-media" style="margin-top:1.5rem;">
+      <img src="../../assets/img/proj/arxiv-trend-agent/screenshot.png" alt="arXiv Trend Agent UI">
+    </div>
+
+    <h2>System Architecture</h2>
+    <p>
+      The backend runs a <strong>LangGraph StateGraph</strong> with a Supervisor coordinating
+      five specialized workers. Real-time progress is streamed to the browser via
+      <strong>Server-Sent Events (SSE)</strong>, and results are presented in a five-tab React UI.
+    </p>
+    <pre style="background:var(--bg-alt);border:1px solid var(--border);border-radius:6px;padding:1rem;overflow-x:auto;font-size:0.82rem;line-height:1.6;">User (Browser)
+    │  POST /api/research
+    ▼
+React Frontend  ←──────────────  SSE real-time progress
+    │  GET /api/research/stream/{task_id}
+    ▼
+FastAPI Backend (port 8080)
+    │  asyncio + ThreadPoolExecutor
+    ▼
+LangGraph Supervisor
+    ├── Search Worker   → arXiv API + Semantic Scholar (citation-ranked)
+    ├── Ingest Worker   → text-embedding-3-large → FAISS
+    ├── Summary Worker  → gpt-4o-mini (Few-shot + CoT + Structured Output, ×5 parallel)
+    ├── Trend Worker    → KMeans clustering + RAG context collection
+    └── Report Worker   → gpt-4o (role prompt + CoT)
+    │
+    ▼
+Result JSON → React 5-tab UI</pre>
+
+    <h2>Key Features</h2>
+    <p>
+      <strong>Paper Collection:</strong>
+      arXiv API keyword search combined with Semantic Scholar citation counts for
+      quality-based paper selection.
+    </p>
+    <p>
+      <strong>Korean Summarization:</strong>
+      gpt-4o-mini with Few-shot prompting, Chain-of-Thought reasoning, and Structured Output
+      for per-paper structured Korean summaries.
+    </p>
+    <p>
+      <strong>Trend Visualization:</strong>
+      Daily/weekly/monthly keyword frequency line and bar charts built with Recharts.
+    </p>
+    <p>
+      <strong>Cluster Analysis:</strong>
+      KMeans + PCA 2D Scatter Plot for topic clustering across collected papers.
+    </p>
+    <p>
+      <strong>Insight Report:</strong>
+      gpt-4o-generated comprehensive analysis report with <code>.md</code> download support.
+    </p>
+    <p>
+      <strong>RAG Q&amp;A Chatbot:</strong>
+      FAISS vector DB-backed multi-turn conversational Q&amp;A over collected papers.
+    </p>
+
+    <h2>Tech Stack</h2>
+    <p>
+      <strong>Frontend:</strong> React 18 + TypeScript + Tailwind CSS (Vite), Recharts, react-markdown<br>
+      <strong>Backend:</strong> FastAPI + SSE, LangGraph <code>StateGraph</code><br>
+      <strong>AI / ML:</strong> Azure OpenAI (gpt-4o, gpt-4o-mini, text-embedding-3-large),
+      FAISS Vector DB, scikit-learn (KMeans, PCA)
+    </p>
+  </div>
+
+</main>
+
+<footer>
+  <p>© 2025 Jihyeon Hwang</p>
+</footer>
+
+<script src="../../assets/js/main.js"></script>
+</body>
+</html>
