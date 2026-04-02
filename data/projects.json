@@ -1,5 +1,15 @@
 [
   {
+    "id": "deutsch-vokabeln",
+    "title": "Deutsch Vokabeln",
+    "short_desc": "German vocabulary trainer with 1,240 words (A1+A2), spaced repetition (SM-2), flashcards, quizzes, and grammar tables.",
+    "tags": ["Language Learning", "Spaced Repetition", "A1", "A2", "Korean"],
+    "thumbnail": null,
+    "thumbnail_type": null,
+    "page": "deutsch/",
+    "external_link": null
+  },
+  {
     "id": "arxiv-trend-agent",
     "title": "arXiv Trend Agent",
     "short_desc": "LangGraph-based Multi-Agent service for automated arXiv paper collection, Korean summarization, trend analysis, and RAG Q&A.",

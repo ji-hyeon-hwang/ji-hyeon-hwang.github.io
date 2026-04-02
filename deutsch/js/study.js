@@ -1,0 +1,130 @@
+// Study mode - flashcards (static version)
+const Study = (() => {
+    let words = [];
+    let currentIndex = 0;
+    let isFlipped = false;
+
+    function renderBatchSelector(level) {
+        const levels = Data.getLevels();
+        const lvl = levels.find(l => l.id === level);
+        if (!lvl) return "";
+
+        let html = `<button class="back-btn" onclick="App.navigate('study')">&larr; Back</button>`;
+        html += `<h2 class="section-title">${level} - Select Batch</h2>`;
+        html += `<div class="batch-grid">`;
+
+        for (let i = 1; i <= lvl.total_batches; i++) {
+            const unlocked = Progress.isBatchUnlocked(level, i, Data.BATCH_SIZE);
+            const cls = unlocked ? "batch-btn unlocked" : "batch-btn locked";
+            const click = unlocked ? `onclick="Study.loadBatch('${level}', ${i})"` : "";
+            const startWord = (i - 1) * Data.BATCH_SIZE + 1;
+            const endWord = Math.min(i * Data.BATCH_SIZE, lvl.total_words);
+            html += `<button class="${cls}" ${click}>${i}<br><span style="font-size:0.7rem">${startWord}-${endWord}</span></button>`;
+        }
+        html += `</div>`;
+        return html;
+    }
+
+    function loadBatch(level, batchNum) {
+        words = Data.getBatchWords(level, batchNum);
+        currentIndex = 0;
+        isFlipped = false;
+        renderCard();
+    }
+
+    function renderCard() {
+        if (!words.length) return;
+        const w = words[currentIndex];
+        isFlipped = false;
+
+        let frontHtml = `
+            <span class="word-type-badge">${w.word_type}</span>
+            <div class="article">${w.article || ""}</div>
+            <div class="german-word">${w.german}</div>
+            <div style="color:#666;margin-top:1rem;font-size:0.85rem">Click to flip</div>
+        `;
+
+        let backHtml = `
+            <span class="word-type-badge">${w.word_type}</span>
+            <div class="article">${w.article || ""}</div>
+            <div class="german-word">${w.german}</div>
+            <div class="korean">${w.korean}</div>
+            <div class="korean-detail">${w.korean_detail || ""}</div>
+        `;
+
+        if (w.conjugation && w.conjugation.present) {
+            const c = w.conjugation;
+            backHtml += `<table class="conjugation-table"><tbody>`;
+            for (const [pron, form] of Object.entries(c.present)) {
+                backHtml += `<tr><td class="pronoun">${pron}</td><td>${form}</td></tr>`;
+            }
+            backHtml += `</tbody></table>`;
+            if (c.past_participle) {
+                backHtml += `<div style="margin-top:0.5rem;color:#888;font-size:0.85rem">
+                    P.P.: <strong style="color:#e0e0e0">${c.past_participle}</strong>
+                    (${c.auxiliary})
+                    ${c.is_separable ? '<span style="color:#ff9800"> [sep]</span>' : ""}
+                    ${c.is_reflexive ? '<span style="color:#2196f3"> [refl]</span>' : ""}
+                </div>`;
+            }
+        }
+
+        if (w.word_type === "noun" && w.plural) {
+            backHtml += `<div style="margin-top:0.5rem;color:#888;font-size:0.85rem">Plural: <strong style="color:#e0e0e0">${w.plural}</strong></div>`;
+        }
+
+        if (w.examples && w.examples.length) {
+            backHtml += `<div class="examples">`;
+            for (const ex of w.examples) {
+                backHtml += `<div class="example"><div class="de">${ex.de}</div><div class="ko">${ex.ko}</div></div>`;
+            }
+            backHtml += `</div>`;
+        }
+
+        document.getElementById("app").innerHTML = `
+            <button class="back-btn" onclick="App.navigate('study')">&larr; Back to batches</button>
+            <div class="card-container">
+                <div class="card" onclick="Study.flip()">
+                    <div class="card-front">${frontHtml}</div>
+                    <div class="card-back">${backHtml}</div>
+                </div>
+            </div>
+            <div class="card-nav">
+                <button onclick="Study.prev()">&larr; Prev</button>
+                <span class="counter">${currentIndex + 1} / ${words.length}</span>
+                <button onclick="Study.next()">Next &rarr;</button>
+            </div>
+            <div class="text-center mt-1">
+                <button class="btn" onclick="Study.startQuiz()">Quiz this batch</button>
+            </div>
+        `;
+    }
+
+    function flip() {
+        const card = document.querySelector(".card");
+        if (card) {
+            card.classList.toggle("flipped");
+            isFlipped = !isFlipped;
+            if (isFlipped && words[currentIndex]) {
+                const w = Progress.getWord(words[currentIndex].id);
+                if (w.status === "new") {
+                    w.status = "learning";
+                    w.lastSeen = new Date().toISOString().split("T")[0];
+                    Progress.setWord(words[currentIndex].id, w);
+                }
+            }
+        }
+    }
+
+    function next() { if (currentIndex < words.length - 1) { currentIndex++; renderCard(); } }
+    function prev() { if (currentIndex > 0) { currentIndex--; renderCard(); } }
+
+    function startQuiz() {
+        if (!words.length) return;
+        const level = words[0].id.split("_")[0];
+        const batchNum = Math.ceil(words[0].number / 20);
+        App.navigate("quiz", { level, batch: batchNum });
+    }
+
+    return { renderBatchSelector, loadBatch, renderCard, flip, next, prev, startQuiz };
+})();

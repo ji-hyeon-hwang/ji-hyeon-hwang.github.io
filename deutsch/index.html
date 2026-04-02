@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deutsch Vokabeln - German Vocabulary Trainer</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <h1 id="header-title">Deutsch Vokabeln</h1>
+        <nav id="main-nav">
+            <button class="nav-btn active" data-page="home">Home</button>
+            <button class="nav-btn" data-page="study">Study</button>
+            <button class="nav-btn" data-page="quiz">Quiz</button>
+            <button class="nav-btn" data-page="grammar">Grammar</button>
+            <button class="nav-btn" data-page="progress">Progress</button>
+        </nav>
+    </header>
+    <main id="app"></main>
+
+    <!-- Data files -->
+    <script src="js/data_a1.js"></script>
+    <script src="js/data_a2.js"></script>
+    <script src="js/data_grammar.js"></script>
+    <script src="js/data.js"></script>
+
+    <!-- App modules -->
+    <script src="js/progress.js"></script>
+    <script src="js/study.js"></script>
+    <script src="js/quiz.js"></script>
+    <script src="js/grammar.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
