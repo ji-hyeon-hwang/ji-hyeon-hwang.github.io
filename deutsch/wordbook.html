@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deutsch Wordbook - A1 & A2</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #0f0f1a; color: #e0e0e0; }
+
+        .top-bar {
+            background: #1a1a2e; padding: 1rem 2rem; border-bottom: 2px solid #16213e;
+            position: sticky; top: 0; z-index: 100; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+        }
+        .top-bar h1 { color: #e94560; font-size: 1.3rem; }
+        .top-bar a { color: #888; text-decoration: none; font-size: 0.9rem; }
+        .top-bar a:hover { color: #e94560; }
+
+        .controls {
+            background: #1a1a2e; padding: 0.8rem 2rem; border-bottom: 1px solid #222;
+            display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;
+            position: sticky; top: 54px; z-index: 99;
+        }
+        .controls button, .controls select, .controls input {
+            padding: 0.4rem 0.8rem; border-radius: 6px; border: 1px solid #333;
+            background: #16213e; color: #e0e0e0; font-size: 0.85rem; cursor: pointer;
+        }
+        .controls button:hover { border-color: #e94560; }
+        .controls button.active { background: #e94560; color: #fff; border-color: #e94560; }
+        .controls input { width: 200px; }
+        .controls input::placeholder { color: #666; }
+        .controls .count { color: #888; font-size: 0.8rem; margin-left: auto; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 1rem; }
+
+        .word-entry {
+            background: #1a1a2e; border: 1px solid #222; border-radius: 10px;
+            padding: 1rem 1.2rem; margin-bottom: 0.6rem;
+            display: grid; grid-template-columns: 50px 1fr; gap: 0.5rem 1rem;
+        }
+        .word-num {
+            color: #555; font-size: 0.8rem; grid-row: 1 / 3; display: flex;
+            align-items: flex-start; padding-top: 0.2rem;
+        }
+        .word-main { display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; }
+        .word-german { font-size: 1.25rem; color: #fff; font-weight: 600; }
+        .word-article { color: #e94560; font-size: 1rem; }
+        .word-type {
+            background: #e94560; color: #fff; padding: 0.1rem 0.5rem;
+            border-radius: 10px; font-size: 0.7rem;
+        }
+        .word-korean { color: #4caf50; font-size: 1.05rem; font-weight: 500; }
+        .word-korean-detail { color: #888; font-size: 0.85rem; margin-top: 0.1rem; }
+
+        .word-details { grid-column: 2; }
+
+        .word-examples { margin-top: 0.5rem; }
+        .example-row {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;
+            padding: 0.3rem 0.5rem; background: #16213e; border-radius: 5px; margin-top: 0.3rem;
+            font-size: 0.85rem;
+        }
+        .ex-de { color: #e0e0e0; }
+        .ex-ko { color: #999; }
+
+        .conj-table {
+            margin-top: 0.5rem; border-collapse: collapse;
+            font-size: 0.82rem; width: auto;
+        }
+        .conj-table td { padding: 0.15rem 0.6rem; }
+        .conj-table .pron { color: #e94560; font-weight: 500; }
+        .conj-table .form { color: #ccc; }
+        .conj-meta { color: #777; font-size: 0.8rem; margin-top: 0.2rem; }
+        .conj-meta strong { color: #bbb; }
+        .sep-tag { color: #ff9800; }
+        .refl-tag { color: #2196f3; }
+
+        .plural-info { color: #777; font-size: 0.85rem; margin-top: 0.3rem; }
+        .plural-info strong { color: #bbb; }
+
+        .batch-divider {
+            color: #e94560; font-size: 0.9rem; font-weight: 600;
+            padding: 0.8rem 0 0.3rem; margin-top: 1rem;
+            border-bottom: 1px solid #333; margin-bottom: 0.5rem;
+        }
+
+        .toggle-details { color: #666; font-size: 0.75rem; cursor: pointer; margin-left: 0.5rem; }
+        .toggle-details:hover { color: #e94560; }
+
+        .hidden { display: none !important; }
+
+        @media print {
+            body { background: #fff; color: #000; }
+            .top-bar, .controls { position: static; background: #fff; border-color: #ddd; }
+            .top-bar h1 { color: #c00; }
+            .word-entry { background: #fff; border-color: #ddd; break-inside: avoid; }
+            .word-german { color: #000; }
+            .word-article { color: #c00; }
+            .word-korean { color: #060; }
+            .word-type { background: #c00; }
+            .example-row { background: #f5f5f5; }
+            .ex-de { color: #000; }
+            .ex-ko { color: #555; }
+            .conj-table .pron { color: #c00; }
+            .conj-table .form { color: #000; }
+            .batch-divider { color: #c00; border-color: #ccc; }
+            .controls button, .controls select, .controls input { border-color: #ccc; background: #fff; color: #000; }
+        }
+
+        @media (max-width: 600px) {
+            .word-entry { grid-template-columns: 35px 1fr; padding: 0.8rem; }
+            .example-row { grid-template-columns: 1fr; }
+            .controls { padding: 0.5rem 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <a href="index.html">&larr; Back to app</a>
+    <h1>Deutsch Wordbook</h1>
+</div>
+
+<div class="controls">
+    <button class="active" data-level="all" onclick="filterLevel('all')">All (1240)</button>
+    <button data-level="A1" onclick="filterLevel('A1')">A1 (570)</button>
+    <button data-level="A2" onclick="filterLevel('A2')">A2 (670)</button>
+    <select id="typeFilter" onchange="applyFilters()">
+        <option value="all">All types</option>
+        <option value="noun">Noun</option>
+        <option value="verb">Verb</option>
+        <option value="adjective">Adjective</option>
+        <option value="adverb">Adverb</option>
+        <option value="preposition">Preposition</option>
+        <option value="conjunction">Conjunction</option>
+        <option value="pronoun">Pronoun</option>
+        <option value="phrase">Phrase</option>
+    </select>
+    <input type="text" id="searchBox" placeholder="Search (de/ko)..." oninput="applyFilters()">
+    <button onclick="toggleAllDetails()">Toggle details</button>
+    <button onclick="window.print()">Print</button>
+    <span class="count" id="countLabel">1240 words</span>
+</div>
+
+<div class="container" id="wordList"></div>
+
+<script src="js/data_a1.js"></script>
+<script src="js/data_a2.js"></script>
+<script>
+    const ALL = WORDS_A1.concat(WORDS_A2);
+    let currentLevel = "all";
+    let showDetails = true;
+
+    function filterLevel(level) {
+        currentLevel = level;
+        document.querySelectorAll(".controls button[data-level]").forEach(b => {
+            b.classList.toggle("active", b.dataset.level === level);
+        });
+        applyFilters();
+    }
+
+    function applyFilters() {
+        const type = document.getElementById("typeFilter").value;
+        const search = document.getElementById("searchBox").value.toLowerCase().trim();
+
+        let words = currentLevel === "all" ? ALL
+            : currentLevel === "A1" ? WORDS_A1 : WORDS_A2;
+
+        if (type !== "all") words = words.filter(w => w.word_type === type);
+        if (search) words = words.filter(w =>
+            w.german.toLowerCase().includes(search) ||
+            w.korean.toLowerCase().includes(search) ||
+            (w.korean_detail && w.korean_detail.toLowerCase().includes(search))
+        );
+
+        render(words);
+    }
+
+    function render(words) {
+        const container = document.getElementById("wordList");
+        document.getElementById("countLabel").textContent = words.length + " words";
+
+        if (!words.length) {
+            container.innerHTML = '<p style="color:#888;padding:2rem;text-align:center">No results.</p>';
+            return;
+        }
+
+        let html = "";
+        let lastBatch = -1;
+
+        for (const w of words) {
+            const batch = Math.ceil(w.number / 20);
+            if (batch !== lastBatch) {
+                lastBatch = batch;
+                html += `<div class="batch-divider">${w.level} - Batch ${batch} (#${(batch-1)*20+1}~${Math.min(batch*20, w.level==="A1"?570:670)})</div>`;
+            }
+
+            html += `<div class="word-entry">`;
+            html += `<div class="word-num">${w.id}</div>`;
+            html += `<div><div class="word-main">`;
+            if (w.article) html += `<span class="word-article">${w.article}</span>`;
+            html += `<span class="word-german">${w.german}</span>`;
+            html += `<span class="word-type">${w.word_type}</span>`;
+            html += `</div>`;
+            html += `<div class="word-korean">${w.korean}</div>`;
+            if (w.korean_detail) html += `<div class="word-korean-detail">${w.korean_detail}</div>`;
+            html += `</div>`;
+
+            // Details
+            html += `<div class="word-details${showDetails ? "" : " hidden"}">`;
+
+            // Plural
+            if (w.word_type === "noun" && w.plural) {
+                html += `<div class="plural-info">Pl. <strong>${w.plural}</strong></div>`;
+            }
+
+            // Conjugation
+            if (w.conjugation && w.conjugation.present) {
+                const c = w.conjugation;
+                html += `<table class="conj-table"><tbody>`;
+                const entries = Object.entries(c.present);
+                // Show in 2 columns for compactness
+                for (let i = 0; i < entries.length; i += 2) {
+                    html += `<tr>`;
+                    html += `<td class="pron">${entries[i][0]}</td><td class="form">${entries[i][1]}</td>`;
+                    if (entries[i+1]) {
+                        html += `<td style="padding-left:1.5rem" class="pron">${entries[i+1][0]}</td><td class="form">${entries[i+1][1]}</td>`;
+                    }
+                    html += `</tr>`;
+                }
+                html += `</tbody></table>`;
+                html += `<div class="conj-meta">P.P. <strong>${c.past_participle}</strong> (${c.auxiliary})`;
+                if (c.is_separable) html += ` <span class="sep-tag">[trennbar]</span>`;
+                if (c.is_reflexive) html += ` <span class="refl-tag">[reflexiv]</span>`;
+                html += `</div>`;
+            }
+
+            // Examples
+            if (w.examples && w.examples.length) {
+                html += `<div class="word-examples">`;
+                for (const ex of w.examples) {
+                    html += `<div class="example-row"><span class="ex-de">${ex.de}</span><span class="ex-ko">${ex.ko}</span></div>`;
+                }
+                html += `</div>`;
+            }
+
+            html += `</div>`; // end details
+            html += `</div>`; // end word-entry
+        }
+
+        container.innerHTML = html;
+    }
+
+    function toggleAllDetails() {
+        showDetails = !showDetails;
+        document.querySelectorAll(".word-details").forEach(el => {
+            el.classList.toggle("hidden", !showDetails);
+        });
+    }
+
+    // Initial render
+    render(ALL);
+</script>
+</body>
+</html>
