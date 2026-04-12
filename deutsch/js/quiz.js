@@ -59,6 +59,7 @@ const Quiz = (() => {
                 <div class="quiz-question">
                     <div class="q-german">
                         ${q.article ? `<span class="q-article">${q.article}</span> ` : ""}${q.german}
+                        ${TTS.btn((q.article ? q.article + " " : "") + q.german, "1rem")}
                         ${q.is_review ? '<span class="quiz-review-badge">review</span>' : ""}
                     </div>
                     <div style="color:#888;text-align:center;margin-bottom:1rem;font-size:0.8rem">${q.word_type}</div>

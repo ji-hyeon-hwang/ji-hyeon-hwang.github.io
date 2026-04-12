@@ -300,6 +300,19 @@ main {
 .stat-box .stat-num { font-size: 1.8rem; color: #e94560; }
 .stat-box .stat-label { color: #888; font-size: 0.8rem; }
 
+.tts-btn {
+    background: none;
+    border: 1px solid #444;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 0.15rem 0.3rem;
+    vertical-align: middle;
+    transition: border-color 0.2s, transform 0.1s;
+    line-height: 1;
+}
+.tts-btn:hover { border-color: #e94560; transform: scale(1.15); }
+.tts-btn:active { transform: scale(0.95); }
+
 .btn {
     padding: 0.6rem 1.2rem;
     background: #e94560;
