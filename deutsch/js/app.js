@@ -130,10 +130,9 @@ const App = (() => {
                 const info = wrongData[wid];
                 const word = allWords.find(w => w.id === wid);
                 if (!word) continue;
-                const fullWord = (word.article ? word.article + " " : "") + word.german;
                 html += `<div style="background:#1a1a2e;border:1px solid #333;border-radius:8px;padding:0.8rem 1rem;margin-bottom:0.4rem;display:flex;justify-content:space-between;align-items:center">
                     <div>
-                        <div style="color:#fff;font-size:1.05rem">${fullWord} ${TTS.btn(fullWord, "0.9rem")}
+                        <div style="color:#fff;font-size:1.05rem">${word.german} ${TTS.btn(word.german, "0.9rem")}
                             <span style="color:#888;font-size:0.75rem;margin-left:0.3rem">${word.word_type}</span>
                         </div>
                         <div style="color:#4caf50;font-size:0.9rem">${word.korean}</div>

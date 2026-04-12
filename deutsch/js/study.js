@@ -45,19 +45,15 @@ const Study = (() => {
         const w = words[currentIndex];
         isFlipped = false;
 
-        const fullWord = (w.article ? w.article + " " : "") + w.german;
-
         let frontHtml = `
             <span class="word-type-badge">${w.word_type}</span>
-            <div class="article">${w.article || ""}</div>
-            <div class="german-word">${w.german} ${TTS.btn(fullWord, "1.2rem")}</div>
+            <div class="german-word">${w.german} ${TTS.btn(w.german, "1.2rem")}</div>
             <div style="color:#666;margin-top:1rem;font-size:0.85rem">Click card to flip</div>
         `;
 
         let backHtml = `
             <span class="word-type-badge">${w.word_type}</span>
-            <div class="article">${w.article || ""}</div>
-            <div class="german-word">${w.german} ${TTS.btn(fullWord, "1.2rem")}</div>
+            <div class="german-word">${w.german} ${TTS.btn(w.german, "1.2rem")}</div>
             <div class="korean">${w.korean}</div>
             <div class="korean-detail">${w.korean_detail || ""}</div>
         `;
