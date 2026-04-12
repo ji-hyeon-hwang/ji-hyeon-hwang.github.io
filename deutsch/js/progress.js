@@ -88,26 +88,9 @@ const Progress = (() => {
         });
     }
 
-    // Batch unlock logic: batch N unlocked if >=80% of batch N-1 at review+ status
+    // All batches always unlocked — start from any batch you want
     function isBatchUnlocked(level, batchNum, batchSize) {
-        if (batchNum <= 1) return true;
-
-        const prevStart = (batchNum - 2) * batchSize;
-        const prevEnd = prevStart + batchSize;
-        const prefix = level + "_";
-
-        let reviewCount = 0;
-        let total = 0;
-        for (let i = prevStart; i < prevEnd; i++) {
-            const num = String(i + 1).padStart(4, "0");
-            const id = prefix + num;
-            const w = getWord(id);
-            total++;
-            if (w.status === "review" || w.status === "mastered" || w.status === "learning") {
-                reviewCount++;
-            }
-        }
-        return total === 0 || (reviewCount / total) >= 0.8;
+        return true;
     }
 
     // Stats
