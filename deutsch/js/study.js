@@ -16,7 +16,6 @@ const Study = (() => {
         for (let i = 1; i <= lvl.total_batches; i++) {
             const startWord = (i - 1) * Data.BATCH_SIZE + 1;
             const endWord = Math.min(i * Data.BATCH_SIZE, lvl.total_words);
-            // Check how many words in this batch have been studied
             let seen = 0;
             for (let j = startWord; j <= endWord; j++) {
                 const id = level + "_" + String(j).padStart(4, "0");
@@ -46,17 +45,19 @@ const Study = (() => {
         const w = words[currentIndex];
         isFlipped = false;
 
+        const fullWord = (w.article ? w.article + " " : "") + w.german;
+
         let frontHtml = `
             <span class="word-type-badge">${w.word_type}</span>
             <div class="article">${w.article || ""}</div>
-            <div class="german-word">${w.german}</div>
-            <div style="color:#666;margin-top:1rem;font-size:0.85rem">Click to flip</div>
+            <div class="german-word">${w.german} ${TTS.btn(fullWord, "1.2rem")}</div>
+            <div style="color:#666;margin-top:1rem;font-size:0.85rem">Click card to flip</div>
         `;
 
         let backHtml = `
             <span class="word-type-badge">${w.word_type}</span>
             <div class="article">${w.article || ""}</div>
-            <div class="german-word">${w.german}</div>
+            <div class="german-word">${w.german} ${TTS.btn(fullWord, "1.2rem")}</div>
             <div class="korean">${w.korean}</div>
             <div class="korean-detail">${w.korean_detail || ""}</div>
         `;
@@ -65,7 +66,8 @@ const Study = (() => {
             const c = w.conjugation;
             backHtml += `<table class="conjugation-table"><tbody>`;
             for (const [pron, form] of Object.entries(c.present)) {
-                backHtml += `<tr><td class="pronoun">${pron}</td><td>${form}</td></tr>`;
+                const fullForm = pron + " " + form;
+                backHtml += `<tr><td class="pronoun">${pron}</td><td>${form} ${TTS.btn(fullForm, "0.8rem")}</td></tr>`;
             }
             backHtml += `</tbody></table>`;
             if (c.past_participle) {
@@ -79,13 +81,13 @@ const Study = (() => {
         }
 
         if (w.word_type === "noun" && w.plural) {
-            backHtml += `<div style="margin-top:0.5rem;color:#888;font-size:0.85rem">Plural: <strong style="color:#e0e0e0">${w.plural}</strong></div>`;
+            backHtml += `<div style="margin-top:0.5rem;color:#888;font-size:0.85rem">Plural: <strong style="color:#e0e0e0">${w.plural}</strong> ${TTS.btn(w.plural, "0.8rem")}</div>`;
         }
 
         if (w.examples && w.examples.length) {
             backHtml += `<div class="examples">`;
             for (const ex of w.examples) {
-                backHtml += `<div class="example"><div class="de">${ex.de}</div><div class="ko">${ex.ko}</div></div>`;
+                backHtml += `<div class="example"><div class="de">${ex.de} ${TTS.btn(ex.de, "0.85rem")}</div><div class="ko">${ex.ko}</div></div>`;
             }
             backHtml += `</div>`;
         }

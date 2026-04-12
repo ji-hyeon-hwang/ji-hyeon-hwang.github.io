@@ -107,6 +107,13 @@
             .controls button, .controls select, .controls input { border-color: #ccc; background: #fff; color: #000; }
         }
 
+        .tts-btn {
+            background: none; border: 1px solid #444; border-radius: 50%;
+            cursor: pointer; padding: 0.15rem 0.3rem; vertical-align: middle;
+            transition: border-color 0.2s; line-height: 1; font-size: 0.85rem;
+        }
+        .tts-btn:hover { border-color: #e94560; }
+
         @media (max-width: 600px) {
             .word-entry { grid-template-columns: 35px 1fr; padding: 0.8rem; }
             .example-row { grid-template-columns: 1fr; }
@@ -147,6 +154,20 @@
 <script src="js/data_a1.js"></script>
 <script src="js/data_a2.js"></script>
 <script>
+    function speakDe(text) {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = "de-DE"; u.rate = 0.85;
+        const v = window.speechSynthesis.getVoices().find(v => v.lang.startsWith("de"));
+        if (v) u.voice = v;
+        window.speechSynthesis.speak(u);
+    }
+    function ttsBtn(text) {
+        const e = text.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+        return `<button class="tts-btn" onclick="speakDe('${e}')" title="Listen">&#128264;</button>`;
+    }
+    if (window.speechSynthesis) { window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices(); }
+
     const ALL = WORDS_A1.concat(WORDS_A2);
     let currentLevel = "all";
     let showDetails = true;
@@ -196,10 +217,12 @@
             }
 
             html += `<div class="word-entry">`;
+            const fullWord = (w.article ? w.article + " " : "") + w.german;
             html += `<div class="word-num">${w.id}</div>`;
             html += `<div><div class="word-main">`;
             if (w.article) html += `<span class="word-article">${w.article}</span>`;
             html += `<span class="word-german">${w.german}</span>`;
+            html += ttsBtn(fullWord);
             html += `<span class="word-type">${w.word_type}</span>`;
             html += `</div>`;
             html += `<div class="word-korean">${w.korean}</div>`;
@@ -239,7 +262,7 @@
             if (w.examples && w.examples.length) {
                 html += `<div class="word-examples">`;
                 for (const ex of w.examples) {
-                    html += `<div class="example-row"><span class="ex-de">${ex.de}</span><span class="ex-ko">${ex.ko}</span></div>`;
+                    html += `<div class="example-row"><span class="ex-de">${ex.de} ${ttsBtn(ex.de)}</span><span class="ex-ko">${ex.ko}</span></div>`;
                 }
                 html += `</div>`;
             }
