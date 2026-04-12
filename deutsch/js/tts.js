@@ -5,7 +5,7 @@ const TTS = (() => {
         window.speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(text);
         u.lang = lang;
-        u.rate = 0.85;
+        u.rate = 1.0;
         // Try to pick a German voice if available
         const voices = window.speechSynthesis.getVoices();
         const deVoice = voices.find(v => v.lang.startsWith("de"));

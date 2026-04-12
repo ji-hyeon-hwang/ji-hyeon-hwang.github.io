@@ -157,7 +157,7 @@
     function speakDe(text) {
         window.speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(text);
-        u.lang = "de-DE"; u.rate = 0.85;
+        u.lang = "de-DE"; u.rate = 1.0;
         const v = window.speechSynthesis.getVoices().find(v => v.lang.startsWith("de"));
         if (v) u.voice = v;
         window.speechSynthesis.speak(u);
@@ -217,12 +217,10 @@
             }
 
             html += `<div class="word-entry">`;
-            const fullWord = (w.article ? w.article + " " : "") + w.german;
             html += `<div class="word-num">${w.id}</div>`;
             html += `<div><div class="word-main">`;
-            if (w.article) html += `<span class="word-article">${w.article}</span>`;
             html += `<span class="word-german">${w.german}</span>`;
-            html += ttsBtn(fullWord);
+            html += ttsBtn(w.german);
             html += `<span class="word-type">${w.word_type}</span>`;
             html += `</div>`;
             html += `<div class="word-korean">${w.korean}</div>`;
