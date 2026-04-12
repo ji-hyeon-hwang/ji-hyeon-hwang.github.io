@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goethe A2 Practice - Schreiben & Sprechen</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #0f0f1a; color: #e0e0e0; }
+
+        .top-bar {
+            background: #1a1a2e; padding: 1rem 2rem; border-bottom: 2px solid #16213e;
+            position: sticky; top: 0; z-index: 100; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+        }
+        .top-bar h1 { color: #e94560; font-size: 1.3rem; }
+        .top-bar a { color: #888; text-decoration: none; font-size: 0.9rem; }
+        .top-bar a:hover { color: #e94560; }
+
+        .controls {
+            background: #1a1a2e; padding: 0.8rem 2rem; border-bottom: 1px solid #222;
+            display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;
+            position: sticky; top: 54px; z-index: 99;
+        }
+        .controls button, .controls select, .controls input {
+            padding: 0.4rem 0.8rem; border-radius: 6px; border: 1px solid #333;
+            background: #16213e; color: #e0e0e0; font-size: 0.85rem; cursor: pointer;
+        }
+        .controls button:hover { border-color: #e94560; }
+        .controls button.active { background: #e94560; color: #fff; border-color: #e94560; }
+        .controls input { width: 180px; }
+        .controls input::placeholder { color: #666; }
+        .controls .count { color: #888; font-size: 0.8rem; margin-left: auto; }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 1rem; }
+
+        .topic-divider {
+            color: #e94560; font-size: 1.1rem; font-weight: 600;
+            padding: 1.2rem 0 0.3rem; margin-top: 1.5rem;
+            border-bottom: 2px solid #e94560; margin-bottom: 0.3rem;
+        }
+        .topic-desc { color: #888; font-size: 0.85rem; margin-bottom: 0.8rem; }
+
+        .section-header {
+            color: #ccc; font-size: 0.95rem; font-weight: 500;
+            padding: 0.6rem 0 0.3rem; margin-top: 0.8rem;
+            border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center;
+        }
+        .skill-badge {
+            display: inline-block; padding: 0.15rem 0.5rem; border-radius: 10px;
+            font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+        }
+        .skill-badge.schreiben { background: #1a3a5c; color: #64b5f6; }
+        .skill-badge.sprechen { background: #1a3a2a; color: #81c784; }
+
+        .phrase-entry {
+            background: #1a1a2e; border: 1px solid #222; border-radius: 8px;
+            padding: 0.8rem 1rem; margin: 0.4rem 0;
+        }
+        .phrase-de { font-size: 1.1rem; color: #fff; line-height: 1.5; }
+        .phrase-ko { color: #4caf50; font-size: 0.95rem; margin-top: 0.2rem; }
+        .phrase-note { color: #999; font-size: 0.8rem; margin-top: 0.2rem; font-style: italic; }
+
+        .grammar-box {
+            background: #12121e; border: 1px solid #2a2a3e; border-radius: 6px;
+            padding: 0.5rem 0.8rem; margin-top: 0.4rem; font-size: 0.82rem;
+        }
+        .grammar-item { margin: 0.3rem 0; }
+        .grammar-word { color: #e94560; font-weight: 600; }
+        .grammar-meaning { color: #ccc; }
+        .grammar-explain { color: #888; margin-left: 0.3rem; }
+
+        .tts-btn {
+            background: none; border: 1px solid #444; border-radius: 50%;
+            cursor: pointer; padding: 0.15rem 0.3rem; vertical-align: middle;
+            transition: border-color 0.2s; line-height: 1; font-size: 0.85rem;
+        }
+        .tts-btn:hover { border-color: #e94560; }
+
+        .hidden { display: none !important; }
+
+        @media print {
+            body { background: #fff; color: #000; }
+            .top-bar, .controls { position: static; background: #fff; border-color: #ddd; }
+            .top-bar h1 { color: #c00; }
+            .topic-divider { color: #c00; border-color: #c00; }
+            .phrase-entry { background: #fff; border-color: #ddd; break-inside: avoid; }
+            .phrase-de { color: #000; }
+            .phrase-ko { color: #060; }
+            .grammar-box { background: #f8f8f8; border-color: #ddd; }
+            .grammar-word { color: #c00; }
+            .grammar-explain { color: #555; }
+            .skill-badge.schreiben { background: #e3f2fd; color: #1565c0; }
+            .skill-badge.sprechen { background: #e8f5e9; color: #2e7d32; }
+            .controls button, .controls select, .controls input { border-color: #ccc; background: #fff; color: #000; }
+        }
+
+        @media (max-width: 600px) {
+            .controls { padding: 0.5rem 1rem; }
+            .phrase-de { font-size: 1rem; }
+            .container { padding: 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <a href="index.html">&larr; Back to app</a>
+    <h1>Goethe A2 Practice</h1>
+</div>
+
+<div class="controls">
+    <button class="active" data-skill="all" onclick="filterSkill('all')">All</button>
+    <button data-skill="schreiben" onclick="filterSkill('schreiben')">Schreiben</button>
+    <button data-skill="sprechen" onclick="filterSkill('sprechen')">Sprechen</button>
+    <select id="topicFilter" onchange="applyFilters()">
+        <option value="all">All topics</option>
+    </select>
+    <input type="text" id="searchBox" placeholder="Search..." oninput="applyFilters()">
+    <button onclick="toggleGrammar()">Grammar ON/OFF</button>
+    <button onclick="window.print()">Print</button>
+    <span class="count" id="countLabel"></span>
+</div>
+
+<div class="container" id="content"></div>
+
+<script src="js/data_practice.js"></script>
+<script>
+    // TTS
+    function speakDe(text) {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = "de-DE"; u.rate = 1.0;
+        const v = window.speechSynthesis.getVoices().find(v => v.lang.startsWith("de"));
+        if (v) u.voice = v;
+        window.speechSynthesis.speak(u);
+    }
+    function ttsBtn(text) {
+        const e = text.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+        return `<button class="tts-btn" onclick="speakDe('${e}')" title="Listen">&#128264;</button>`;
+    }
+    if (window.speechSynthesis) { window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices(); }
+
+    let currentSkill = "all";
+    let showGrammar = true;
+
+    // Populate topic dropdown
+    const topicSelect = document.getElementById("topicFilter");
+    for (const t of PRACTICE_DATA) {
+        const opt = document.createElement("option");
+        opt.value = t.id;
+        opt.textContent = `${t.topic_de} (${t.topic_ko})`;
+        topicSelect.appendChild(opt);
+    }
+
+    function filterSkill(skill) {
+        currentSkill = skill;
+        document.querySelectorAll(".controls button[data-skill]").forEach(b => {
+            b.classList.toggle("active", b.dataset.skill === skill);
+        });
+        applyFilters();
+    }
+
+    function toggleGrammar() {
+        showGrammar = !showGrammar;
+        document.querySelectorAll(".grammar-box").forEach(el => {
+            el.classList.toggle("hidden", !showGrammar);
+        });
+    }
+
+    function applyFilters() {
+        const topic = topicSelect.value;
+        const search = document.getElementById("searchBox").value.toLowerCase().trim();
+        render(topic, currentSkill, search);
+    }
+
+    function render(topicFilter, skillFilter, search) {
+        const container = document.getElementById("content");
+        let html = "";
+        let phraseCount = 0;
+
+        for (const topic of PRACTICE_DATA) {
+            if (topicFilter !== "all" && topic.id !== topicFilter) continue;
+
+            let topicHtml = "";
+            let topicHasPhrases = false;
+
+            for (const section of topic.sections) {
+                if (skillFilter !== "all" && section.skill !== skillFilter) continue;
+
+                let sectionHtml = "";
+                let sectionHasPhrases = false;
+
+                for (const p of section.phrases) {
+                    // Search filter
+                    if (search) {
+                        const hay = (p.de + " " + p.ko + " " + (p.note || "")).toLowerCase();
+                        if (!hay.includes(search)) continue;
+                    }
+
+                    phraseCount++;
+                    sectionHasPhrases = true;
+
+                    sectionHtml += `<div class="phrase-entry">`;
+                    sectionHtml += `<div class="phrase-de">${ttsBtn(p.de)} ${p.de}</div>`;
+                    sectionHtml += `<div class="phrase-ko">${p.ko}</div>`;
+                    if (p.note) sectionHtml += `<div class="phrase-note">${p.note}</div>`;
+
+                    // Grammar box
+                    if (p.grammar && p.grammar.length > 0) {
+                        sectionHtml += `<div class="grammar-box${showGrammar ? "" : " hidden"}">`;
+                        for (const g of p.grammar) {
+                            sectionHtml += `<div class="grammar-item">`;
+                            sectionHtml += `<span class="grammar-word">${g.word}</span>`;
+                            sectionHtml += ` <span class="grammar-meaning">— ${g.meaning}</span>`;
+                            sectionHtml += `<div class="grammar-explain">&nbsp;&nbsp;→ ${g.explain}</div>`;
+                            sectionHtml += `</div>`;
+                        }
+                        sectionHtml += `</div>`;
+                    }
+                    sectionHtml += `</div>`;
+                }
+
+                if (sectionHasPhrases) {
+                    topicHasPhrases = true;
+                    topicHtml += `<div class="section-header">
+                        <span>${section.title_de} (${section.title_ko})</span>
+                        <span class="skill-badge ${section.skill}">${section.skill}</span>
+                    </div>`;
+                    topicHtml += sectionHtml;
+                }
+            }
+
+            if (topicHasPhrases) {
+                html += `<div class="topic-divider">${topic.topic_de} (${topic.topic_ko})</div>`;
+                if (topic.description_ko) html += `<div class="topic-desc">${topic.description_ko}</div>`;
+                html += topicHtml;
+            }
+        }
+
+        if (!phraseCount) {
+            html = '<p style="color:#888;padding:2rem;text-align:center">No results.</p>';
+        }
+
+        document.getElementById("countLabel").textContent = phraseCount + " phrases";
+        container.innerHTML = html;
+    }
+
+    // Initial render
+    applyFilters();
+</script>
+</body>
+</html>
