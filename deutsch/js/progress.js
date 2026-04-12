@@ -113,9 +113,47 @@ const Progress = (() => {
         return { total, new: newCount, learning, review, mastered };
     }
 
-    function resetAll() {
-        localStorage.removeItem(STORAGE_KEY);
+    // Wrong words tracking
+    const WRONG_KEY = "deutsch_wrong";
+
+    function loadWrong() {
+        try { return JSON.parse(localStorage.getItem(WRONG_KEY)) || {}; }
+        catch { return {}; }
     }
 
-    return { getWord, setWord, sm2Update, getDueWords, isBatchUnlocked, getStats, resetAll, load };
+    function saveWrong(data) {
+        localStorage.setItem(WRONG_KEY, JSON.stringify(data));
+    }
+
+    function addWrong(wordId, chosen) {
+        const data = loadWrong();
+        if (!data[wordId]) {
+            data[wordId] = { count: 0, last: null, lastChosen: null };
+        }
+        data[wordId].count += 1;
+        data[wordId].last = new Date().toISOString().split("T")[0];
+        data[wordId].lastChosen = chosen;
+        saveWrong(data);
+    }
+
+    function removeWrong(wordId) {
+        const data = loadWrong();
+        delete data[wordId];
+        saveWrong(data);
+    }
+
+    function clearAllWrong() {
+        localStorage.removeItem(WRONG_KEY);
+    }
+
+    function getWrongList() {
+        return loadWrong();
+    }
+
+    function resetAll() {
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(WRONG_KEY);
+    }
+
+    return { getWord, setWord, sm2Update, getDueWords, isBatchUnlocked, getStats, resetAll, load, addWrong, removeWrong, clearAllWrong, getWrongList };
 })();
