@@ -14,12 +14,21 @@ const Study = (() => {
         html += `<div class="batch-grid">`;
 
         for (let i = 1; i <= lvl.total_batches; i++) {
-            const unlocked = Progress.isBatchUnlocked(level, i, Data.BATCH_SIZE);
-            const cls = unlocked ? "batch-btn unlocked" : "batch-btn locked";
-            const click = unlocked ? `onclick="Study.loadBatch('${level}', ${i})"` : "";
             const startWord = (i - 1) * Data.BATCH_SIZE + 1;
             const endWord = Math.min(i * Data.BATCH_SIZE, lvl.total_words);
-            html += `<button class="${cls}" ${click}>${i}<br><span style="font-size:0.7rem">${startWord}-${endWord}</span></button>`;
+            // Check how many words in this batch have been studied
+            let seen = 0;
+            for (let j = startWord; j <= endWord; j++) {
+                const id = level + "_" + String(j).padStart(4, "0");
+                const w = Progress.getWord(id);
+                if (w.status !== "new") seen++;
+            }
+            const total = endWord - startWord + 1;
+            const pct = Math.round((seen / total) * 100);
+            let cls = "batch-btn unlocked";
+            if (pct === 100) cls = "batch-btn completed";
+            else if (pct > 0) cls = "batch-btn current";
+            html += `<button class="${cls}" onclick="Study.loadBatch('${level}', ${i})">${i}<br><span style="font-size:0.7rem">${startWord}-${endWord}</span>${pct > 0 ? `<br><span style="font-size:0.65rem;color:#4caf50">${pct}%</span>` : ""}</button>`;
         }
         html += `</div>`;
         return html;
