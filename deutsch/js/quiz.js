@@ -86,6 +86,7 @@ const Quiz = (() => {
         if (correct) score++;
 
         Progress.sm2Update(q.id, correct ? 4 : 1);
+        if (!correct) Progress.addWrong(q.id, chosen);
         results.push({ ...q, chosen, correct });
 
         const btns = document.querySelectorAll(".quiz-option");
