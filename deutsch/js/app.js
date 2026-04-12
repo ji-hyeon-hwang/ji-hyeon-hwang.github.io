@@ -22,6 +22,7 @@ const App = (() => {
             case "study": renderStudy(); break;
             case "quiz": renderQuiz(); break;
             case "grammar": renderGrammar(); break;
+            case "practice": renderPractice(); break;
             case "progress": renderProgress(); break;
         }
     }
@@ -84,6 +85,10 @@ const App = (() => {
 
     function renderGrammar() {
         document.getElementById("app").innerHTML = Grammar.renderList();
+    }
+
+    function renderPractice() {
+        document.getElementById("app").innerHTML = Practice.renderModeSelector();
     }
 
     function renderProgress() {
