@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goethe A2 Exam Simulation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #0f0f1a; color: #e0e0e0; }
+
+        .top-bar {
+            background: #1a1a2e; padding: 1rem 2rem; border-bottom: 2px solid #16213e;
+            position: sticky; top: 0; z-index: 100; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+        }
+        .top-bar h1 { color: #e94560; font-size: 1.3rem; }
+        .top-bar a { color: #888; text-decoration: none; font-size: 0.9rem; }
+        .top-bar a:hover { color: #e94560; }
+
+        .controls {
+            background: #1a1a2e; padding: 0.8rem 2rem; border-bottom: 1px solid #222;
+            display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;
+            position: sticky; top: 54px; z-index: 99;
+        }
+        .controls button {
+            padding: 0.4rem 0.8rem; border-radius: 6px; border: 1px solid #333;
+            background: #16213e; color: #e0e0e0; font-size: 0.85rem; cursor: pointer;
+        }
+        .controls button:hover { border-color: #e94560; }
+        .controls button.active { background: #e94560; color: #fff; border-color: #e94560; }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 1rem; }
+
+        .skill-section {
+            color: #e94560; font-size: 1.3rem; font-weight: 700;
+            padding: 1.5rem 0 0.5rem; margin-top: 1rem;
+            border-bottom: 2px solid #e94560;
+        }
+        .part-section {
+            background: #1a1a2e; border: 1px solid #2a2a3e; border-radius: 10px;
+            padding: 1rem 1.2rem; margin: 1rem 0;
+        }
+        .part-header {
+            color: #ff9800; font-size: 1.1rem; font-weight: 600; margin-bottom: 0.3rem;
+        }
+        .part-desc { color: #888; font-size: 0.85rem; margin-bottom: 0.8rem; }
+
+        .example {
+            background: #12121e; border: 1px solid #2a2a3e; border-radius: 8px;
+            padding: 1rem; margin: 0.6rem 0;
+        }
+        .scenario {
+            background: #1a2a3e; border-left: 3px solid #64b5f6; padding: 0.6rem 0.8rem;
+            margin-bottom: 0.6rem; border-radius: 4px;
+        }
+        .scenario-label { color: #64b5f6; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.3rem; }
+        .scenario-de { color: #fff; white-space: pre-line; font-size: 0.92rem; line-height: 1.5; }
+        .scenario-ko { color: #aaa; white-space: pre-line; font-size: 0.85rem; margin-top: 0.4rem; line-height: 1.5; }
+
+        .model {
+            background: #1a3a1a; border-left: 3px solid #81c784; padding: 0.6rem 0.8rem;
+            margin-bottom: 0.6rem; border-radius: 4px;
+        }
+        .model-label { color: #81c784; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.3rem; display: flex; justify-content: space-between; }
+        .model-de { color: #fff; white-space: pre-line; font-size: 0.95rem; line-height: 1.6; }
+        .model-ko { color: #aaa; white-space: pre-line; font-size: 0.85rem; margin-top: 0.5rem; line-height: 1.5; }
+        .word-count { color: #ff9800; font-size: 0.75rem; }
+
+        .tips {
+            background: #2a1a3e; border-left: 3px solid #ba68c8; padding: 0.5rem 0.8rem;
+            margin-top: 0.6rem; border-radius: 4px; font-size: 0.85rem;
+        }
+        .tips-label { color: #ba68c8; font-weight: 600; margin-bottom: 0.3rem; }
+        .tips ul { padding-left: 1.2rem; color: #ccc; }
+        .tips li { margin: 0.2rem 0; }
+
+        .keyword-card {
+            display: inline-block; background: #16213e; border: 1px solid #444;
+            border-radius: 8px; padding: 0.6rem 1rem; margin: 0.3rem;
+            text-align: center; min-width: 120px;
+        }
+        .keyword-de { color: #ffeb3b; font-weight: 600; font-size: 0.95rem; }
+        .keyword-ko { color: #888; font-size: 0.75rem; margin-top: 0.2rem; }
+        .keyword-row { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0.5rem 0; }
+
+        .qa-block { margin: 0.6rem 0; }
+        .qa-keyword {
+            background: #ff9800; color: #000; padding: 0.3rem 0.8rem;
+            border-radius: 4px; display: inline-block; font-weight: 600; font-size: 0.85rem;
+            margin-bottom: 0.4rem;
+        }
+        .qa-q { color: #64b5f6; margin: 0.2rem 0; font-size: 0.95rem; }
+        .qa-a { color: #81c784; margin: 0.2rem 0 0.4rem 1rem; font-size: 0.95rem; }
+        .qa-ko { color: #888; font-size: 0.8rem; margin-left: 1.5rem; }
+
+        .dialogue-line {
+            display: flex; gap: 0.5rem; margin: 0.4rem 0;
+            padding: 0.4rem; border-radius: 4px;
+        }
+        .dialogue-line.A { background: #16213e; }
+        .dialogue-line.B { background: #1a1a3e; }
+        .speaker {
+            background: #e94560; color: #fff; padding: 0.1rem 0.5rem; border-radius: 4px;
+            font-weight: 700; font-size: 0.85rem; flex-shrink: 0; height: fit-content;
+        }
+        .speaker.B { background: #2196f3; }
+        .dialogue-content { flex: 1; }
+        .dialogue-de { color: #fff; font-size: 0.92rem; }
+        .dialogue-ko { color: #888; font-size: 0.8rem; margin-top: 0.2rem; }
+
+        .tts-btn {
+            background: none; border: 1px solid #444; border-radius: 50%;
+            cursor: pointer; padding: 0.15rem 0.3rem; vertical-align: middle;
+            transition: border-color 0.2s; line-height: 1; font-size: 0.85rem;
+        }
+        .tts-btn:hover { border-color: #e94560; }
+
+        .vocab-category {
+            background: #1a1a2e; border: 1px solid #2a2a3e; border-radius: 8px;
+            padding: 0.8rem 1rem; margin: 0.8rem 0;
+        }
+        .vocab-cat-header {
+            color: #e94560; font-size: 1.05rem; font-weight: 600;
+            border-bottom: 1px solid #333; padding-bottom: 0.4rem; margin-bottom: 0.5rem;
+        }
+        .vocab-item {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 0.5rem; padding: 0.3rem 0;
+            border-bottom: 1px dashed #2a2a3e;
+        }
+        .vocab-de { color: #fff; font-size: 0.9rem; }
+        .vocab-ko { color: #4caf50; font-size: 0.9rem; }
+        .vocab-note { grid-column: 1/-1; color: #888; font-size: 0.78rem; font-style: italic; margin-top: 0.1rem; }
+
+        .hidden { display: none !important; }
+
+        @media print {
+            body { background: #fff; color: #000; }
+            .top-bar, .controls { position: static; background: #fff; border-color: #ddd; }
+            .top-bar h1 { color: #c00; }
+            .skill-section { color: #c00; border-color: #c00; }
+            .part-section, .example, .vocab-category { background: #fff; border-color: #ddd; break-inside: avoid; }
+            .part-header { color: #f57c00; }
+            .scenario { background: #e3f2fd; }
+            .scenario-de { color: #000; }
+            .model { background: #e8f5e9; }
+            .model-de { color: #000; }
+            .tips { background: #f3e5f5; }
+            .vocab-de, .dialogue-de { color: #000; }
+            .vocab-ko { color: #2e7d32; }
+            .keyword-card { background: #fff; border-color: #999; }
+            .keyword-de { color: #f57c00; }
+            .controls button { border-color: #ccc; background: #fff; color: #000; }
+        }
+        @media (max-width: 600px) {
+            .container { padding: 0.5rem; }
+            .controls { padding: 0.5rem 1rem; }
+            .vocab-item { grid-template-columns: 1fr; gap: 0.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <a href="index.html">&larr; Back to app</a>
+    <h1>Goethe A2 Exam</h1>
+</div>
+
+<div class="controls">
+    <button class="active" data-view="all" onclick="showView('all')">All</button>
+    <button data-view="schreiben" onclick="showView('schreiben')">Schreiben</button>
+    <button data-view="sprechen" onclick="showView('sprechen')">Sprechen</button>
+    <button data-view="vocab" onclick="showView('vocab')">Vocab</button>
+    <button onclick="window.print()">Print</button>
+</div>
+
+<div class="container" id="content"></div>
+
+<script src="js/data_exam.js"></script>
+<script src="js/data_exam_vocab.js"></script>
+<script>
+    function speakDe(text) {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = "de-DE"; u.rate = 1.0;
+        const v = window.speechSynthesis.getVoices().find(v => v.lang.startsWith("de"));
+        if (v) u.voice = v;
+        window.speechSynthesis.speak(u);
+    }
+    function ttsBtn(text) {
+        const e = text.replace(/'/g, "\\'").replace(/"/g, "&quot;").replace(/\n/g, " ");
+        return `<button class="tts-btn" onclick="speakDe('${e}')" title="Listen">&#128264;</button>`;
+    }
+    if (window.speechSynthesis) { window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices(); }
+
+    function showView(view) {
+        document.querySelectorAll(".controls button[data-view]").forEach(b => {
+            b.classList.toggle("active", b.dataset.view === view);
+        });
+        render(view);
+    }
+
+    function renderSchreiben() {
+        let html = `<div class="skill-section">📝 Schreiben (쓰기)</div>`;
+        for (const part of EXAM_DATA.schreiben.parts) {
+            html += `<div class="part-section">`;
+            html += `<div class="part-header">${part.part} — ${part.title_de}</div>`;
+            html += `<div class="part-desc">${part.title_ko} · ${part.description_ko}</div>`;
+            for (const ex of part.examples) {
+                html += `<div class="example">`;
+                html += `<div class="scenario">`;
+                html += `<div class="scenario-label">📋 Aufgabe (시험 상황)</div>`;
+                html += `<div class="scenario-de">${ex.scenario_de}</div>`;
+                html += `<div class="scenario-ko">${ex.scenario_ko}</div>`;
+                html += `</div>`;
+                html += `<div class="model">`;
+                html += `<div class="model-label"><span>✍ Musterlösung (모범답안) ${ttsBtn(ex.model_de)}</span><span class="word-count">${ex.word_count} Wörter</span></div>`;
+                html += `<div class="model-de">${ex.model_de}</div>`;
+                html += `<div class="model-ko">${ex.model_ko}</div>`;
+                html += `</div>`;
+                if (ex.tips_ko && ex.tips_ko.length) {
+                    html += `<div class="tips"><div class="tips-label">💡 Tipps</div><ul>`;
+                    for (const t of ex.tips_ko) html += `<li>${t}</li>`;
+                    html += `</ul></div>`;
+                }
+                html += `</div>`;
+            }
+            html += `</div>`;
+        }
+        return html;
+    }
+
+    function renderSprechen() {
+        let html = `<div class="skill-section">🗣 Sprechen (말하기)</div>`;
+        for (const part of EXAM_DATA.sprechen.parts) {
+            html += `<div class="part-section">`;
+            html += `<div class="part-header">${part.part} — ${part.title_de}</div>`;
+            html += `<div class="part-desc">${part.title_ko} · ${part.description_ko}</div>`;
+
+            if (part.part === "Teil 1") {
+                // Keyword cards + Q/A
+                for (const ex of part.examples) {
+                    html += `<div class="example">`;
+                    html += `<div class="qa-block">`;
+                    html += `<div class="qa-keyword">📇 ${ex.keyword} (${ex.keyword_ko})</div>`;
+                    for (let i = 0; i < ex.questions.length; i++) {
+                        const q = ex.questions[i];
+                        html += `<div class="qa-q">❓ ${q.de} ${ttsBtn(q.de)}</div>`;
+                        html += `<div class="qa-ko">${q.ko}</div>`;
+                    }
+                    html += `<div style="margin-top:0.5rem;color:#888;font-size:0.8rem">→ Mögliche Antworten:</div>`;
+                    for (const a of ex.answers) {
+                        html += `<div class="qa-a">✓ ${a.de} ${ttsBtn(a.de)}</div>`;
+                        html += `<div class="qa-ko">${a.ko}</div>`;
+                    }
+                    html += `</div></div>`;
+                }
+            } else if (part.part === "Teil 2") {
+                // Topic + keywords + model speech
+                for (const ex of part.examples) {
+                    html += `<div class="example">`;
+                    html += `<div class="scenario">`;
+                    html += `<div class="scenario-label">🎯 Thema (주제)</div>`;
+                    html += `<div class="scenario-de"><strong>${ex.topic_de}</strong></div>`;
+                    html += `<div class="scenario-ko">${ex.topic_ko}</div>`;
+                    html += `<div class="keyword-row">`;
+                    for (let i = 0; i < ex.keywords.length; i++) {
+                        html += `<div class="keyword-card"><div class="keyword-de">${ex.keywords[i]}</div><div class="keyword-ko">${ex.keywords_ko[i]}</div></div>`;
+                    }
+                    html += `</div></div>`;
+                    html += `<div class="model">`;
+                    html += `<div class="model-label">🎤 Modellantwort (모범 답변) ${ttsBtn(ex.model_de)}</div>`;
+                    html += `<div class="model-de">${ex.model_de}</div>`;
+                    html += `<div class="model-ko">${ex.model_ko}</div>`;
+                    html += `</div>`;
+                    if (ex.tips_ko && ex.tips_ko.length) {
+                        html += `<div class="tips"><div class="tips-label">💡 Tipps</div><ul>`;
+                        for (const t of ex.tips_ko) html += `<li>${t}</li>`;
+                        html += `</ul></div>`;
+                    }
+                    html += `</div>`;
+                }
+            } else if (part.part === "Teil 3") {
+                // Dialogues
+                for (const ex of part.examples) {
+                    html += `<div class="example">`;
+                    html += `<div class="scenario">`;
+                    html += `<div class="scenario-label">🤝 Situation (상황)</div>`;
+                    html += `<div class="scenario-de"><strong>${ex.scenario_de}</strong></div>`;
+                    html += `<div class="scenario-ko">${ex.scenario_ko}</div>`;
+                    html += `</div>`;
+                    html += `<div style="margin-top:0.5rem">`;
+                    for (const line of ex.dialogue) {
+                        html += `<div class="dialogue-line ${line.speaker}">`;
+                        html += `<span class="speaker ${line.speaker}">${line.speaker}</span>`;
+                        html += `<div class="dialogue-content">`;
+                        html += `<div class="dialogue-de">${line.de} ${ttsBtn(line.de)}</div>`;
+                        html += `<div class="dialogue-ko">${line.ko}</div>`;
+                        html += `</div></div>`;
+                    }
+                    html += `</div>`;
+                    if (ex.tips_ko && ex.tips_ko.length) {
+                        html += `<div class="tips"><div class="tips-label">💡 Tipps</div><ul>`;
+                        for (const t of ex.tips_ko) html += `<li>${t}</li>`;
+                        html += `</ul></div>`;
+                    }
+                    html += `</div>`;
+                }
+            }
+            html += `</div>`;
+        }
+        return html;
+    }
+
+    function renderVocab() {
+        let html = `<div class="skill-section">📚 Prüfungswortschatz (시험 빈출 어휘)</div>`;
+        html += `<p style="color:#888;font-size:0.9rem;margin-bottom:1rem">Goethe A2 시험에서 자주 등장하는 핵심 어휘/표현을 카테고리별로 정리</p>`;
+        for (const cat of EXAM_VOCAB) {
+            html += `<div class="vocab-category">`;
+            html += `<div class="vocab-cat-header">${cat.category_de}</div>`;
+            html += `<div style="color:#888;font-size:0.8rem;margin-bottom:0.5rem">${cat.category_ko}</div>`;
+            for (const item of cat.items) {
+                html += `<div class="vocab-item">`;
+                html += `<div class="vocab-de">${item.de} ${ttsBtn(item.de)}</div>`;
+                html += `<div class="vocab-ko">${item.ko}</div>`;
+                if (item.note) html += `<div class="vocab-note">→ ${item.note}</div>`;
+                html += `</div>`;
+            }
+            html += `</div>`;
+        }
+        return html;
+    }
+
+    function render(view) {
+        let html = "";
+        if (view === "all" || view === "schreiben") html += renderSchreiben();
+        if (view === "all" || view === "sprechen") html += renderSprechen();
+        if (view === "all" || view === "vocab") html += renderVocab();
+        document.getElementById("content").innerHTML = html;
+        window.scrollTo(0, 0);
+    }
+
+    render("all");
+</script>
+</body>
+</html>
