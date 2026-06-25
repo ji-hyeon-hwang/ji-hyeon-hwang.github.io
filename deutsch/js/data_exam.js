@@ -1,4 +1,4 @@
-// Goethe A2 실전 시험 시뮬레이션 데이터
+// Goethe A2 실전 시험 시뮬레이션 데이터 (확장판)
 const EXAM_DATA = {
   "schreiben": {
     "title_de": "Schreiben",
@@ -11,6 +11,8 @@ const EXAM_DATA = {
         "description_ko": "친구/지인에게 보내는 짧은 메시지. 3가지 포인트를 모두 답변해야 함.",
         "examples": [
           {
+            "id": "s1-1",
+            "title_ko": "친구를 생일 파티에 초대하기",
             "scenario_de": "Sie haben Geburtstag und möchten Ihre Freundin Anna zu Ihrer Party einladen.\n- Wann ist die Party?\n- Wo findet die Party statt?\n- Was soll Anna mitbringen?",
             "scenario_ko": "당신은 생일이고 친구 Anna를 파티에 초대하고 싶습니다.\n- 파티는 언제인가요?\n- 어디서 열리나요?\n- Anna가 뭘 가져와야 하나요?",
             "model_de": "Liebe Anna,\n\nam Samstag, den 15. März, feiere ich meinen Geburtstag. Die Party findet bei mir zu Hause um 19 Uhr statt. Kannst du bitte einen Salat mitbringen? Ich freue mich auf dich!\n\nLiebe Grüße\nMaria",
@@ -21,9 +23,16 @@ const EXAM_DATA = {
               "3가지 포인트(언제/어디서/무엇)를 모두 다루기",
               "마무리: Liebe Grüße + 본인 이름",
               "단어 수 20-30 엄수"
+            ],
+            "variations": [
+              {"de": "am Freitag, den 20. April", "ko": "4월 20일 금요일에", "note": "날짜 바꿔서 응용"},
+              {"de": "im Restaurant 'Italia'", "ko": "이탈리아 식당에서", "note": "장소 변형"},
+              {"de": "Kannst du etwas zu trinken mitbringen?", "ko": "마실 거 가져올 수 있어?", "note": "가져올 물건 변형"}
             ]
           },
           {
+            "id": "s1-2",
+            "title_ko": "선생님께 병가 알리기",
             "scenario_de": "Sie sind krank und können nicht zum Deutschkurs kommen. Schreiben Sie Ihrem Lehrer Herrn Müller.\n- Sagen Sie, dass Sie krank sind.\n- Wie lange können Sie nicht kommen?\n- Fragen Sie nach Hausaufgaben.",
             "scenario_ko": "당신은 아파서 독일어 수업에 갈 수 없습니다. 선생님 Müller씨에게 메일을 쓰세요.\n- 아프다고 말하세요.\n- 얼마나 못 가나요?\n- 숙제를 물어보세요.",
             "model_de": "Sehr geehrter Herr Müller,\n\nleider bin ich krank und kann diese Woche nicht zum Kurs kommen. Ich habe Fieber und muss zu Hause bleiben. Können Sie mir bitte die Hausaufgaben per E-Mail schicken?\n\nVielen Dank!\nMit freundlichen Grüßen\nJihyeon",
@@ -33,9 +42,16 @@ const EXAM_DATA = {
               "선생님 → 격식체 (Sehr geehrter Herr / Mit freundlichen Grüßen)",
               "사유 + 기간 + 요청 순서로",
               "정중한 부탁: Können Sie bitte... ?"
+            ],
+            "variations": [
+              {"de": "Ich habe starke Kopfschmerzen.", "ko": "두통이 심해요.", "note": "다른 증상"},
+              {"de": "Ich kann bis Freitag nicht kommen.", "ko": "금요일까지 못 가요.", "note": "기간 명시"},
+              {"de": "Können Sie mir die Materialien geben, wenn ich zurück bin?", "ko": "돌아오면 자료를 받을 수 있을까요?", "note": "다른 요청 방식"}
             ]
           },
           {
+            "id": "s1-3",
+            "title_ko": "친구에게 새 직장 알리기",
             "scenario_de": "Sie haben einen neuen Job. Schreiben Sie Ihrem Freund Tom.\n- Was ist Ihr neuer Job?\n- Wann beginnen Sie?\n- Wo arbeiten Sie?",
             "scenario_ko": "새 직장을 구했습니다. 친구 Tom에게 편지하세요.\n- 새 직업은 무엇인가요?\n- 언제 시작하나요?\n- 어디서 일하나요?",
             "model_de": "Hallo Tom,\n\nich habe tolle Neuigkeiten! Ich arbeite ab nächstem Monat als Designer in einer kleinen Firma. Das Büro ist in der Stadtmitte von München. Lass uns bald treffen und feiern!\n\nLiebe Grüße\nMin",
@@ -45,9 +61,15 @@ const EXAM_DATA = {
               "친구 → 비격식 (Hallo + 이름)",
               "직업: arbeiten als + 직업 (관사 없이)",
               "시간: ab + 3격 (ab nächstem Monat)"
+            ],
+            "variations": [
+              {"de": "Ich arbeite als Krankenschwester in einem Krankenhaus.", "ko": "병원에서 간호사로 일해요.", "note": "다른 직업"},
+              {"de": "Ich beginne am ersten August.", "ko": "8월 1일에 시작해요.", "note": "구체적 시작일"}
             ]
           },
           {
+            "id": "s1-4",
+            "title_ko": "치과 예약 취소",
             "scenario_de": "Sie möchten einen Termin beim Zahnarzt absagen. Schreiben Sie an die Praxis.\n- Welcher Termin?\n- Warum sagen Sie ab?\n- Wollen Sie einen neuen Termin?",
             "scenario_ko": "치과 예약을 취소하려고 합니다. 진료소에 메일을 쓰세요.\n- 어떤 예약인가요?\n- 왜 취소하나요?\n- 새 예약을 원하나요?",
             "model_de": "Sehr geehrte Damen und Herren,\n\nleider muss ich meinen Termin am Mittwoch um 10 Uhr absagen, weil ich beruflich verhindert bin. Können Sie mir bitte einen neuen Termin nächste Woche geben?\n\nVielen Dank\nMit freundlichen Grüßen\nKim",
@@ -57,9 +79,15 @@ const EXAM_DATA = {
               "기관 → Sehr geehrte Damen und Herren",
               "사유 설명: weil + 부문장 (동사 끝으로)",
               "대안 요청 포함"
+            ],
+            "variations": [
+              {"de": "weil ich krank geworden bin", "ko": "병이 나서", "note": "다른 사유"},
+              {"de": "weil mein Sohn krank ist", "ko": "아들이 아파서", "note": "가족 사유"}
             ]
           },
           {
+            "id": "s1-5",
+            "title_ko": "집 광고 보고 문의",
             "scenario_de": "Sie haben eine Wohnung in einer Anzeige gesehen. Schreiben Sie an den Vermieter.\n- Sie haben die Anzeige gelesen.\n- Möchten Sie die Wohnung besichtigen?\n- Wann haben Sie Zeit?",
             "scenario_ko": "광고에서 집을 봤습니다. 임대인에게 메일을 쓰세요.\n- 광고를 봤다고 알리세요.\n- 집을 보고 싶나요?\n- 언제 시간이 되나요?",
             "model_de": "Sehr geehrte Frau Schmidt,\n\nich habe Ihre Anzeige im Internet gelesen und interessiere mich für die Wohnung. Könnte ich die Wohnung besichtigen? Ich habe am Freitagnachmittag oder Samstagvormittag Zeit.\n\nMit freundlichen Grüßen\nLee",
@@ -69,6 +97,62 @@ const EXAM_DATA = {
               "광고 보고 연락: Ihre Anzeige + gelesen",
               "관심 표현: sich interessieren für + Akk.",
               "시간 옵션 2개 제시"
+            ],
+            "variations": [
+              {"de": "Ich habe Ihre Anzeige in der Zeitung gelesen.", "ko": "신문에서 광고를 봤어요.", "note": "광고 매체 변형"}
+            ]
+          },
+          {
+            "id": "s1-6",
+            "title_ko": "친구에게 영화 같이 보자고 제안",
+            "scenario_de": "Sie möchten mit Ihrer Freundin ins Kino gehen.\n- Welcher Film?\n- Wann?\n- Wo treffen Sie sich?",
+            "scenario_ko": "친구와 영화관에 가려고 합니다.\n- 어떤 영화?\n- 언제?\n- 어디서 만날까요?",
+            "model_de": "Liebe Sara,\n\nhast du Lust, am Freitagabend ins Kino zu gehen? Es läuft ein neuer Liebesfilm. Der Film beginnt um 20 Uhr. Sollen wir uns um 19:30 Uhr vor dem Kino treffen?\n\nLiebe Grüße\nLena",
+            "model_ko": "친애하는 Sara,\n\n금요일 저녁에 영화관 갈래? 새 로맨스 영화가 상영해. 영화는 20시에 시작해. 19시 30분에 영화관 앞에서 만날까?\n\n안부 전하며\nLena",
+            "word_count": 32,
+            "tips_ko": [
+              "제안: Hast du Lust, ...zu...? = ~할 마음 있어?",
+              "약속은 영화 시작 15-30분 전",
+              "친구 → 비격식"
+            ],
+            "variations": [
+              {"de": "Es läuft ein neuer Actionfilm.", "ko": "새 액션 영화 해.", "note": "다른 장르"},
+              {"de": "am Samstagnachmittag", "ko": "토요일 오후에", "note": "다른 시간"}
+            ]
+          },
+          {
+            "id": "s1-7",
+            "title_ko": "관광 안내소에 문의",
+            "scenario_de": "Sie planen einen Urlaub in Berlin und brauchen Informationen.\n- Was möchten Sie wissen?\n- Wann fahren Sie?\n- Wie viele Personen sind Sie?",
+            "scenario_ko": "베를린 여행을 계획 중이고 정보가 필요합니다.\n- 무엇을 알고 싶나요?\n- 언제 가나요?\n- 몇 명인가요?",
+            "model_de": "Sehr geehrte Damen und Herren,\n\nich plane einen Urlaub in Berlin im Juli. Können Sie mir bitte Informationen über die Sehenswürdigkeiten schicken? Wir sind eine Familie mit zwei Kindern.\n\nVielen Dank\nMit freundlichen Grüßen\nHan",
+            "model_ko": "관계자분께,\n\n7월에 베를린 여행을 계획 중입니다. 관광 명소에 대한 정보를 보내주실 수 있나요? 우리는 아이 둘이 있는 가족입니다.\n\n감사합니다\n경의를 담아\nHan",
+            "word_count": 30,
+            "tips_ko": [
+              "기관 → 격식체",
+              "여행 계획 + 인원 정보 필수",
+              "Können Sie ... schicken? = 정중한 정보 요청"
+            ],
+            "variations": [
+              {"de": "im August", "ko": "8월에", "note": "다른 시기"},
+              {"de": "Wir sind zu dritt.", "ko": "셋이에요.", "note": "다른 인원"}
+            ]
+          },
+          {
+            "id": "s1-8",
+            "title_ko": "동료와 점심 약속",
+            "scenario_de": "Sie wollen mit Ihrem Kollegen Markus zu Mittag essen.\n- Wann?\n- Wo?\n- Was wollen Sie essen?",
+            "scenario_ko": "동료 Markus와 점심을 먹으려고 합니다.\n- 언제?\n- 어디서?\n- 뭘 먹을까요?",
+            "model_de": "Hallo Markus,\n\nhast du heute Lust, zusammen zu Mittag zu essen? Wie wäre es um 12:30 Uhr im italienischen Restaurant nebenan? Ich habe Lust auf Pizza.\n\nLiebe Grüße\nTina",
+            "model_ko": "안녕 Markus,\n\n오늘 같이 점심 먹을래? 옆에 이탈리아 식당에서 12시 30분 어때? 피자 먹고 싶어.\n\n안부 전하며\nTina",
+            "word_count": 28,
+            "tips_ko": [
+              "동료 → 보통 비격식",
+              "Lust haben auf + 4격 = ~ 먹고 싶다",
+              "Wie wäre es + 시간/장소 = ~ 어때?"
+            ],
+            "variations": [
+              {"de": "im neuen Café gegenüber", "ko": "건너편 새 카페에서", "note": "다른 장소"}
             ]
           }
         ]
@@ -80,6 +164,8 @@ const EXAM_DATA = {
         "description_ko": "주어진 상황에 대한 응답 이메일/편지. 격식체 또는 비격식체.",
         "examples": [
           {
+            "id": "s2-1",
+            "title_ko": "결혼식 초대 답장",
             "scenario_de": "Ihre Freundin hat Sie zu einer Hochzeit eingeladen. Antworten Sie:\n- Bedanken Sie sich für die Einladung.\n- Sagen Sie, dass Sie kommen.\n- Fragen Sie, ob Sie etwas mitbringen sollen.",
             "scenario_ko": "친구가 결혼식에 초대했습니다. 답장하세요:\n- 초대에 감사하기\n- 간다고 말하기\n- 뭔가 가져갈지 묻기",
             "model_de": "Liebe Julia,\n\nvielen Dank für deine Einladung zu deiner Hochzeit! Ich freue mich sehr und komme natürlich gerne. Soll ich etwas mitbringen? Sag mir bitte Bescheid.\n\nIch freue mich auf den Tag!\nLiebe Grüße\nSarah",
@@ -89,9 +175,15 @@ const EXAM_DATA = {
               "친구 → 비격식",
               "감사 → 수락 → 질문 순",
               "Sag mir Bescheid = 알려줘"
+            ],
+            "variations": [
+              {"de": "Vielen Dank für die Einladung zum Geburtstag!", "ko": "생일 초대 고마워!", "note": "다른 행사"},
+              {"de": "Soll ich einen Blumenstrauß mitbringen?", "ko": "꽃다발 가져갈까?", "note": "구체적 제안"}
             ]
           },
           {
+            "id": "s2-2",
+            "title_ko": "온라인 쇼핑 교환 요청",
             "scenario_de": "Sie haben einen Wintermantel online gekauft, aber er ist zu klein. Schreiben Sie an den Online-Shop:\n- Was haben Sie gekauft?\n- Was ist das Problem?\n- Was möchten Sie tun (umtauschen/zurückgeben)?",
             "scenario_ko": "겨울 코트를 온라인으로 샀는데 너무 작습니다. 온라인 쇼핑몰에 메일을 쓰세요:\n- 무엇을 샀나요?\n- 무엇이 문제인가요?\n- 어떻게 하고 싶나요?",
             "model_de": "Sehr geehrte Damen und Herren,\n\nletzte Woche habe ich bei Ihnen einen schwarzen Wintermantel in Größe M bestellt. Leider ist er mir zu klein. Ich möchte den Mantel gegen Größe L umtauschen. Können Sie mir bitte sagen, wie das geht?\n\nMit freundlichen Grüßen\nPark",
@@ -101,9 +193,16 @@ const EXAM_DATA = {
               "구매 사실 → 문제 → 요청 순",
               "사이즈 표현: in Größe M",
               "교환: umtauschen gegen + 4격"
+            ],
+            "variations": [
+              {"de": "ein rotes Kleid in Größe S", "ko": "S사이즈 빨간 드레스", "note": "다른 옷"},
+              {"de": "Leider ist die Farbe anders als auf dem Bild.", "ko": "안타깝게도 사진과 색이 달라요.", "note": "다른 문제"},
+              {"de": "Ich möchte das Geld zurückbekommen.", "ko": "환불받고 싶어요.", "note": "환불 요청"}
             ]
           },
           {
+            "id": "s2-3",
+            "title_ko": "시민대학에 강좌 문의",
             "scenario_de": "Sie möchten in der Volkshochschule einen Yoga-Kurs machen. Schreiben Sie:\n- Sie interessieren sich für den Kurs.\n- Wann findet der Kurs statt?\n- Wie viel kostet er?",
             "scenario_ko": "시민대학에서 요가 수업을 듣고 싶습니다. 메일을 쓰세요:\n- 수업에 관심이 있다\n- 수업은 언제인가?\n- 비용은 얼마인가?",
             "model_de": "Sehr geehrte Damen und Herren,\n\nich habe Ihre Anzeige für den Yoga-Kurs gesehen und interessiere mich sehr dafür. Können Sie mir bitte sagen, wann der Kurs stattfindet und wie viel er kostet? Gibt es auch einen Kurs für Anfänger?\n\nVielen Dank\nMit freundlichen Grüßen\nChoi",
@@ -113,9 +212,15 @@ const EXAM_DATA = {
               "관심 표현 + 질문 2개 묶기",
               "간접의문문: wann + 동사 끝",
               "추가 질문: Gibt es...?"
+            ],
+            "variations": [
+              {"de": "den Deutschkurs", "ko": "독일어 강좌", "note": "다른 강좌"},
+              {"de": "den Spanischkurs", "ko": "스페인어 강좌", "note": "다른 언어"}
             ]
           },
           {
+            "id": "s2-4",
+            "title_ko": "미용실 예약 변경",
             "scenario_de": "Sie haben einen Termin beim Friseur, aber Sie können nicht kommen. Schreiben Sie:\n- Welcher Termin?\n- Warum können Sie nicht?\n- Schlagen Sie einen neuen Termin vor.",
             "scenario_ko": "미용실 예약이 있는데 갈 수 없습니다. 메일을 쓰세요:\n- 어떤 예약인가요?\n- 왜 못 가나요?\n- 새 예약을 제안하세요.",
             "model_de": "Sehr geehrte Damen und Herren,\n\nich habe einen Termin am Donnerstag um 14 Uhr bei Ihnen. Leider kann ich nicht kommen, weil ich an dem Tag arbeiten muss. Könnten wir den Termin auf Freitag um die gleiche Uhrzeit verschieben?\n\nVielen Dank\nMit freundlichen Grüßen\nWang",
@@ -125,11 +230,16 @@ const EXAM_DATA = {
               "기존 예약 명시 (요일 + 시간)",
               "사유 (weil + 부문장)",
               "대안 제안 (verschieben auf + 4격)"
+            ],
+            "variations": [
+              {"de": "auf nächste Woche verschieben", "ko": "다음 주로 미루기", "note": "기간 단위 연기"}
             ]
           },
           {
-            "scenario_de": "Sie sind neu in der Stadt und suchen einen Tandempartner (Sprachpartner). Schreiben Sie an einen Sprachlernverein:\n- Was suchen Sie?\n- Welche Sprache?\n- Wann haben Sie Zeit?",
-            "scenario_ko": "도시에 새로 왔고 언어 교환 파트너를 찾고 있습니다. 어학 동호회에 메일을 쓰세요:\n- 무엇을 찾나요?\n- 어떤 언어?\n- 언제 시간이 되나요?",
+            "id": "s2-5",
+            "title_ko": "언어 교환 파트너 찾기",
+            "scenario_de": "Sie sind neu in der Stadt und suchen einen Tandempartner. Schreiben Sie an einen Sprachlernverein:\n- Was suchen Sie?\n- Welche Sprache?\n- Wann haben Sie Zeit?",
+            "scenario_ko": "도시에 새로 왔고 언어 교환 파트너를 찾고 있습니다.\n- 무엇을 찾나요?\n- 어떤 언어?\n- 언제 시간이 되나요?",
             "model_de": "Sehr geehrte Damen und Herren,\n\nich bin neu in Berlin und suche einen Tandempartner. Ich möchte Deutsch lernen und kann Koreanisch unterrichten. Ich habe abends und am Wochenende Zeit. Können Sie mir bitte helfen?\n\nVielen Dank\nMit freundlichen Grüßen\nJang",
             "model_ko": "관계자분께,\n\n베를린에 새로 왔고 언어 교환 파트너를 찾고 있습니다. 독일어를 배우고 싶고 한국어를 가르칠 수 있습니다. 저녁과 주말에 시간이 됩니다. 도와주실 수 있나요?\n\n감사합니다\n경의를 담아\nJang",
             "word_count": 38,
@@ -137,7 +247,83 @@ const EXAM_DATA = {
               "자기 상황 → 목적 → 가능 시간",
               "교환 제안: 배움 + 가르침",
               "abends / am Wochenende = 시간 표현"
-            ]
+            ],
+            "variations": []
+          },
+          {
+            "id": "s2-6",
+            "title_ko": "친구 부탁 거절하며 사과",
+            "scenario_de": "Ihre Freundin hat Sie gebeten, ihre Katze zu füttern, aber Sie können nicht.\n- Bedanken Sie sich für die Frage.\n- Erklären Sie, warum Sie nicht können.\n- Schlagen Sie eine Lösung vor.",
+            "scenario_ko": "친구가 고양이 먹이 줄 것을 부탁했는데 못 합니다.\n- 부탁에 감사하기\n- 못 하는 이유 설명\n- 해결책 제안",
+            "model_de": "Liebe Lisa,\n\ndanke, dass du mich gefragt hast! Leider bin ich nächste Woche auf einer Geschäftsreise und kann dir nicht helfen. Vielleicht kann meine Schwester die Katze füttern? Soll ich sie fragen?\n\nLiebe Grüße\nTina",
+            "model_ko": "친애하는 Lisa,\n\n물어봐줘서 고마워! 안타깝지만 다음 주에 출장이 있어서 도와줄 수 없어. 우리 언니가 고양이 밥 줄 수 있을지도? 물어볼까?\n\n안부 전하며\nTina",
+            "word_count": 36,
+            "tips_ko": [
+              "감사 → 사정 설명 → 대안 제시",
+              "거절은 부드럽게 (Leider, Vielleicht)",
+              "Soll ich...? = 내가 ~할까?"
+            ],
+            "variations": []
+          },
+          {
+            "id": "s2-7",
+            "title_ko": "은행 약속 잡기",
+            "scenario_de": "Sie möchten ein Konto eröffnen. Schreiben Sie an die Bank:\n- Was wollen Sie?\n- Wann haben Sie Zeit?\n- Welche Unterlagen brauchen Sie?",
+            "scenario_ko": "은행 계좌를 개설하고 싶습니다.\n- 무엇을 원하나요?\n- 언제 시간이 되나요?\n- 어떤 서류가 필요한가요?",
+            "model_de": "Sehr geehrte Damen und Herren,\n\nich möchte bei Ihrer Bank ein Konto eröffnen. Können Sie mir bitte einen Termin geben? Ich habe am Montag oder Dienstag Vormittag Zeit. Welche Unterlagen muss ich mitbringen?\n\nVielen Dank\nMit freundlichen Grüßen\nKim",
+            "model_ko": "관계자분께,\n\n귀하의 은행에서 계좌를 개설하고 싶습니다. 약속을 잡아주실 수 있나요? 월요일이나 화요일 오전에 시간이 됩니다. 어떤 서류를 가져가야 하나요?\n\n감사합니다\n경의를 담아\nKim",
+            "word_count": 38,
+            "tips_ko": [
+              "목적 → 시간 → 준비물 순",
+              "Konto eröffnen = 계좌 개설",
+              "Unterlagen = 서류 (항상 복수)"
+            ],
+            "variations": []
+          },
+          {
+            "id": "s2-8",
+            "title_ko": "이웃에게 파티 알리며 사과",
+            "scenario_de": "Sie machen am Wochenende eine Party und wollen Ihren Nachbarn informieren:\n- Wann ist die Party?\n- Wie laut wird es?\n- Entschuldigen Sie sich für den Lärm.",
+            "scenario_ko": "주말에 파티를 하는데 이웃에게 알리려고 합니다.\n- 언제인가요?\n- 얼마나 시끄러울까요?\n- 소음에 대해 사과하기",
+            "model_de": "Liebe Frau Becker,\n\nich möchte Sie informieren, dass ich am Samstag eine kleine Geburtstagsparty mache. Es kann etwas lauter werden. Ich entschuldige mich schon im Voraus für den Lärm.\n\nMit freundlichen Grüßen\nLee",
+            "model_ko": "Becker 여사님께,\n\n토요일에 작은 생일 파티를 한다는 걸 알려드립니다. 좀 시끄러울 수 있어요. 소음에 대해 미리 사과드립니다.\n\n경의를 담아\nLee",
+            "word_count": 33,
+            "tips_ko": [
+              "이웃 → 반격식",
+              "정보 전달 + 사과",
+              "im Voraus = 미리"
+            ],
+            "variations": []
+          },
+          {
+            "id": "s2-9",
+            "title_ko": "호텔 예약 문의",
+            "scenario_de": "Sie möchten ein Hotelzimmer in Hamburg reservieren. Schreiben Sie:\n- Wann kommen Sie?\n- Was für ein Zimmer?\n- Was möchten Sie wissen?",
+            "scenario_ko": "함부르크 호텔을 예약하려고 합니다.\n- 언제 가나요?\n- 어떤 방?\n- 무엇을 알고 싶나요?",
+            "model_de": "Sehr geehrte Damen und Herren,\n\nich möchte vom 10. bis 15. Mai ein Doppelzimmer mit Frühstück reservieren. Wie viel kostet das Zimmer pro Nacht? Gibt es einen kostenlosen Parkplatz?\n\nVielen Dank\nMit freundlichen Grüßen\nChoi",
+            "model_ko": "관계자분께,\n\n5월 10일부터 15일까지 조식 포함 더블룸을 예약하고 싶습니다. 1박에 얼마인가요? 무료 주차장이 있나요?\n\n감사합니다\n경의를 담아\nChoi",
+            "word_count": 32,
+            "tips_ko": [
+              "기간 (vom~bis), 방 종류 명시",
+              "pro Nacht = 1박당",
+              "kostenlos = 무료"
+            ],
+            "variations": []
+          },
+          {
+            "id": "s2-10",
+            "title_ko": "분실물 신고",
+            "scenario_de": "Sie haben in der U-Bahn Ihre Tasche verloren. Schreiben Sie an das Fundbüro:\n- Was haben Sie verloren?\n- Wann und wo?\n- Was war in der Tasche?",
+            "scenario_ko": "지하철에서 가방을 잃어버렸습니다. 분실물 사무소에 메일을 쓰세요.\n- 무엇을 잃어버렸나요?\n- 언제, 어디서?\n- 가방 안에 뭐가 있었나요?",
+            "model_de": "Sehr geehrte Damen und Herren,\n\ngestern Morgen habe ich in der U-Bahn (Linie 6) meine schwarze Handtasche verloren. In der Tasche waren mein Geldbeutel und mein Handy. Haben Sie die Tasche gefunden?\n\nMit freundlichen Grüßen\nHan",
+            "model_ko": "관계자분께,\n\n어제 아침에 지하철(6호선)에서 검은색 핸드백을 잃어버렸습니다. 가방 안에는 지갑과 핸드폰이 있었습니다. 가방을 찾으셨나요?\n\n경의를 담아\nHan",
+            "word_count": 34,
+            "tips_ko": [
+              "시간 + 장소 + 색/특징 명시",
+              "내용물 구체적으로",
+              "haben verloren = 잃어버렸다 (현재완료)"
+            ],
+            "variations": []
           }
         ]
       }
@@ -154,6 +340,7 @@ const EXAM_DATA = {
         "description_ko": "4개 키워드 카드를 보고 파트너에게 질문하고 답변. 각 키워드당 1개 질문 + 답변.",
         "examples": [
           {
+            "id": "sp1-1",
             "keyword": "Name",
             "keyword_ko": "이름",
             "questions": [
@@ -168,6 +355,7 @@ const EXAM_DATA = {
             ]
           },
           {
+            "id": "sp1-2",
             "keyword": "Wohnort",
             "keyword_ko": "거주지",
             "questions": [
@@ -182,6 +370,7 @@ const EXAM_DATA = {
             ]
           },
           {
+            "id": "sp1-3",
             "keyword": "Alter",
             "keyword_ko": "나이",
             "questions": [
@@ -194,6 +383,7 @@ const EXAM_DATA = {
             ]
           },
           {
+            "id": "sp1-4",
             "keyword": "Beruf",
             "keyword_ko": "직업",
             "questions": [
@@ -208,6 +398,7 @@ const EXAM_DATA = {
             ]
           },
           {
+            "id": "sp1-5",
             "keyword": "Familie",
             "keyword_ko": "가족",
             "questions": [
@@ -222,18 +413,22 @@ const EXAM_DATA = {
             ]
           },
           {
+            "id": "sp1-6",
             "keyword": "Sprachen",
             "keyword_ko": "언어",
             "questions": [
               {"de": "Welche Sprachen sprechen Sie?", "ko": "어떤 언어를 하세요?"},
-              {"de": "Wie lange lernen Sie schon Deutsch?", "ko": "독일어를 얼마나 배우셨어요?"}
+              {"de": "Wie lange lernen Sie schon Deutsch?", "ko": "독일어를 얼마나 배우셨어요?"},
+              {"de": "Warum lernen Sie Deutsch?", "ko": "왜 독일어를 배우세요?"}
             ],
             "answers": [
               {"de": "Ich spreche Koreanisch, Englisch und ein bisschen Deutsch.", "ko": "한국어, 영어, 그리고 독일어를 조금 해요."},
-              {"de": "Ich lerne seit einem Jahr Deutsch.", "ko": "1년 전부터 독일어를 배우고 있어요."}
+              {"de": "Ich lerne seit einem Jahr Deutsch.", "ko": "1년 전부터 독일어를 배우고 있어요."},
+              {"de": "Ich lerne Deutsch, weil ich in Deutschland arbeiten möchte.", "ko": "독일에서 일하고 싶어서 독일어를 배워요."}
             ]
           },
           {
+            "id": "sp1-7",
             "keyword": "Hobbys",
             "keyword_ko": "취미",
             "questions": [
@@ -248,6 +443,7 @@ const EXAM_DATA = {
             ]
           },
           {
+            "id": "sp1-8",
             "keyword": "Essen",
             "keyword_ko": "음식",
             "questions": [
@@ -262,6 +458,7 @@ const EXAM_DATA = {
             ]
           },
           {
+            "id": "sp1-9",
             "keyword": "Reisen",
             "keyword_ko": "여행",
             "questions": [
@@ -276,6 +473,7 @@ const EXAM_DATA = {
             ]
           },
           {
+            "id": "sp1-10",
             "keyword": "Tagesablauf",
             "keyword_ko": "하루 일과",
             "questions": [
@@ -288,6 +486,7 @@ const EXAM_DATA = {
             ]
           },
           {
+            "id": "sp1-11",
             "keyword": "Wetter",
             "keyword_ko": "날씨",
             "questions": [
@@ -300,6 +499,7 @@ const EXAM_DATA = {
             ]
           },
           {
+            "id": "sp1-12",
             "keyword": "Schule",
             "keyword_ko": "학교",
             "questions": [
@@ -309,6 +509,60 @@ const EXAM_DATA = {
             "answers": [
               {"de": "Ich mag Mathe und Englisch.", "ko": "수학과 영어를 좋아해요."},
               {"de": "Ich gehe in die VHS für den Deutschkurs.", "ko": "시민대학에서 독일어 수업을 들어요."}
+            ]
+          },
+          {
+            "id": "sp1-13",
+            "keyword": "Wohnung",
+            "keyword_ko": "집",
+            "questions": [
+              {"de": "Wie groß ist Ihre Wohnung?", "ko": "집이 얼마나 커요?"},
+              {"de": "In welchem Stock wohnen Sie?", "ko": "몇 층에 사세요?"},
+              {"de": "Haben Sie einen Balkon?", "ko": "발코니 있어요?"}
+            ],
+            "answers": [
+              {"de": "Meine Wohnung ist ungefähr 60 Quadratmeter.", "ko": "집은 약 60제곱미터예요."},
+              {"de": "Ich wohne im dritten Stock.", "ko": "3층에 살아요."},
+              {"de": "Ja, ich habe einen kleinen Balkon.", "ko": "네, 작은 발코니가 있어요."}
+            ]
+          },
+          {
+            "id": "sp1-14",
+            "keyword": "Verkehrsmittel",
+            "keyword_ko": "교통수단",
+            "questions": [
+              {"de": "Wie kommen Sie zur Arbeit?", "ko": "어떻게 출근하세요?"},
+              {"de": "Haben Sie ein Auto?", "ko": "차 있으세요?"}
+            ],
+            "answers": [
+              {"de": "Ich fahre mit der U-Bahn zur Arbeit.", "ko": "지하철로 출근해요."},
+              {"de": "Nein, ich nehme immer den Bus.", "ko": "아니요, 항상 버스를 타요."}
+            ]
+          },
+          {
+            "id": "sp1-15",
+            "keyword": "Einkaufen",
+            "keyword_ko": "쇼핑",
+            "questions": [
+              {"de": "Wo kaufen Sie ein?", "ko": "어디서 장보세요?"},
+              {"de": "Was kaufen Sie gerne?", "ko": "뭘 즐겨 사세요?"}
+            ],
+            "answers": [
+              {"de": "Ich kaufe meistens im Supermarkt nebenan ein.", "ko": "보통 옆 슈퍼에서 장봐요."},
+              {"de": "Ich kaufe gerne Bücher und Kleidung.", "ko": "책과 옷을 자주 사요."}
+            ]
+          },
+          {
+            "id": "sp1-16",
+            "keyword": "Musik",
+            "keyword_ko": "음악",
+            "questions": [
+              {"de": "Welche Musik hören Sie gerne?", "ko": "어떤 음악 좋아하세요?"},
+              {"de": "Spielen Sie ein Instrument?", "ko": "악기 다루세요?"}
+            ],
+            "answers": [
+              {"de": "Ich höre gerne Pop und Klassik.", "ko": "팝과 클래식을 좋아해요."},
+              {"de": "Ja, ich spiele Klavier seit zehn Jahren.", "ko": "네, 10년째 피아노를 쳐요."}
             ]
           }
         ]
@@ -320,6 +574,7 @@ const EXAM_DATA = {
         "description_ko": "주어진 주제 + 4개 키워드로 3-4분간 자기 경험을 설명. 모든 키워드를 다뤄야 함.",
         "examples": [
           {
+            "id": "sp2-1",
             "topic_de": "Erzählen Sie über Ihren Tagesablauf",
             "topic_ko": "당신의 하루 일과를 이야기해보세요",
             "keywords": ["aufstehen", "Arbeit/Schule", "Freizeit", "Schlafen"],
@@ -334,6 +589,7 @@ const EXAM_DATA = {
             ]
           },
           {
+            "id": "sp2-2",
             "topic_de": "Erzählen Sie über Ihre Familie",
             "topic_ko": "당신의 가족에 대해 이야기해보세요",
             "keywords": ["Mitglieder", "Beruf", "Wohnort", "Aktivitäten zusammen"],
@@ -348,6 +604,7 @@ const EXAM_DATA = {
             ]
           },
           {
+            "id": "sp2-3",
             "topic_de": "Erzählen Sie über Ihre Wohnung",
             "topic_ko": "당신의 집에 대해 이야기해보세요",
             "keywords": ["Größe", "Zimmer", "Lage", "Was Sie mögen"],
@@ -362,6 +619,7 @@ const EXAM_DATA = {
             ]
           },
           {
+            "id": "sp2-4",
             "topic_de": "Erzählen Sie über Ihren letzten Urlaub",
             "topic_ko": "최근 휴가에 대해 이야기해보세요",
             "keywords": ["Wohin", "Mit wem", "Aktivitäten", "Wetter"],
@@ -376,6 +634,7 @@ const EXAM_DATA = {
             ]
           },
           {
+            "id": "sp2-5",
             "topic_de": "Erzählen Sie über Ihre Hobbys",
             "topic_ko": "당신의 취미에 대해 이야기해보세요",
             "keywords": ["Welche Hobbys", "Wie oft", "Mit wem", "Warum"],
@@ -387,6 +646,48 @@ const EXAM_DATA = {
               "이유 (warum): weil + 부문장",
               "감정: Es macht Spaß, Ich mag"
             ]
+          },
+          {
+            "id": "sp2-6",
+            "topic_de": "Erzählen Sie über Ihren Beruf / Ihr Studium",
+            "topic_ko": "당신의 직업 / 학업에 대해 이야기해보세요",
+            "keywords": ["Beruf", "Arbeitsort", "Aufgaben", "Zufrieden?"],
+            "keywords_ko": ["직업", "근무지", "업무", "만족도"],
+            "model_de": "Ich arbeite als Krankenschwester in einem großen Krankenhaus in Seoul. Ich arbeite dort seit drei Jahren.\n\nDas Krankenhaus liegt im Zentrum der Stadt. Ich fahre jeden Tag mit der U-Bahn dorthin. Die Fahrt dauert ungefähr 30 Minuten.\n\nMeine Aufgaben sind vielfältig. Ich helfe den Patienten, gebe Medikamente und arbeite mit Ärzten zusammen. Manchmal arbeite ich auch nachts.\n\nIch bin mit meiner Arbeit sehr zufrieden, weil ich Menschen helfen kann. Die Kollegen sind nett und ich lerne jeden Tag etwas Neues. Nur die Schichtarbeit ist manchmal anstrengend.",
+            "model_ko": "서울의 큰 병원에서 간호사로 일해요. 3년째 거기서 일하고 있습니다.\n\n병원은 시내 중심에 있어요. 매일 지하철로 출근합니다. 이동에 약 30분 걸려요.\n\n업무는 다양해요. 환자를 돕고, 약을 주고, 의사들과 함께 일합니다. 가끔은 야간 근무도 해요.\n\n일에 매우 만족하는데, 사람들을 도울 수 있기 때문이에요. 동료들이 친절하고 매일 새로운 걸 배워요. 다만 교대 근무가 가끔 힘들어요.",
+            "tips_ko": [
+              "직업: als + 직업 (관사 없이)",
+              "기간: seit + 3격",
+              "감정 평가 포함 (만족/불만족)"
+            ]
+          },
+          {
+            "id": "sp2-7",
+            "topic_de": "Erzählen Sie über Ihre Stadt",
+            "topic_ko": "당신이 사는 도시에 대해 이야기해보세요",
+            "keywords": ["Lage", "Bevölkerung", "Sehenswürdigkeiten", "Was Sie mögen"],
+            "keywords_ko": ["위치", "인구", "관광 명소", "마음에 드는 점"],
+            "model_de": "Ich wohne in Seoul, der Hauptstadt von Südkorea. Die Stadt liegt im Nordwesten des Landes.\n\nIn Seoul leben ungefähr 10 Millionen Menschen. Es ist eine sehr große und moderne Stadt.\n\nEs gibt viele interessante Sehenswürdigkeiten, zum Beispiel den Gyeongbokgung-Palast, den N-Seoul-Tower und den Han-Fluss. Touristen besuchen die Stadt das ganze Jahr.\n\nIch mag Seoul, weil es hier immer etwas zu tun gibt. Das Essen ist sehr lecker und die öffentlichen Verkehrsmittel sind sehr gut. Manchmal ist die Stadt aber zu laut und zu voll.",
+            "model_ko": "한국의 수도 서울에 살아요. 도시는 나라의 북서쪽에 있어요.\n\n서울에는 약 1천만 명이 살아요. 매우 크고 현대적인 도시입니다.\n\n흥미로운 관광 명소가 많아요, 예를 들어 경복궁, 남산 타워, 한강이요. 관광객들이 1년 내내 도시를 방문합니다.\n\n서울을 좋아해요, 항상 할 일이 있기 때문이에요. 음식이 정말 맛있고 대중교통이 매우 좋아요. 하지만 가끔 도시가 너무 시끄럽고 사람이 많아요.",
+            "tips_ko": [
+              "위치 표현: im Nordwesten / im Süden",
+              "인구: ungefähr X Millionen",
+              "장단점 균형있게"
+            ]
+          },
+          {
+            "id": "sp2-8",
+            "topic_de": "Erzählen Sie über das Essen in Ihrem Land",
+            "topic_ko": "당신 나라의 음식에 대해 이야기해보세요",
+            "keywords": ["Typisches Essen", "Lieblingsessen", "Wann/wie isst man?", "Selbst kochen?"],
+            "keywords_ko": ["전통 음식", "좋아하는 음식", "언제/어떻게 먹는지", "직접 요리?"],
+            "model_de": "In Korea essen wir viel Reis und Gemüse. Typisch koreanisch sind zum Beispiel Kimchi und Bibimbap.\n\nMein Lieblingsessen ist Bulgogi mit Reis. Das ist Fleisch in einer süßen Soße. Es schmeckt sehr lecker.\n\nIn Korea essen wir normalerweise dreimal am Tag. Zum Frühstück essen wir oft Suppe oder Reis. Wir essen mit Stäbchen und Löffel.\n\nJa, ich koche oft zu Hause. Ich kann verschiedene koreanische Gerichte kochen. Manchmal koche ich auch für meine deutschen Freunde.",
+            "model_ko": "한국에서는 쌀과 채소를 많이 먹어요. 대표적인 한국 음식은 김치와 비빔밥이에요.\n\n제 최애 음식은 불고기와 밥이에요. 달콤한 소스의 고기예요. 정말 맛있어요.\n\n한국에서는 보통 하루에 세 끼 먹어요. 아침에는 국이나 밥을 자주 먹어요. 젓가락과 숟가락으로 먹어요.\n\n네, 집에서 자주 요리해요. 다양한 한국 음식을 만들 수 있어요. 가끔 독일 친구들에게도 요리해줘요.",
+            "tips_ko": [
+              "Typisch + 형용사 = 대표적인 ~ 인",
+              "schmecken = 맛이 나다",
+              "Hilfsverben: oft/manchmal/normalerweise"
+            ]
           }
         ]
       },
@@ -397,6 +698,7 @@ const EXAM_DATA = {
         "description_ko": "파트너와 일정/계획 협의. 카드의 정보로 약속 시간/장소 정하기.",
         "examples": [
           {
+            "id": "sp3-1",
             "scenario_de": "Ein gemeinsames Geschenk für einen Freund kaufen",
             "scenario_ko": "친구를 위한 공동 선물 사러 가기",
             "dialogue": [
@@ -417,6 +719,7 @@ const EXAM_DATA = {
             ]
           },
           {
+            "id": "sp3-2",
             "scenario_de": "Einen Ausflug am Wochenende planen",
             "scenario_ko": "주말 나들이 계획",
             "dialogue": [
@@ -437,6 +740,7 @@ const EXAM_DATA = {
             ]
           },
           {
+            "id": "sp3-3",
             "scenario_de": "Zusammen einen Geburtstag feiern",
             "scenario_ko": "함께 생일 파티 열기",
             "dialogue": [
@@ -456,6 +760,7 @@ const EXAM_DATA = {
             ]
           },
           {
+            "id": "sp3-4",
             "scenario_de": "Einen Kinobesuch organisieren",
             "scenario_ko": "영화 보러 가기 계획",
             "dialogue": [
@@ -472,6 +777,86 @@ const EXAM_DATA = {
               "Hast du Lust zu + 동사원형 = ~할 마음 있어?",
               "장르 선호 차이 → 협상",
               "약속은 영화 시작 15분 전이 자연스러움"
+            ]
+          },
+          {
+            "id": "sp3-5",
+            "scenario_de": "Einen gemeinsamen Urlaub planen",
+            "scenario_ko": "공동 휴가 계획",
+            "dialogue": [
+              {"speaker": "A", "de": "Sollen wir im Sommer zusammen Urlaub machen?", "ko": "여름에 같이 휴가 갈까?"},
+              {"speaker": "B", "de": "Ja, gerne! Wohin möchtest du fahren?", "ko": "응, 좋아! 어디 가고 싶어?"},
+              {"speaker": "A", "de": "Wie wäre es mit Spanien? Da ist es warm und es gibt schöne Strände.", "ko": "스페인 어때? 따뜻하고 예쁜 해변이 있어."},
+              {"speaker": "B", "de": "Spanien klingt gut. Aber wann genau? Im Juli oder August?", "ko": "스페인 좋네. 근데 정확히 언제? 7월 아니면 8월?"},
+              {"speaker": "A", "de": "Ich habe nur im August Urlaub. Geht das bei dir auch?", "ko": "나는 8월에만 휴가야. 너도 괜찮아?"},
+              {"speaker": "B", "de": "Ja, August passt mir. Wie lange wollen wir bleiben?", "ko": "응, 8월 괜찮아. 얼마나 머물까?"},
+              {"speaker": "A", "de": "Eine Woche reicht, denke ich. Sollen wir das Hotel zusammen buchen?", "ko": "일주일이면 충분할 것 같아. 호텔 같이 예약할까?"},
+              {"speaker": "B", "de": "Ja, ich suche heute Abend ein paar Hotels und schicke dir Links.", "ko": "응, 오늘 저녁에 호텔 좀 알아보고 링크 보내줄게."}
+            ],
+            "tips_ko": [
+              "여행 계획: 목적지 → 시기 → 기간 → 예약",
+              "Wie wäre es mit + 3격 = ~은 어때?",
+              "Geht das bei dir? = 너도 괜찮아?"
+            ]
+          },
+          {
+            "id": "sp3-6",
+            "scenario_de": "Eine Lerngruppe organisieren",
+            "scenario_ko": "학습 모임 조직",
+            "dialogue": [
+              {"speaker": "A", "de": "Sollen wir zusammen für die Prüfung lernen?", "ko": "시험 같이 공부할까?"},
+              {"speaker": "B", "de": "Ja, das ist eine gute Idee! Wann treffen wir uns?", "ko": "응, 좋은 생각이야! 언제 만날까?"},
+              {"speaker": "A", "de": "Wie wäre es zweimal pro Woche, immer dienstags und donnerstags?", "ko": "일주일에 두 번, 항상 화요일과 목요일 어때?"},
+              {"speaker": "B", "de": "Dienstag passt mir nicht, ich arbeite bis 19 Uhr. Wie wäre es mittwochs?", "ko": "화요일은 안 돼, 19시까지 일해. 수요일은 어때?"},
+              {"speaker": "A", "de": "Okay, dann mittwochs und donnerstags. Um wie viel Uhr?", "ko": "오케이, 그럼 수요일과 목요일. 몇 시에?"},
+              {"speaker": "B", "de": "Um 18 Uhr? Bei mir zu Hause oder in der Bibliothek?", "ko": "18시 어때? 우리 집 아니면 도서관?"},
+              {"speaker": "A", "de": "In der Bibliothek ist es ruhiger. Treffen wir uns dort.", "ko": "도서관이 더 조용해. 거기서 만나자."},
+              {"speaker": "B", "de": "Gut, also Mittwoch und Donnerstag um 18 Uhr in der Bibliothek.", "ko": "좋아, 그럼 수목 18시에 도서관에서."}
+            ],
+            "tips_ko": [
+              "빈도: zweimal pro Woche / immer + 요일s",
+              "장소 선택 비교",
+              "확정: also + 요일 + 시간 + 장소"
+            ]
+          },
+          {
+            "id": "sp3-7",
+            "scenario_de": "Ein gemeinsames Abendessen planen",
+            "scenario_ko": "공동 저녁식사 계획",
+            "dialogue": [
+              {"speaker": "A", "de": "Lass uns mal wieder zusammen essen gehen.", "ko": "다시 한번 같이 식사하러 가자."},
+              {"speaker": "B", "de": "Ja, das wäre schön. Was für ein Restaurant?", "ko": "응, 좋겠다. 어떤 식당?"},
+              {"speaker": "A", "de": "Wie wäre es mit dem neuen Italiener in der Stadtmitte?", "ko": "시내 중심에 새로 생긴 이탈리아 식당 어때?"},
+              {"speaker": "B", "de": "Italienisch klingt gut. Wann?", "ko": "이탈리아 음식 좋네. 언제?"},
+              {"speaker": "A", "de": "Was hältst du von Freitagabend um 19 Uhr?", "ko": "금요일 저녁 19시 어떻게 생각해?"},
+              {"speaker": "B", "de": "Freitag bin ich beschäftigt. Geht Samstag auch?", "ko": "금요일은 바빠. 토요일도 돼?"},
+              {"speaker": "A", "de": "Samstag um 19 Uhr ist super. Soll ich einen Tisch reservieren?", "ko": "토요일 19시 좋아. 자리 예약할까?"},
+              {"speaker": "B", "de": "Ja, bitte. Reserviere für zwei Personen.", "ko": "응, 부탁해. 두 명으로 예약해."}
+            ],
+            "tips_ko": [
+              "Was hältst du von + Dat. = ~을 어떻게 생각해?",
+              "beschäftigt sein = 바쁘다",
+              "예약 분담"
+            ]
+          },
+          {
+            "id": "sp3-8",
+            "scenario_de": "Ein Sportprogramm zusammen machen",
+            "scenario_ko": "운동 함께 하기",
+            "dialogue": [
+              {"speaker": "A", "de": "Möchtest du mit mir Sport machen? Ich will fitter werden.", "ko": "나랑 운동할래? 더 건강해지고 싶어."},
+              {"speaker": "B", "de": "Sehr gerne! Was für Sport möchtest du machen?", "ko": "정말 좋아! 어떤 운동 하고 싶어?"},
+              {"speaker": "A", "de": "Joggen wäre günstig. Wir brauchen kein Geld dafür.", "ko": "조깅이 좋겠어. 돈도 안 들어."},
+              {"speaker": "B", "de": "Joggen mag ich nicht so. Wie wäre es mit Yoga im Park?", "ko": "조깅은 별로야. 공원에서 요가 어때?"},
+              {"speaker": "A", "de": "Yoga ist auch gut. Wie oft pro Woche?", "ko": "요가도 좋아. 일주일에 몇 번?"},
+              {"speaker": "B", "de": "Zweimal pro Woche, vielleicht montags und donnerstags morgens?", "ko": "일주일에 두 번, 월요일과 목요일 아침 어때?"},
+              {"speaker": "A", "de": "Morgens ist gut. Um 7 Uhr vor dem Park?", "ko": "아침 좋아. 공원 앞에서 7시에?"},
+              {"speaker": "B", "de": "Perfekt! Wir starten am Montag.", "ko": "완벽해! 월요일부터 시작하자."}
+            ],
+            "tips_ko": [
+              "운동 선호 차이",
+              "Wie oft pro Woche? = 주에 몇 번?",
+              "확정 + 시작일"
             ]
           }
         ]

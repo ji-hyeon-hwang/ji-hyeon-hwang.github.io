@@ -112,8 +112,11 @@
     <button class="active" data-skill="all" onclick="filterSkill('all')">All</button>
     <button data-skill="schreiben" onclick="filterSkill('schreiben')">Schreiben</button>
     <button data-skill="sprechen" onclick="filterSkill('sprechen')">Sprechen</button>
-    <select id="topicFilter" onchange="applyFilters()">
+    <select id="topicFilter" onchange="topicChanged()">
         <option value="all">All topics</option>
+    </select>
+    <select id="scenarioFilter" onchange="applyFilters()">
+        <option value="all">All scenarios</option>
     </select>
     <input type="text" id="searchBox" placeholder="Search..." oninput="applyFilters()">
     <button onclick="toggleGrammar()">Grammar ON/OFF</button>
@@ -145,12 +148,44 @@
 
     // Populate topic dropdown
     const topicSelect = document.getElementById("topicFilter");
+    const scenarioSelect = document.getElementById("scenarioFilter");
     for (const t of PRACTICE_DATA) {
         const opt = document.createElement("option");
         opt.value = t.id;
         opt.textContent = `${t.topic_de} (${t.topic_ko})`;
         topicSelect.appendChild(opt);
     }
+
+    function topicChanged() {
+        // Refill scenarios based on topic
+        const topic = topicSelect.value;
+        scenarioSelect.innerHTML = '<option value="all">All scenarios</option>';
+        if (topic === "all") {
+            // Show all sections across all topics
+            for (const t of PRACTICE_DATA) {
+                for (const s of t.sections) {
+                    const opt = document.createElement("option");
+                    opt.value = t.id + "::" + s.title_de;
+                    opt.textContent = `[${t.topic_ko}] ${s.title_ko}`;
+                    scenarioSelect.appendChild(opt);
+                }
+            }
+        } else {
+            const t = PRACTICE_DATA.find(x => x.id === topic);
+            if (t) {
+                for (const s of t.sections) {
+                    const opt = document.createElement("option");
+                    opt.value = t.id + "::" + s.title_de;
+                    opt.textContent = `${s.title_de} (${s.title_ko})`;
+                    scenarioSelect.appendChild(opt);
+                }
+            }
+        }
+        applyFilters();
+    }
+
+    // Initial scenario population
+    topicChanged();
 
     function filterSkill(skill) {
         currentSkill = skill;
@@ -169,11 +204,12 @@
 
     function applyFilters() {
         const topic = topicSelect.value;
+        const scenario = scenarioSelect.value;
         const search = document.getElementById("searchBox").value.toLowerCase().trim();
-        render(topic, currentSkill, search);
+        render(topic, currentSkill, search, scenario);
     }
 
-    function render(topicFilter, skillFilter, search) {
+    function render(topicFilter, skillFilter, search, scenarioFilter) {
         const container = document.getElementById("content");
         let html = "";
         let phraseCount = 0;
@@ -186,6 +222,7 @@
 
             for (const section of topic.sections) {
                 if (skillFilter !== "all" && section.skill !== skillFilter) continue;
+                if (scenarioFilter && scenarioFilter !== "all" && scenarioFilter !== (topic.id + "::" + section.title_de)) continue;
 
                 let sectionHtml = "";
                 let sectionHasPhrases = false;
