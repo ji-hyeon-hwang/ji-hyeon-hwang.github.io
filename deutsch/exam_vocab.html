@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goethe A2 Exam - Vocab</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #0f0f1a; color: #e0e0e0; }
+
+        .top-bar {
+            background: #1a1a2e; padding: 1rem 2rem; border-bottom: 2px solid #16213e;
+            position: sticky; top: 0; z-index: 100; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+        }
+        .top-bar a { color: #888; text-decoration: none; font-size: 0.9rem; }
+        .top-bar a:hover { color: #e94560; }
+        .top-bar h1 { color: #e94560; font-size: 1.3rem; }
+
+        .controls {
+            background: #1a1a2e; padding: 0.7rem 2rem; border-bottom: 1px solid #222;
+            position: sticky; top: 54px; z-index: 99;
+            display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;
+        }
+        .controls input, .controls select {
+            padding: 0.4rem 0.6rem; border-radius: 6px; border: 1px solid #333;
+            background: #16213e; color: #e0e0e0; font-size: 0.85rem;
+        }
+        .controls input { width: 220px; }
+        .controls input::placeholder { color: #666; }
+        .controls button {
+            padding: 0.4rem 0.8rem; border-radius: 6px; border: 1px solid #333;
+            background: #16213e; color: #e0e0e0; font-size: 0.85rem; cursor: pointer;
+        }
+        .controls button:hover { border-color: #e94560; }
+        .controls .count { color: #888; font-size: 0.8rem; margin-left: auto; }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 1rem; }
+
+        .vocab-category {
+            background: #1a1a2e; border: 1px solid #2a2a3e; border-radius: 10px;
+            padding: 1rem 1.2rem; margin: 1rem 0;
+        }
+        .vocab-cat-header {
+            color: #e94560; font-size: 1.1rem; font-weight: 700;
+            border-bottom: 2px solid #e94560; padding-bottom: 0.4rem; margin-bottom: 0.6rem;
+        }
+        .vocab-cat-ko { color: #888; font-size: 0.85rem; margin-bottom: 0.5rem; }
+        .vocab-item {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 0.5rem; padding: 0.5rem 0;
+            border-bottom: 1px dashed #2a2a3e;
+        }
+        .vocab-item:last-child { border-bottom: none; }
+        .vocab-de { color: #fff; font-size: 0.95rem; }
+        .vocab-ko { color: #4caf50; font-size: 0.95rem; }
+        .vocab-note { grid-column: 1/-1; color: #888; font-size: 0.8rem; font-style: italic; margin-top: 0.2rem; }
+
+        .tts-btn {
+            background: none; border: 1px solid #444; border-radius: 50%;
+            cursor: pointer; padding: 0.15rem 0.3rem; vertical-align: middle;
+            transition: border-color 0.2s; line-height: 1; font-size: 0.85rem;
+        }
+        .tts-btn:hover { border-color: #e94560; }
+
+        @media print {
+            body { background: #fff; color: #000; }
+            .top-bar, .controls { position: static; background: #fff; border-color: #ddd; }
+            .top-bar h1 { color: #c00; }
+            .vocab-category { background: #fff; border-color: #ddd; break-inside: avoid; }
+            .vocab-cat-header { color: #c00; border-color: #c00; }
+            .vocab-de { color: #000; }
+            .vocab-ko { color: #2e7d32; }
+            .controls button, .controls input, .controls select { border-color: #ccc; background: #fff; color: #000; }
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 0.5rem; }
+            .controls { padding: 0.5rem 1rem; }
+            .vocab-item { grid-template-columns: 1fr; gap: 0.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <a href="exam.html">&larr; Exam Index</a>
+    <h1>📚 Prüfungswortschatz</h1>
+</div>
+
+<div class="controls">
+    <input type="text" id="searchBox" placeholder="Search (de/ko/note)..." oninput="render()">
+    <select id="catFilter" onchange="render()">
+        <option value="all">All categories</option>
+    </select>
+    <button onclick="window.print()">Print</button>
+    <span class="count" id="countLabel"></span>
+</div>
+
+<div class="container" id="content"></div>
+
+<script src="js/data_exam_vocab.js"></script>
+<script>
+    function speakDe(text) {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = "de-DE"; u.rate = 1.0;
+        const v = window.speechSynthesis.getVoices().find(v => v.lang.startsWith("de"));
+        if (v) u.voice = v;
+        window.speechSynthesis.speak(u);
+    }
+    function ttsBtn(text) {
+        const e = text.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+        return `<button class="tts-btn" onclick="speakDe('${e}')" title="Listen">&#128264;</button>`;
+    }
+    if (window.speechSynthesis) { window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices(); }
+
+    // Populate category dropdown
+    const catSelect = document.getElementById("catFilter");
+    for (let i = 0; i < EXAM_VOCAB.length; i++) {
+        const cat = EXAM_VOCAB[i];
+        const opt = document.createElement("option");
+        opt.value = i;
+        opt.textContent = cat.category_ko;
+        catSelect.appendChild(opt);
+    }
+
+    function render() {
+        const cat = catSelect.value;
+        const search = document.getElementById("searchBox").value.toLowerCase().trim();
+        let html = "";
+        let count = 0;
+
+        for (let i = 0; i < EXAM_VOCAB.length; i++) {
+            if (cat !== "all" && String(i) !== cat) continue;
+            const c = EXAM_VOCAB[i];
+            let items = c.items;
+            if (search) {
+                items = items.filter(it =>
+                    it.de.toLowerCase().includes(search) ||
+                    it.ko.toLowerCase().includes(search) ||
+                    (it.note && it.note.toLowerCase().includes(search))
+                );
+            }
+            if (!items.length) continue;
+            html += `<div class="vocab-category">`;
+            html += `<div class="vocab-cat-header">${c.category_de}</div>`;
+            html += `<div class="vocab-cat-ko">${c.category_ko}</div>`;
+            for (const item of items) {
+                count++;
+                html += `<div class="vocab-item">`;
+                html += `<div class="vocab-de">${item.de} ${ttsBtn(item.de)}</div>`;
+                html += `<div class="vocab-ko">${item.ko}</div>`;
+                if (item.note) html += `<div class="vocab-note">→ ${item.note}</div>`;
+                html += `</div>`;
+            }
+            html += `</div>`;
+        }
+
+        if (!count) html = '<p style="color:#888;padding:2rem;text-align:center">No results.</p>';
+        document.getElementById("countLabel").textContent = count + " items";
+        document.getElementById("content").innerHTML = html;
+    }
+
+    render();
+</script>
+</body>
+</html>

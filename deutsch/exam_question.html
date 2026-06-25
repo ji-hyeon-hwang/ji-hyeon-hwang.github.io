@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goethe A2 Exam Question</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #0f0f1a; color: #e0e0e0; line-height: 1.5; }
+
+        .top-bar {
+            background: #1a1a2e; padding: 1rem 2rem; border-bottom: 2px solid #16213e;
+            position: sticky; top: 0; z-index: 100; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+        }
+        .top-bar a { color: #888; text-decoration: none; font-size: 0.9rem; }
+        .top-bar a:hover { color: #e94560; }
+        .top-bar .title { color: #e94560; font-size: 1.1rem; font-weight: 600; }
+        .top-bar .sub { color: #888; font-size: 0.85rem; }
+
+        .container { max-width: 850px; margin: 0 auto; padding: 1rem; }
+
+        .breadcrumb {
+            color: #888; font-size: 0.85rem; margin-bottom: 1rem; padding: 0.5rem 0;
+        }
+        .breadcrumb a { color: #64b5f6; text-decoration: none; }
+        .breadcrumb a:hover { color: #e94560; }
+
+        .q-header {
+            background: #1a1a2e; border-left: 4px solid #ff9800;
+            padding: 1rem 1.2rem; border-radius: 6px; margin-bottom: 1rem;
+        }
+        .q-num {
+            display: inline-block; background: #ff9800; color: #000;
+            padding: 0.2rem 0.6rem; border-radius: 4px;
+            font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem;
+        }
+        .q-title { color: #fff; font-size: 1.3rem; font-weight: 600; }
+        .q-subtitle { color: #aaa; font-size: 0.9rem; margin-top: 0.2rem; }
+
+        .block {
+            background: #1a1a2e; border: 1px solid #2a2a3e; border-radius: 10px;
+            padding: 1rem 1.2rem; margin: 1rem 0;
+        }
+        .block-header {
+            font-size: 0.85rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.5px; margin-bottom: 0.6rem;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        /* Aufgabe (scenario) */
+        .scenario-block { border-left: 4px solid #64b5f6; }
+        .scenario-block .block-header { color: #64b5f6; }
+        .scenario-de { color: #fff; white-space: pre-line; font-size: 0.95rem; line-height: 1.6; }
+        .scenario-ko { color: #aaa; white-space: pre-line; font-size: 0.88rem; margin-top: 0.6rem; line-height: 1.6; padding-top: 0.6rem; border-top: 1px dashed #2a2a3e; }
+
+        /* Model answer */
+        .model-block { border-left: 4px solid #81c784; }
+        .model-block .block-header { color: #81c784; }
+        .model-de { color: #fff; white-space: pre-line; font-size: 1.02rem; line-height: 1.7; }
+        .model-ko { color: #aaa; white-space: pre-line; font-size: 0.88rem; margin-top: 0.6rem; line-height: 1.6; padding-top: 0.6rem; border-top: 1px dashed #2a2a3e; }
+        .word-count {
+            background: #ff9800; color: #000; padding: 0.15rem 0.5rem;
+            border-radius: 4px; font-size: 0.75rem; font-weight: 700;
+        }
+
+        /* Tips */
+        .tips-block { border-left: 4px solid #ba68c8; }
+        .tips-block .block-header { color: #ba68c8; }
+        .tips-block ul { padding-left: 1.5rem; color: #ddd; font-size: 0.92rem; }
+        .tips-block li { margin: 0.3rem 0; }
+
+        /* Variations */
+        .var-block { border-left: 4px solid #f06292; }
+        .var-block .block-header { color: #f06292; }
+        .var-item {
+            background: #12121e; border-radius: 6px; padding: 0.5rem 0.8rem; margin: 0.3rem 0;
+        }
+        .var-de { color: #fff; font-size: 0.92rem; }
+        .var-ko { color: #aaa; font-size: 0.82rem; margin-top: 0.1rem; }
+        .var-note { color: #888; font-size: 0.75rem; font-style: italic; margin-top: 0.2rem; }
+
+        /* Sprechen Teil 1 - Q&A */
+        .keyword-badge {
+            display: inline-block; background: #ff9800; color: #000;
+            padding: 0.3rem 0.8rem; border-radius: 6px; font-weight: 700;
+            font-size: 1rem; margin-bottom: 0.5rem;
+        }
+        .qa-question {
+            background: #1a2a3e; border-left: 3px solid #64b5f6;
+            padding: 0.6rem 0.8rem; margin: 0.4rem 0; border-radius: 4px;
+        }
+        .qa-q { color: #64b5f6; font-size: 0.95rem; }
+        .qa-ko { color: #888; font-size: 0.82rem; margin-top: 0.2rem; }
+        .qa-answer {
+            background: #1a3a1a; border-left: 3px solid #81c784;
+            padding: 0.6rem 0.8rem; margin: 0.4rem 0 0.4rem 1rem; border-radius: 4px;
+        }
+        .qa-a { color: #81c784; font-size: 0.95rem; }
+
+        /* Sprechen Teil 2 - keywords */
+        .keyword-row {
+            display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.6rem 0;
+        }
+        .keyword-card {
+            background: #16213e; border: 1px solid #ff9800;
+            border-radius: 8px; padding: 0.6rem 1rem; text-align: center;
+            min-width: 120px;
+        }
+        .keyword-de { color: #ffeb3b; font-weight: 600; font-size: 0.95rem; }
+        .keyword-ko { color: #888; font-size: 0.75rem; margin-top: 0.2rem; }
+
+        /* Sprechen Teil 3 - dialogue */
+        .dialogue-line {
+            display: flex; gap: 0.6rem; margin: 0.5rem 0;
+            padding: 0.6rem 0.8rem; border-radius: 6px;
+        }
+        .dialogue-line.A { background: #1a2a3e; }
+        .dialogue-line.B { background: #2a1a3e; }
+        .speaker {
+            background: #e94560; color: #fff; padding: 0.2rem 0.6rem; border-radius: 4px;
+            font-weight: 700; font-size: 0.9rem; flex-shrink: 0; height: fit-content;
+            min-width: 32px; text-align: center;
+        }
+        .speaker.B { background: #2196f3; }
+        .dialogue-content { flex: 1; }
+        .dialogue-de { color: #fff; font-size: 0.93rem; }
+        .dialogue-ko { color: #888; font-size: 0.8rem; margin-top: 0.2rem; }
+
+        /* Navigation */
+        .nav-buttons {
+            display: flex; justify-content: space-between; gap: 0.5rem;
+            margin: 1.5rem 0; flex-wrap: wrap;
+        }
+        .nav-btn {
+            flex: 1; padding: 0.7rem 1rem; min-width: 100px;
+            background: #16213e; border: 1px solid #333; color: #e0e0e0;
+            border-radius: 8px; cursor: pointer; font-size: 0.9rem;
+            text-decoration: none; text-align: center; transition: all 0.2s;
+        }
+        .nav-btn:hover:not(.disabled) { border-color: #e94560; background: #1a1a3e; color: #fff; }
+        .nav-btn.disabled { opacity: 0.4; cursor: not-allowed; }
+        .nav-btn.index { background: #e94560; color: #fff; border-color: #e94560; }
+        .nav-btn.index:hover { background: #d63651; }
+
+        .tts-btn {
+            background: none; border: 1px solid #444; border-radius: 50%;
+            cursor: pointer; padding: 0.15rem 0.35rem; vertical-align: middle;
+            transition: border-color 0.2s; line-height: 1; font-size: 0.85rem;
+        }
+        .tts-btn:hover { border-color: #e94560; }
+
+        @media (max-width: 600px) {
+            .container { padding: 0.5rem; }
+            .top-bar { padding: 0.6rem 1rem; }
+            .q-title { font-size: 1.1rem; }
+            .nav-btn { min-width: 80px; font-size: 0.8rem; padding: 0.5rem 0.7rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <a href="exam.html">&larr; Index</a>
+    <span class="title" id="page-title">Goethe A2</span>
+</div>
+
+<div class="container">
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div id="content"></div>
+    <div class="nav-buttons" id="nav-buttons"></div>
+</div>
+
+<script src="js/data_exam.js"></script>
+<script>
+    function speakDe(text) {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = "de-DE"; u.rate = 1.0;
+        const v = window.speechSynthesis.getVoices().find(v => v.lang.startsWith("de"));
+        if (v) u.voice = v;
+        window.speechSynthesis.speak(u);
+    }
+    function ttsBtn(text) {
+        const e = text.replace(/'/g, "\\'").replace(/"/g, "&quot;").replace(/\n/g, " ");
+        return `<button class="tts-btn" onclick="speakDe('${e}')" title="Listen">&#128264;</button>`;
+    }
+    if (window.speechSynthesis) { window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices(); }
+
+    function getParams() {
+        const p = new URLSearchParams(window.location.search);
+        return { skill: p.get("skill") || "schreiben", part: p.get("part") || "Teil 1", id: p.get("id") };
+    }
+
+    function findQuestion(skill, partName, id) {
+        const skillData = EXAM_DATA[skill];
+        if (!skillData) return null;
+        const part = skillData.parts.find(p => p.part === partName);
+        if (!part) return null;
+        const idx = part.examples.findIndex(ex => ex.id === id);
+        if (idx === -1) return null;
+        return { skill, skillData, part, partName, examples: part.examples, idx, ex: part.examples[idx] };
+    }
+
+    function renderSchreiben(ex) {
+        let html = "";
+        html += `<div class="block scenario-block">`;
+        html += `<div class="block-header">📋 Aufgabe (시험 상황)</div>`;
+        html += `<div class="scenario-de">${ex.scenario_de}</div>`;
+        html += `<div class="scenario-ko">${ex.scenario_ko}</div>`;
+        html += `</div>`;
+
+        html += `<div class="block model-block">`;
+        html += `<div class="block-header">✍ Musterlösung (모범 답안) ${ttsBtn(ex.model_de)}<span class="word-count">${ex.word_count} Wörter</span></div>`;
+        html += `<div class="model-de">${ex.model_de}</div>`;
+        html += `<div class="model-ko">${ex.model_ko}</div>`;
+        html += `</div>`;
+
+        if (ex.tips_ko && ex.tips_ko.length) {
+            html += `<div class="block tips-block"><div class="block-header">💡 Tipps</div><ul>`;
+            for (const t of ex.tips_ko) html += `<li>${t}</li>`;
+            html += `</ul></div>`;
+        }
+
+        if (ex.variations && ex.variations.length) {
+            html += `<div class="block var-block"><div class="block-header">🔀 Variationen (변형 예시)</div>`;
+            for (const v of ex.variations) {
+                html += `<div class="var-item">`;
+                html += `<div class="var-de">${v.de} ${ttsBtn(v.de)}</div>`;
+                html += `<div class="var-ko">${v.ko}</div>`;
+                if (v.note) html += `<div class="var-note">→ ${v.note}</div>`;
+                html += `</div>`;
+            }
+            html += `</div>`;
+        }
+
+        return html;
+    }
+
+    function renderSprechen1(ex) {
+        let html = "";
+        html += `<div class="block scenario-block">`;
+        html += `<div class="block-header">📇 Stichwort (키워드)</div>`;
+        html += `<div class="keyword-badge">${ex.keyword} (${ex.keyword_ko})</div>`;
+        html += `<div style="color:#aaa;font-size:0.88rem;margin-top:0.3rem">이 키워드에 대해 파트너에게 질문하고, 받는 질문에 답합니다.</div>`;
+        html += `</div>`;
+
+        html += `<div class="block model-block">`;
+        html += `<div class="block-header">❓ Mögliche Fragen (가능한 질문들)</div>`;
+        for (const q of ex.questions) {
+            html += `<div class="qa-question">`;
+            html += `<div class="qa-q">${q.de} ${ttsBtn(q.de)}</div>`;
+            html += `<div class="qa-ko">${q.ko}</div>`;
+            html += `</div>`;
+        }
+        html += `</div>`;
+
+        html += `<div class="block model-block">`;
+        html += `<div class="block-header">✓ Mögliche Antworten (가능한 답변들)</div>`;
+        for (const a of ex.answers) {
+            html += `<div class="qa-answer">`;
+            html += `<div class="qa-a">${a.de} ${ttsBtn(a.de)}</div>`;
+            html += `<div class="qa-ko">${a.ko}</div>`;
+            html += `</div>`;
+        }
+        html += `</div>`;
+
+        return html;
+    }
+
+    function renderSprechen2(ex) {
+        let html = "";
+        html += `<div class="block scenario-block">`;
+        html += `<div class="block-header">🎯 Thema (주제)</div>`;
+        html += `<div class="scenario-de"><strong>${ex.topic_de}</strong></div>`;
+        html += `<div class="scenario-ko">${ex.topic_ko}</div>`;
+        html += `<div style="color:#aaa;font-size:0.85rem;margin-top:0.6rem">4개 키워드를 모두 다루어 3-4분간 발표합니다.</div>`;
+        html += `<div class="keyword-row">`;
+        for (let i = 0; i < ex.keywords.length; i++) {
+            html += `<div class="keyword-card"><div class="keyword-de">${ex.keywords[i]}</div><div class="keyword-ko">${ex.keywords_ko[i]}</div></div>`;
+        }
+        html += `</div></div>`;
+
+        html += `<div class="block model-block">`;
+        html += `<div class="block-header">🎤 Modellantwort (모범 발표) ${ttsBtn(ex.model_de)}</div>`;
+        html += `<div class="model-de">${ex.model_de}</div>`;
+        html += `<div class="model-ko">${ex.model_ko}</div>`;
+        html += `</div>`;
+
+        if (ex.tips_ko && ex.tips_ko.length) {
+            html += `<div class="block tips-block"><div class="block-header">💡 Tipps</div><ul>`;
+            for (const t of ex.tips_ko) html += `<li>${t}</li>`;
+            html += `</ul></div>`;
+        }
+
+        return html;
+    }
+
+    function renderSprechen3(ex) {
+        let html = "";
+        html += `<div class="block scenario-block">`;
+        html += `<div class="block-header">🤝 Situation (상황)</div>`;
+        html += `<div class="scenario-de"><strong>${ex.scenario_de}</strong></div>`;
+        html += `<div class="scenario-ko">${ex.scenario_ko}</div>`;
+        html += `<div style="color:#aaa;font-size:0.85rem;margin-top:0.6rem">파트너와 함께 약속/계획을 세웁니다. A와 B 두 사람의 대화 예시:</div>`;
+        html += `</div>`;
+
+        html += `<div class="block model-block">`;
+        html += `<div class="block-header">💬 Beispieldialog (예시 대화)</div>`;
+        for (const line of ex.dialogue) {
+            html += `<div class="dialogue-line ${line.speaker}">`;
+            html += `<span class="speaker ${line.speaker}">${line.speaker}</span>`;
+            html += `<div class="dialogue-content">`;
+            html += `<div class="dialogue-de">${line.de} ${ttsBtn(line.de)}</div>`;
+            html += `<div class="dialogue-ko">${line.ko}</div>`;
+            html += `</div></div>`;
+        }
+        html += `</div>`;
+
+        if (ex.tips_ko && ex.tips_ko.length) {
+            html += `<div class="block tips-block"><div class="block-header">💡 Tipps</div><ul>`;
+            for (const t of ex.tips_ko) html += `<li>${t}</li>`;
+            html += `</ul></div>`;
+        }
+
+        return html;
+    }
+
+    function render() {
+        const params = getParams();
+        const found = findQuestion(params.skill, params.part, params.id);
+        if (!found) {
+            document.getElementById("content").innerHTML = '<p style="text-align:center;color:#888;padding:2rem">Question not found. <a href="exam.html" style="color:#e94560">← Back to Index</a></p>';
+            return;
+        }
+        const { skill, part, examples, idx, ex } = found;
+
+        // Title
+        let title = "";
+        if (part.part === "Teil 1" && skill === "sprechen") title = `${ex.keyword} (${ex.keyword_ko})`;
+        else if (part.part === "Teil 2" && skill === "sprechen") title = ex.topic_ko;
+        else if (part.part === "Teil 3") title = ex.scenario_ko;
+        else title = ex.title_ko;
+
+        const skillLabel = skill === "schreiben" ? "📝 Schreiben" : "🗣 Sprechen";
+        const skillKo = skill === "schreiben" ? "쓰기" : "말하기";
+
+        document.getElementById("page-title").innerHTML = `${skillLabel} · ${part.part}`;
+        document.title = `${title} | Goethe A2`;
+
+        document.getElementById("breadcrumb").innerHTML =
+            `<a href="exam.html">Index</a> &raquo; ${skillLabel} (${skillKo}) &raquo; ${part.part}`;
+
+        let html = `<div class="q-header">`;
+        html += `<span class="q-num">Q${idx + 1} / ${examples.length}</span>`;
+        html += `<div class="q-title">${title}</div>`;
+        html += `<div class="q-subtitle">${part.part} — ${part.title_de}</div>`;
+        html += `</div>`;
+
+        if (skill === "schreiben") html += renderSchreiben(ex);
+        else if (part.part === "Teil 1") html += renderSprechen1(ex);
+        else if (part.part === "Teil 2") html += renderSprechen2(ex);
+        else if (part.part === "Teil 3") html += renderSprechen3(ex);
+
+        document.getElementById("content").innerHTML = html;
+
+        // Navigation buttons
+        let navHtml = "";
+        if (idx > 0) {
+            const prev = examples[idx - 1];
+            navHtml += `<a class="nav-btn" href="exam_question.html?skill=${skill}&part=${encodeURIComponent(part.part)}&id=${prev.id}">&larr; Prev</a>`;
+        } else {
+            navHtml += `<span class="nav-btn disabled">&larr; Prev</span>`;
+        }
+        navHtml += `<a class="nav-btn index" href="exam.html">📋 Index</a>`;
+        if (idx < examples.length - 1) {
+            const next = examples[idx + 1];
+            navHtml += `<a class="nav-btn" href="exam_question.html?skill=${skill}&part=${encodeURIComponent(part.part)}&id=${next.id}">Next &rarr;</a>`;
+        } else {
+            navHtml += `<span class="nav-btn disabled">Next &rarr;</span>`;
+        }
+        document.getElementById("nav-buttons").innerHTML = navHtml;
+
+        window.scrollTo(0, 0);
+    }
+
+    render();
+
+    // Keyboard navigation
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowLeft") {
+            const prev = document.querySelector(".nav-btn:not(.disabled):not(.index)");
+            if (prev) window.location.href = prev.href;
+        } else if (e.key === "ArrowRight") {
+            const btns = document.querySelectorAll(".nav-btn:not(.disabled):not(.index)");
+            if (btns.length > 1) window.location.href = btns[1].href;
+            else if (btns.length === 1 && btns[0].textContent.includes("Next")) window.location.href = btns[0].href;
+        }
+    });
+</script>
+</body>
+</html>
