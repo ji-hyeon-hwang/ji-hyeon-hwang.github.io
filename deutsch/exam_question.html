@@ -295,6 +295,32 @@
         return html;
     }
 
+    function renderSchedule(sch, color) {
+        if (!sch) return "";
+        let h = `<div style="background:#12121e;border:1px solid #2a2a3e;border-radius:6px;padding:0.6rem;margin:0.5rem 0;overflow-x:auto">`;
+        h += `<div style="color:${color};font-size:0.85rem;font-weight:600;margin-bottom:0.5rem">📅 ${sch.title}</div>`;
+        h += `<table style="width:100%;border-collapse:collapse;font-size:0.8rem;min-width:480px">`;
+        h += `<thead><tr><th style="background:#1a1a3e;color:#aaa;padding:0.3rem 0.4rem;text-align:left;border:1px solid #333">Zeit</th>`;
+        for (const d of sch.days) {
+            h += `<th style="background:#1a1a3e;color:#aaa;padding:0.3rem 0.4rem;text-align:left;border:1px solid #333">${d}</th>`;
+        }
+        h += `</tr></thead><tbody>`;
+        for (const slot of sch.slots) {
+            h += `<tr><td style="padding:0.3rem 0.4rem;border:1px solid #333;font-weight:600;color:${color}">${slot.time}</td>`;
+            for (const item of slot.items) {
+                const isFree = item === "frei";
+                const bg = isFree ? "#1a3a1a" : "#3a1a1a";
+                const fg = isFree ? "#81c784" : "#ef9a9a";
+                h += `<td style="padding:0.3rem 0.4rem;border:1px solid #333;background:${bg};color:${fg};text-align:center;font-size:0.75rem">${item}</td>`;
+            }
+            h += `</tr>`;
+        }
+        h += `</tbody></table>`;
+        h += `<div style="color:#666;font-size:0.7rem;margin-top:0.4rem">💡 초록 = 시간 있음 (frei) / 빨강 = 약속 있음</div>`;
+        h += `</div>`;
+        return h;
+    }
+
     function renderSprechen3(ex) {
         let html = "";
         html += `<div class="block scenario-block">`;
@@ -302,6 +328,10 @@
         html += `<div class="scenario-de"><strong>${ex.scenario_de}</strong></div>`;
         html += `<div class="scenario-ko">${ex.scenario_ko}</div>`;
         html += `<div style="color:#aaa;font-size:0.85rem;margin-top:0.6rem">파트너와 함께 약속/계획을 세웁니다. A와 B 두 사람의 대화 예시:</div>`;
+        if (ex.schedule_a || ex.schedule_b) {
+            html += renderSchedule(ex.schedule_a, "#64b5f6");
+            html += renderSchedule(ex.schedule_b, "#f06292");
+        }
         html += `</div>`;
 
         html += `<div class="block model-block">`;
