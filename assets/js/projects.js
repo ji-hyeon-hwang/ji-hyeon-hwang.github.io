@@ -11,7 +11,7 @@ async function renderProjects() {
     return;
   }
 
-  projects.forEach(proj => {
+  projects.filter(p => !p.hidden).forEach(proj => {
     const href = proj.page || proj.external_link || '#';
     const isExternal = !proj.page && proj.external_link;
 
