@@ -184,6 +184,30 @@
   .esec .n { font-size: 12.5px; color: var(--muted); margin-top: 4px; font-variant-numeric: tabular-nums; }
   .bar { height: 4px; background: var(--line); border-radius: 2px; margin-top: 11px; overflow: hidden; }
   .bar i { display: block; height: 100%; background: var(--ochre); }
+  /* SRS 단어 암기 */
+  .srs-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin-bottom: 22px; }
+  .srs-stat { background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 13px 15px; }
+  .srs-stat b { font-family: var(--serif); font-size: 25px; font-variant-numeric: tabular-nums; display: block; line-height: 1.15; }
+  .srs-stat span { font-size: 11.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+  .srs-stat.due b { color: var(--cinnabar); } .srs-stat.new b { color: var(--jade); } .srs-stat.learned b { color: var(--ochre); }
+  .srs-bar { height: 5px; background: var(--line); border-radius: 3px; overflow: hidden; margin-bottom: 16px; }
+  .srs-bar i { display: block; height: 100%; background: var(--jade); width: 0; transition: width .2s; }
+  .srs-queue { font-size: 12.5px; color: var(--muted); text-align: center; margin-bottom: 10px; font-variant-numeric: tabular-nums; }
+  .srscard { min-height: 260px; }
+  .srscard .ktext { font-size: 30px; font-weight: 600; }
+  .srscard .backwrap { display: grid; gap: 12px; }
+  .srs-grade { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 14px; }
+  .srs-grade[hidden] { display: none; }
+  .grade { appearance: none; font-family: inherit; cursor: pointer; border: 1px solid var(--line); background: var(--card); border-radius: 6px; padding: 12px 6px; font-size: 14px; font-weight: 500; display: flex; flex-direction: column; gap: 3px; transition: all .12s; }
+  .grade small { font-size: 11px; color: var(--muted); font-weight: 400; }
+  .grade:hover { border-color: var(--muted); }
+  .grade:focus-visible { outline: 2px solid var(--jade); outline-offset: 2px; }
+  .g-again { color: var(--cinnabar); } .g-again:hover { border-color: var(--cinnabar); }
+  .g-hard { color: var(--ochre); }
+  .g-good { color: var(--jade); } .g-good:hover { border-color: var(--jade); }
+  .g-easy { color: var(--jade); }
+  .srs-show[hidden] { display: none; }
+  .srs-done[hidden] { display: none; }
   /* mock exam */
   .mockbar { position: sticky; top: 0; z-index: 10; background: var(--ink); color: #fff; border-radius: 6px;
     padding: 12px 18px; display: flex; align-items: center; gap: 18px; margin-bottom: 20px; }
@@ -258,7 +282,8 @@
   </div>
 
   <nav role="tablist">
-    <button role="tab" aria-selected="true" aria-controls="p-card">플래시카드</button>
+    <button role="tab" aria-selected="true" aria-controls="p-srs">단어 암기</button>
+    <button role="tab" aria-selected="false" aria-controls="p-card">플래시카드</button>
     <button role="tab" aria-selected="false" aria-controls="p-vocab">어휘표</button>
     <button role="tab" aria-selected="false" aria-controls="p-listen">듣기 (음성)</button>
     <button role="tab" aria-selected="false" aria-controls="p-read">독해</button>
@@ -268,7 +293,49 @@
     <button role="tab" aria-selected="false" aria-controls="p-plan">계획 · 시험 정보</button>
   </nav>
 
-  <section class="panel" id="p-card" role="tabpanel">
+  <section class="panel" id="p-srs" role="tabpanel">
+    <h2>단어 암기</h2>
+    <p class="lede">간격 반복(SRS)으로 외웁니다. 뜻을 떠올려 본 뒤 <b>얼마나 쉬웠는지</b>를 스스로 평가하면, 틀린 단어는 자주·아는 단어는 드물게 다시 나옵니다. 4주 안에 600단어를 잡는 가장 효율적인 방법입니다. 진도는 이 브라우저에 자동 저장됩니다.</p>
+
+    <div class="srs-stats" id="srs-stats"></div>
+
+    <div class="srs-setup" id="srs-setup">
+      <div class="verbar" style="margin-bottom:14px">
+        <strong>범위</strong>
+        <span id="srs-rangebtns"></span>
+      </div>
+      <div class="verbar" style="margin-bottom:14px">
+        <strong>방향</strong>
+        <button class="vbtn" data-dir="zh2ko" aria-pressed="true">한자 → 뜻</button>
+        <button class="vbtn" data-dir="ko2zh" aria-pressed="false">뜻 → 한자</button>
+        <span class="vnote">시험 대비엔 '한자 → 뜻'이, 쓰기 대비엔 '뜻 → 한자'가 좋습니다</span>
+      </div>
+      <div class="controls" style="max-width:460px">
+        <button class="btn know" id="srs-start" style="border-color:var(--jade)">오늘 학습 시작</button>
+        <button class="btn" id="srs-reset-btn">진도 초기화</button>
+      </div>
+    </div>
+
+    <div class="srs-run" id="srs-run" hidden>
+      <div class="srs-bar"><i id="srs-bar-i"></i></div>
+      <div class="srs-queue" id="srs-queue"></div>
+      <div class="card srscard" id="srs-card" tabindex="0" role="button" aria-live="polite"></div>
+      <div class="srs-grade" id="srs-grade" hidden>
+        <button class="grade g-again" data-q="0">다시<small>&lt;1분</small></button>
+        <button class="grade g-hard" data-q="3">어려움<small>내일</small></button>
+        <button class="grade g-good" data-q="4">알맞음<small id="g-good-i"></small></button>
+        <button class="grade g-easy" data-q="5">쉬움<small id="g-easy-i"></small></button>
+      </div>
+      <div class="srs-show" id="srs-show"><button class="btn" id="srs-flip">뜻 보기 (Space)</button></div>
+      <div class="controls" style="max-width:300px;margin-top:14px">
+        <button class="btn" id="srs-end">학습 종료</button>
+      </div>
+    </div>
+
+    <div class="srs-done" id="srs-done" hidden></div>
+  </section>
+
+  <section class="panel" id="p-card" role="tabpanel" hidden>
     <h2>플래시카드</h2>
     <p class="lede">카드를 눌러 뒤집고, 아래 버튼으로 분류하세요. "다시"로 표시한 카드는 덱을 한 바퀴 돈 뒤 다시 나옵니다. 좌우 방향키로도 넘길 수 있습니다.</p>
     <div class="verbar" id="voicebar" style="margin-bottom:18px">
@@ -382,9 +449,12 @@
         <div class="esec"><b>독해 阅读</b><div class="n">30문항 · 30분</div><div class="bar"><i style="width:75%"></i></div></div>
         <div class="esec"><b>쓰기 书写</b><div class="n">10문항 · 15분</div><div class="bar"><i style="width:25%"></i></div></div>
       </div>
-      <div class="warn" style="background:#F4F8F6;border-color:#CFE0D8;color:#33604F">
+      <div class="warn mock-only" style="background:#F4F8F6;border-color:#CFE0D8;color:#33604F">
         듣기는 음성이 자동 재생됩니다. 실제 시험처럼 <b>한 번만</b> 듣고 푸세요 (음성 자체는 각 문제를 두 번 읽어 줍니다).
         쓰기 제2부분은 종이에 손으로 쓴 뒤 채점에서 직접 대조하세요.
+      </div>
+      <div class="warn" id="mock-noaudio" hidden style="background:#FDF6EC;border-color:#EBD9BC;color:#8A6A2F">
+        이 온라인 버전에는 듣기 음성이 없어, 모의고사에서 듣기 문항은 <b>정답 확인용</b>으로만 쓸 수 있습니다. 실제 듣기 연습은 로컬 버전(<b>열기.bat</b>)에서 하세요.
       </div>
       <div class="controls" style="max-width:420px">
         <button class="btn know" id="mock-start" style="border-color:var(--jade)">시험 시작</button>
@@ -634,6 +704,7 @@ function applyVersion() {
     ? '공식 «어법 대강» 3급 항목과 샘플 문제에서 실제로 출제된 구문입니다. 아래 회색 표시는 해당 문법에 딸린 3급 어휘입니다.'
     : 'HSK 2.0 3급에서 반복 출제되는 구문입니다. 형태보다 예문 하나를 통째로 외우는 편이 빠릅니다.';
   buildDeck(); drawTable($('#search').value); drawGrammar();
+  srsLoad(); srsRangeButtons(); srsStats();
 }
 
 /* ---------- tabs ---------- */
@@ -702,6 +773,180 @@ if (typeof speechSynthesis !== 'undefined') {
 }
 setTimeout(voiceStatus, 250);
 $('#voicetest').onclick = () => { ttsWarned = false; say('你好'); voiceStatus(); };
+
+/* ================= 단어 암기 (SRS · SM-2) =================
+   각 단어의 복습 상태를 localStorage에 저장합니다.
+   grade 0=다시 3=어려움 4=알맞음 5=쉬움 → 다음 복습 간격을 조절. */
+const SRS_KEY = () => `hsk_srs_v${VER}`;
+let srsDB = {};                                   // { "501": {ef, reps, iv, due} }
+let srsDir = 'zh2ko', srsRange = 'all';
+let srsQueue = [], srsCur = null, srsFlipped = false, srsSessDone = 0;
+
+function srsLoad() { try { srsDB = JSON.parse(localStorage.getItem(SRS_KEY())) || {}; } catch { srsDB = {}; } }
+function srsSave() { try { localStorage.setItem(SRS_KEY(), JSON.stringify(srsDB)); } catch {} }
+function today0() { const d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime(); }
+
+function srsPool() {
+  const w = words();
+  if (srsRange === 'all') return w;
+  if (VER === 2) return w.filter(x => x.lvl === srsRange);        // 급수별
+  const [a, b] = srsRange.split('-').map(Number);                  // 번호 구간
+  return w.filter(x => x.n >= a && x.n <= b);
+}
+function srsCard(w) {
+  return srsDB[w.n] || (srsDB[w.n] = { ef: 2.5, reps: 0, iv: 0, due: 0, seen: false });
+}
+/* SM-2 */
+function srsGrade(w, q) {
+  const c = srsCard(w);
+  c.seen = true;
+  if (q < 3) { c.reps = 0; c.iv = 0; }            // 다시 → 오늘 안에 재출제
+  else {
+    c.reps++;
+    c.iv = c.reps === 1 ? 1 : c.reps === 2 ? 6 : Math.round(c.iv * c.ef);
+    c.ef = Math.max(1.3, c.ef + (0.1 - (5 - q) * (0.08 + (5 - q) * 0.02)));
+  }
+  c.due = q < 3 ? today0() : today0() + c.iv * 86400000;
+  srsSave();
+  return c;
+}
+/* '알맞음/쉬움' 눌렀을 때 나올 다음 간격 미리보기 */
+function srsPreview(w, q) {
+  const c = srsCard(w);
+  if (q < 3) return q === 0 ? '<1분' : '내일';
+  const reps = c.reps + 1;
+  const iv = reps === 1 ? 1 : reps === 2 ? 6 : Math.round(c.iv * c.ef);
+  return iv === 1 ? '내일' : iv + '일 후';
+}
+function srsStats() {
+  const pool = srsPool(), t = today0();
+  let due = 0, learned = 0, fresh = 0;
+  for (const w of pool) {
+    const c = srsDB[w.n];
+    if (!c || !c.seen) fresh++;
+    else { if (c.due <= t) due++; if (c.iv >= 7) learned++; }
+  }
+  $('#srs-stats').innerHTML = `
+    <div class="srs-stat due"><b>${due}</b><span>복습 예정</span></div>
+    <div class="srs-stat new"><b>${fresh}</b><span>안 본 단어</span></div>
+    <div class="srs-stat learned"><b>${learned}</b><span>외운 단어</span></div>
+    <div class="srs-stat"><b>${pool.length}</b><span>범위 전체</span></div>`;
+}
+function srsRangeButtons() {
+  let opts;
+  if (VER === 2) opts = [['all', '전체 600'], ['3급', '3급 301'], ['2급', '2급 149'], ['1급', '1급 150']];
+  else opts = [['all', '전체 500'], ['501-600', '1–100'], ['601-700', '101–200'], ['701-800', '201–300'], ['801-900', '301–400'], ['901-1000', '401–500']];
+  $('#srs-rangebtns').innerHTML = opts.map(([v, l], i) =>
+    `<button class="vbtn" data-range="${v}" aria-pressed="${i === 0}">${l}</button>`).join('');
+  srsRange = 'all';
+  document.querySelectorAll('#srs-rangebtns .vbtn').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('#srs-rangebtns .vbtn').forEach(x => x.setAttribute('aria-pressed', x === b));
+    srsRange = b.dataset.range; srsStats();
+  }));
+}
+const NEW_PER_SESSION = 20;                        // 하루 새 단어 상한
+function srsBuildQueue() {
+  const pool = srsPool(), t = today0();
+  const due = [], fresh = [];
+  for (const w of pool) {
+    const c = srsDB[w.n];
+    if (!c || !c.seen) fresh.push(w);
+    else if (c.due <= t) due.push(w);
+  }
+  // 오늘 복습분 전부 + 새 단어 일부. 번호순 유지(fresh)로 예측 가능하게.
+  srsQueue = [...due, ...fresh.slice(0, NEW_PER_SESSION)];
+}
+function srsRenderCard() {
+  const w = srsCur;
+  const front = srsDir === 'zh2ko'
+    ? `<div class="hanzi">${w.zh}</div>`
+    : `<div class="ktext">${w.ko}</div>`;
+  const back = srsDir === 'zh2ko'
+    ? `<div class="backwrap"><div class="pinyin">${w.py}</div><div class="meaning">${w.ko}</div></div>`
+    : `<div class="backwrap"><div class="hanzi">${w.zh}</div><div class="pinyin">${w.py}</div></div>`;
+  $('#srs-card').innerHTML =
+    `<div class="pos">${w.pos}</div><div class="idx">${w.n}</div>` +
+    (srsFlipped ? front + back : front) +
+    `<button class="speak" type="button">🔊 발음</button>`;
+  const sp = $('#srs-card').querySelector('.speak');
+  if (sp) sp.addEventListener('click', e => { e.stopPropagation(); say(w.zh); });
+  $('#srs-grade').hidden = !srsFlipped;
+  $('#srs-show').hidden = srsFlipped;
+  if (srsFlipped) {
+    $('#g-good-i').textContent = srsPreview(w, 4);
+    $('#g-easy-i').textContent = srsPreview(w, 5);
+  }
+  const total = srsQueue.length + srsSessDone;
+  $('#srs-queue').textContent = `남은 ${srsQueue.length}개 · 오늘 완료 ${srsSessDone}개`;
+  $('#srs-bar-i').style.width = total ? (srsSessDone / total * 100) + '%' : '0';
+}
+function srsNext() {
+  if (!srsQueue.length) return srsFinish();
+  srsCur = srsQueue.shift();
+  srsFlipped = false;
+  srsRenderCard();
+}
+function srsFinish() {
+  $('#srs-run').hidden = true;
+  $('#srs-done').hidden = false;
+  srsStats();
+  const pool = srsPool(), t = today0();
+  const remain = pool.filter(w => { const c = srsDB[w.n]; return c && c.seen && c.due <= t; }).length;
+  $('#srs-done').innerHTML = `
+    <div class="rgrid">
+      <div class="rcard pass"><b>${srsSessDone}</b><span>오늘 학습</span></div>
+      <div class="rcard"><b>${remain}</b><span>남은 복습</span></div>
+    </div>
+    <div class="warn" style="background:#F4F8F6;border-color:#CFE0D8;color:#33604F">
+      ${remain ? '아직 복습할 카드가 남았습니다. 이어서 하려면 다시 시작하세요.' : '오늘 예정된 카드를 모두 끝냈습니다. 내일 다시 오세요 🎉'}
+    </div>
+    <div class="controls" style="max-width:420px;margin-top:16px">
+      <button class="btn know" id="srs-again2" style="border-color:var(--jade)">이어서 하기</button>
+      <button class="btn" id="srs-back">설정으로</button>
+    </div>`;
+  $('#srs-again2').onclick = () => srsStart();
+  $('#srs-back').onclick = () => { $('#srs-done').hidden = true; $('#srs-setup').hidden = false; };
+}
+function srsStart() {
+  srsBuildQueue();
+  srsSessDone = 0;
+  $('#srs-setup').hidden = true; $('#srs-done').hidden = true; $('#srs-run').hidden = false;
+  if (!srsQueue.length) { srsFinish(); return; }
+  srsNext();
+}
+function srsGradeCur(q) {
+  srsGrade(srsCur, q);
+  if (q === 0) srsQueue.push(srsCur);              // '다시'는 이번 세션 뒤쪽에 재삽입
+  srsSessDone++;
+  srsStats();
+  srsNext();
+}
+/* 이벤트 */
+$('#srs-card').addEventListener('click', () => { if (!srsFlipped) { srsFlipped = true; srsRenderCard(); } });
+$('#srs-flip').onclick = () => { srsFlipped = true; srsRenderCard(); };
+$('#srs-card').addEventListener('keydown', e => {
+  if ((e.key === ' ' || e.key === 'Enter') && !srsFlipped) { e.preventDefault(); srsFlipped = true; srsRenderCard(); }
+});
+document.querySelectorAll('#srs-grade .grade').forEach(b =>
+  b.addEventListener('click', () => srsGradeCur(+b.dataset.q)));
+document.querySelectorAll('#srs-setup .vbtn[data-dir]').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('#srs-setup .vbtn[data-dir]').forEach(x => x.setAttribute('aria-pressed', x === b));
+  srsDir = b.dataset.dir;
+}));
+$('#srs-start').onclick = srsStart;
+$('#srs-end').onclick = () => { $('#srs-run').hidden = true; $('#srs-setup').hidden = false; srsStats(); };
+$('#srs-reset-btn').onclick = () => {
+  if (confirm(`${VER === 3 ? 'HSK 3.0' : 'HSK 2.0'} 단어 암기 진도를 모두 지웁니다. 계속할까요?`)) {
+    srsDB = {}; srsSave(); srsStats();
+  }
+};
+/* 키보드 단축키: 1=다시 2=어려움 3=알맞음 4=쉬움 */
+document.addEventListener('keydown', e => {
+  if ($('#p-srs').hidden || $('#srs-run').hidden || !srsFlipped) return;
+  if (e.target.tagName === 'INPUT') return;
+  const map = { '1': 0, '2': 3, '3': 4, '4': 5 };
+  if (e.key in map) { e.preventDefault(); srsGradeCur(map[e.key]); }
+});
 
 /* ---------- flashcards ---------- */
 let cat = 'all', deck = [], idx = 0, flipped = false;
@@ -1069,8 +1314,8 @@ function mkLoad() {
   mkProgress();
   $('#mock-next').textContent = mkIdx < MOCK_SECTIONS.length - 1 ? '다음 영역으로' : '채점하기';
   const au = $('#mock-audio');
-  if (s.key === 'listen') { au.src = 'audio/HSK3.mp3'; au.currentTime = 0; if (mkTimed) au.play().catch(() => {}); }
-  else { au.pause(); }
+  if (s.key === 'listen' && MP3_OK) { au.src = 'audio/HSK3.mp3'; au.currentTime = 0; if (mkTimed) au.play().catch(() => {}); }
+  else { au.pause(); au.removeAttribute('src'); }
   if (mkTimer) clearInterval(mkTimer);
   if (mkTimed) { mkLeft = s.secs; $('#mock-time').textContent = mkFmt(mkLeft); mkTimer = setInterval(mkTick, 1000); }
   else { $('#mock-time').textContent = '연습'; }
@@ -1161,21 +1406,34 @@ $('#mock-practice').onclick = () => mkStart(false);
 $('#mock-next').onclick = mkNext;
 $('#mock-submit').onclick = () => { if (confirm('채점하시겠습니까? 남은 영역은 무응답 처리됩니다.')) mkFinish(); };
 
-/* ---------- 음성 파일 존재 확인 ----------
-   GitHub Pages 배포본에는 용량 문제로 MP3를 올리지 않습니다.
-   파일이 없으면 음성 UI를 숨기고 안내로 대체합니다. */
+/* ---------- 음성 파일(MP3) 존재 확인 ----------
+   온라인 배포본에는 용량 문제로 MP3가 없습니다.
+   없으면 MP3 관련 UI를 조용히 숨겨, 재생 실패 경고가 뜨지 않게 합니다.
+   (플래시카드 '발음 듣기'는 브라우저 음성이라 이와 무관하게 동작합니다.) */
+let MP3_OK = false;
 (function () {
+  // 미리 src를 비워, 확인 전에 없는 파일을 로드하려다 error 나는 것을 막습니다.
+  const main = $('#player'); if (main) { main.dataset.src = main.getAttribute('src') || ''; main.removeAttribute('src'); }
+
   fetch('audio/HSK3.mp3', { method: 'HEAD' })
-    .then(r => { if (!r.ok) throw 0; })
+    .then(r => {
+      if (!r.ok) throw 0;
+      MP3_OK = true;
+      if (main && main.dataset.src) { main.src = main.dataset.src; }   // 있으면 다시 연결
+    })
     .catch(() => {
-      document.querySelectorAll('#p-listen .player, #vocaplayer').forEach(el => el.hidden = true);
+      MP3_OK = false;
+      // MP3에 의존하는 요소 전부 숨김
+      document.querySelectorAll('.player, .mock-only').forEach(el => el.hidden = true);
+      $('#audio-warn').hidden = true;
       const note = document.createElement('div');
       note.className = 'warn';
-      note.innerHTML = `<b>이 온라인 버전에는 음성 파일이 포함돼 있지 않습니다.</b> (공식 음성·모의고사 MP3 합계 약 200MB)<br>
-        음성까지 쓰려면 로컬에서 <b>열기.bat</b>으로 실행하세요. 플래시카드의 “발음 듣기”(브라우저 음성)는 여기서도 동작합니다.`;
+      note.style.cssText = 'background:#F4F8F6;border-color:#CFE0D8;color:#33604F';
+      note.innerHTML = `이 온라인 버전에는 시험 음성 파일(약 200MB)이 없습니다. 문제 텍스트와 정답 확인은 그대로 되고,
+        <b>플래시카드·단어장의 발음 듣기는 여기서도 동작합니다.</b> 실제 시험 음성이 필요하면 로컬에서 <b>열기.bat</b>으로 실행하세요.`;
       const p = $('#p-listen');
-      if (p) p.insertBefore(note, p.querySelector('h3'));
-      const mockA = $('#mock-audio'); if (mockA) mockA.removeAttribute('src');
+      if (p) p.insertBefore(note, p.querySelector('.player') || p.querySelector('h3'));
+      const mn = $('#mock-noaudio'); if (mn) mn.hidden = false;
     });
 })();
 
