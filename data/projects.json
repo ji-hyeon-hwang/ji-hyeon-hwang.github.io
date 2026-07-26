@@ -1,19 +1,48 @@
 [
   {
+    "id": "hsk3",
+    "title": "HSK 3급 Trainer",
+    "short_desc": "Chinese HSK Level 3 prep with the official 2026 syllabus (500 new words), 600-word HSK 2.0 list, full sample exam, and a timed mock test with scoring.",
+    "tags": [
+      "Language Learning",
+      "Chinese",
+      "HSK",
+      "Mock Exam",
+      "Korean"
+    ],
+    "thumbnail": null,
+    "thumbnail_type": null,
+    "page": "hsk/",
+    "external_link": null
+  },
+  {
     "id": "deutsch-vokabeln",
     "title": "Deutsch Vokabeln",
     "short_desc": "German vocabulary trainer with 1,240 words (A1+A2), spaced repetition (SM-2), flashcards, quizzes, and grammar tables.",
-    "tags": ["Language Learning", "Spaced Repetition", "A1", "A2", "Korean"],
+    "tags": [
+      "Language Learning",
+      "Spaced Repetition",
+      "A1",
+      "A2",
+      "Korean"
+    ],
     "thumbnail": null,
     "thumbnail_type": null,
     "page": "deutsch/",
-    "external_link": null
+    "external_link": null,
+    "hidden": true
   },
   {
     "id": "arxiv-trend-agent",
     "title": "arXiv Trend Agent",
     "short_desc": "LangGraph-based Multi-Agent service for automated arXiv paper collection, Korean summarization, trend analysis, and RAG Q&A.",
-    "tags": ["LLM", "Multi-Agent", "LangGraph", "RAG", "Full-Stack"],
+    "tags": [
+      "LLM",
+      "Multi-Agent",
+      "LangGraph",
+      "RAG",
+      "Full-Stack"
+    ],
     "thumbnail": "assets/img/proj/arxiv-trend-agent/demo.mp4",
     "thumbnail_type": "video",
     "page": "projects/arxiv-trend-agent/",
@@ -23,7 +52,13 @@
     "id": "bevsa",
     "title": "BEVSA: BEV Segmentation Accelerator",
     "short_desc": "28nm ASIC accelerator for real-time bird's-eye-view semantic segmentation in multi-camera autonomous driving systems.",
-    "tags": ["HW Accelerator", "ASIC", "Multi-Camera System", "3D Perception", "BEV"],
+    "tags": [
+      "HW Accelerator",
+      "ASIC",
+      "Multi-Camera System",
+      "3D Perception",
+      "BEV"
+    ],
     "thumbnail": "assets/img/proj/bevsa/image2.png",
     "thumbnail_type": "image",
     "page": "projects/bevsa/",
@@ -33,7 +68,13 @@
     "id": "point-cloud-seg",
     "title": "Real-time Point Cloud Segmentation System",
     "short_desc": "Real-time 3D LiDAR semantic segmentation with adaptive ground estimation and selective neural network inference.",
-    "tags": ["Systems for ML", "LiDAR", "FPGA", "GPU", "3D Semantic Segmentation"],
+    "tags": [
+      "Systems for ML",
+      "LiDAR",
+      "FPGA",
+      "GPU",
+      "3D Semantic Segmentation"
+    ],
     "thumbnail": "assets/img/proj/point-cloud-seg/image.png",
     "thumbnail_type": "image",
     "page": "projects/point-cloud-seg/",
@@ -43,7 +84,12 @@
     "id": "muscle-sync",
     "title": "Muscle SYNC",
     "short_desc": "AI-based sensorless muscle activation analysis using computer vision.",
-    "tags": ["Startup", "Computer Vision", "HW-SW Co-design", "AI"],
+    "tags": [
+      "Startup",
+      "Computer Vision",
+      "HW-SW Co-design",
+      "AI"
+    ],
     "thumbnail": "assets/img/proj/muscle-sync/demo.mp4",
     "thumbnail_type": "video",
     "page": "projects/muscle-sync/",
@@ -53,7 +99,13 @@
     "id": "lspu",
     "title": "LSPU: Real-Time LiDAR-SLAM SoC",
     "short_desc": "Demo system for a fully integrated real-time LiDAR-SLAM SoC with point neural network segmentation, presented at ISSCC 2024.",
-    "tags": ["HW Accelerator", "SoC", "LiDAR", "SLAM", "Demo"],
+    "tags": [
+      "HW Accelerator",
+      "SoC",
+      "LiDAR",
+      "SLAM",
+      "Demo"
+    ],
     "thumbnail": "assets/img/proj/lspu/demo.mp4",
     "thumbnail_type": "video",
     "page": "projects/lspu/",
