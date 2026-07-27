@@ -185,17 +185,32 @@
   .bar { height: 4px; background: var(--line); border-radius: 2px; margin-top: 11px; overflow: hidden; }
   .bar i { display: block; height: 100%; background: var(--ochre); }
   /* SRS 단어 암기 */
-  .srs-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin-bottom: 22px; }
-  .srs-stat { background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 13px 15px; }
-  .srs-stat b { font-family: var(--serif); font-size: 25px; font-variant-numeric: tabular-nums; display: block; line-height: 1.15; }
-  .srs-stat span { font-size: 11.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
-  .srs-stat.due b { color: var(--cinnabar); } .srs-stat.new b { color: var(--jade); } .srs-stat.learned b { color: var(--ochre); }
+  .srs-stats { margin-bottom: 22px; }
+  .today-panel { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: space-between;
+    background: var(--ink); color: #fff; border-radius: 10px; padding: 20px 26px; margin-bottom: 12px; }
+  .today-main { display: flex; align-items: center; gap: 18px; }
+  .today-num { font-family: var(--serif); font-size: 56px; line-height: 1; font-variant-numeric: tabular-nums; color: #fff; }
+  .today-label { font-size: 15px; font-weight: 600; }
+  .today-label small { font-weight: 400; opacity: .7; font-size: 12.5px; }
+  .today-side { display: flex; gap: 22px; }
+  .today-chip { text-align: center; }
+  .today-chip b { font-family: var(--serif); font-size: 22px; font-variant-numeric: tabular-nums; display: block; color: var(--ochre); }
+  .today-chip span { font-size: 11px; opacity: .7; letter-spacing: .04em; }
+  .prog-line { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 14px 18px; }
+  .prog-track { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; margin-bottom: 10px; }
+  .prog-track i { display: block; height: 100%; background: linear-gradient(90deg, var(--jade), var(--ochre)); border-radius: 4px; transition: width .3s; }
+  .prog-meta { display: flex; flex-wrap: wrap; gap: 6px 20px; font-size: 12.5px; color: var(--muted); }
+  .prog-meta b { color: var(--ink); font-variant-numeric: tabular-nums; }
+  @media (max-width: 520px) { .today-num { font-size: 44px; } .today-side { gap: 14px; } }
   .srs-bar { height: 5px; background: var(--line); border-radius: 3px; overflow: hidden; margin-bottom: 16px; }
   .srs-bar i { display: block; height: 100%; background: var(--jade); width: 0; transition: width .2s; }
   .srs-queue { font-size: 12.5px; color: var(--muted); text-align: center; margin-bottom: 10px; font-variant-numeric: tabular-nums; }
   .srscard { min-height: 260px; }
+  .srs-inner { display: flex; flex-direction: column; align-items: center; gap: 16px; }
   .srscard .ktext { font-size: 30px; font-weight: 600; }
-  .srscard .backwrap { display: grid; gap: 12px; }
+  .srscard .backwrap { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .srs-hint { margin-top: 8px; }
+  .srs-speak { position: static; transform: none; margin-top: 4px; }   /* 뜻 위에 겹치지 않도록 흐름 안에 배치 */
   .srs-grade { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 14px; }
   .srs-grade[hidden] { display: none; }
   .grade { appearance: none; font-family: inherit; cursor: pointer; border: 1px solid var(--line); background: var(--card); border-radius: 6px; padding: 12px 6px; font-size: 14px; font-weight: 500; display: flex; flex-direction: column; gap: 3px; transition: all .12s; }
@@ -322,7 +337,7 @@
       <div class="card srscard" id="srs-card" tabindex="0" role="button" aria-live="polite"></div>
       <div class="srs-grade" id="srs-grade" hidden>
         <button class="grade g-again" data-q="0">다시<small>&lt;1분</small></button>
-        <button class="grade g-hard" data-q="3">어려움<small>내일</small></button>
+        <button class="grade g-hard" data-q="3">어려움<small id="g-hard-i"></small></button>
         <button class="grade g-good" data-q="4">알맞음<small id="g-good-i"></small></button>
         <button class="grade g-easy" data-q="5">쉬움<small id="g-easy-i"></small></button>
       </div>
@@ -744,13 +759,33 @@ function ttsUnavailable() {
   w.hidden = false;
 }
 
+let _lastUtter = null;   // GC로 발화가 끊기지 않도록 참조 유지
+let ttsDebug = location.search.includes('debug');    // ?debug 로 켜면 발음 상태를 화면에 표시
+function ttsLog(msg) {
+  if (!ttsDebug) return;
+  const w = $('#audio-warn'); if (!w) return;
+  w.hidden = false;
+  w.innerHTML = '<b>TTS 진단</b><br>' + msg;
+}
 function say(text) {
   if (typeof speechSynthesis === 'undefined') { ttsUnavailable(); return; }
   speechSynthesis.cancel();
+  // 음성 목록이 지연 로드되는 브라우저 대비 — 호출 시점에 다시 선택
+  const vs = speechSynthesis.getVoices();
+  if (!zhVoice) zhVoice = vs.find(v => /^zh/i.test(v.lang)) || null;
   const u = new SpeechSynthesisUtterance(text);
   u.lang = 'zh-CN'; u.rate = .85;
   if (zhVoice) u.voice = zhVoice;   // 중국어 음성이 있으면 사용, 없으면 브라우저 기본 음성으로 발화
+  u.onstart = () => ttsLog(`✓ 발화 시작: "${text}" · 음성 ${zhVoice ? zhVoice.name : '(기본)'}`);
+  u.onend   = () => ttsLog(`✓ 발화 종료: "${text}"`);
+  u.onerror = e => ttsLog(`✗ 오류: ${e.error} · 음성 ${zhVoice ? zhVoice.name : '(기본)'} · 총 ${vs.length}개`);
+  _lastUtter = u;
   speechSynthesis.speak(u);
+  ttsLog(`▶ speak 호출: "${text}" · 음성목록 ${vs.length}개 · 중국어 ${vs.filter(v=>/^zh/i.test(v.lang)).length}개`);
+  setTimeout(() => {
+    if (!speechSynthesis.speaking && !speechSynthesis.pending)
+      ttsLog(`⚠️ 350ms 후 발화 안 됨 — 브라우저가 조용히 무시함. 음성목록 ${speechSynthesis.getVoices().length}개`);
+  }, 400);
 }
 
 /* 중국어 음성 사용 가능 여부를 화면에 표시 */
@@ -796,27 +831,54 @@ function srsPool() {
 function srsCard(w) {
   return srsDB[w.n] || (srsDB[w.n] = { ef: 2.5, reps: 0, iv: 0, due: 0, seen: false });
 }
-/* SM-2 */
+/* SM-2 (첫 학습 시 '쉬움'은 바로 4일로 건너뛰어, 4주 벼락치기에 맞춤) */
+function srsInterval(c, q) {
+  if (q < 3) return 0;
+  if (c.reps === 0) return q === 5 ? 4 : 1;       // 처음 본 단어: 쉬움→4일, 알맞음/어려움→1일
+  if (c.reps === 1) return 6;
+  return Math.round(c.iv * c.ef);
+}
 function srsGrade(w, q) {
   const c = srsCard(w);
   c.seen = true;
   if (q < 3) { c.reps = 0; c.iv = 0; }            // 다시 → 오늘 안에 재출제
   else {
+    c.iv = srsInterval(c, q);
     c.reps++;
-    c.iv = c.reps === 1 ? 1 : c.reps === 2 ? 6 : Math.round(c.iv * c.ef);
     c.ef = Math.max(1.3, c.ef + (0.1 - (5 - q) * (0.08 + (5 - q) * 0.02)));
   }
   c.due = q < 3 ? today0() : today0() + c.iv * 86400000;
   srsSave();
   return c;
 }
-/* '알맞음/쉬움' 눌렀을 때 나올 다음 간격 미리보기 */
+/* '어려움/알맞음/쉬움' 눌렀을 때 나올 다음 간격 미리보기 */
 function srsPreview(w, q) {
   const c = srsCard(w);
   if (q < 3) return q === 0 ? '<1분' : '내일';
-  const reps = c.reps + 1;
-  const iv = reps === 1 ? 1 : reps === 2 ? 6 : Math.round(c.iv * c.ef);
+  const iv = srsInterval(c, q);
   return iv === 1 ? '내일' : iv + '일 후';
+}
+/* 하루 학습 기록 (연속 학습일 계산용) — 버전 무관하게 하나로 관리 */
+function srsMeta() { try { return JSON.parse(localStorage.getItem('hsk_srs_meta')) || {}; } catch { return {}; } }
+function srsMetaSave(m) { try { localStorage.setItem('hsk_srs_meta', JSON.stringify(m)); } catch {} }
+function srsMarkToday(n) {
+  const m = srsMeta(), key = new Date(today0()).toISOString().slice(0, 10);
+  m.days = m.days || {};
+  m.days[key] = (m.days[key] || 0) + n;
+  srsMetaSave(m);
+}
+function srsStreak() {
+  const m = srsMeta(); if (!m.days) return 0;
+  let streak = 0, d = today0();
+  // 오늘 안 했으면 어제부터 카운트
+  const k = t => new Date(t).toISOString().slice(0, 10);
+  if (!m.days[k(d)]) d -= 86400000;
+  while (m.days[k(d)]) { streak++; d -= 86400000; }
+  return streak;
+}
+function daysToExam() {
+  const exam = new Date(2026, 7, 23), today = new Date(); today.setHours(0, 0, 0, 0);
+  return Math.max(0, Math.round((exam - today) / 86400000));
 }
 function srsStats() {
   const pool = srsPool(), t = today0();
@@ -826,11 +888,32 @@ function srsStats() {
     if (!c || !c.seen) fresh++;
     else { if (c.due <= t) due++; if (c.iv >= 7) learned++; }
   }
+  const todayNew = Math.min(fresh, NEW_PER_SESSION);
+  const todayTotal = due + todayNew;
+  const doneToday = (srsMeta().days || {})[new Date(t).toISOString().slice(0, 10)] || 0;
+  const seen = pool.length - fresh;
+  const pct = pool.length ? Math.round(seen / pool.length * 100) : 0;
+  const dexam = daysToExam();
+  const needPerDay = dexam > 0 ? Math.ceil(fresh / dexam) : fresh;
+
   $('#srs-stats').innerHTML = `
-    <div class="srs-stat due"><b>${due}</b><span>복습 예정</span></div>
-    <div class="srs-stat new"><b>${fresh}</b><span>안 본 단어</span></div>
-    <div class="srs-stat learned"><b>${learned}</b><span>외운 단어</span></div>
-    <div class="srs-stat"><b>${pool.length}</b><span>범위 전체</span></div>`;
+    <div class="today-panel">
+      <div class="today-main">
+        <div class="today-num">${todayTotal}</div>
+        <div class="today-label">오늘 할 단어<br><small>복습 ${due} + 새 단어 ${todayNew}</small></div>
+      </div>
+      <div class="today-side">
+        <div class="today-chip"><b>${srsStreak()}일</b><span>연속 학습</span></div>
+        <div class="today-chip"><b>${doneToday}</b><span>오늘 완료</span></div>
+        <div class="today-chip"><b>D-${dexam}</b><span>8/23 시험</span></div>
+      </div>
+    </div>
+    <div class="prog-line">
+      <div class="prog-track"><i style="width:${pct}%"></i></div>
+      <div class="prog-meta"><span>진도 <b>${seen}/${pool.length}</b> (${pct}%)</span>
+        <span>외운 단어 ${learned}개</span>
+        <span>합격까지 하루 <b>${needPerDay}개</b> 페이스</span></div>
+    </div>`;
 }
 function srsRangeButtons() {
   let opts;
@@ -858,21 +941,22 @@ function srsBuildQueue() {
 }
 function srsRenderCard() {
   const w = srsCur;
+  const speakBtn = `<button class="speak srs-speak" type="button">🔊 발음</button>`;
   const front = srsDir === 'zh2ko'
     ? `<div class="hanzi">${w.zh}</div>`
     : `<div class="ktext">${w.ko}</div>`;
   const back = srsDir === 'zh2ko'
-    ? `<div class="backwrap"><div class="pinyin">${w.py}</div><div class="meaning">${w.ko}</div></div>`
-    : `<div class="backwrap"><div class="hanzi">${w.zh}</div><div class="pinyin">${w.py}</div></div>`;
+    ? `<div class="backwrap"><div class="pinyin">${w.py}</div><div class="meaning">${w.ko}</div>${speakBtn}</div>`
+    : `<div class="backwrap"><div class="hanzi">${w.zh}</div><div class="pinyin">${w.py}</div>${speakBtn}</div>`;
   $('#srs-card').innerHTML =
     `<div class="pos">${w.pos}</div><div class="idx">${w.n}</div>` +
-    (srsFlipped ? front + back : front) +
-    `<button class="speak" type="button">🔊 발음</button>`;
-  const sp = $('#srs-card').querySelector('.speak');
-  if (sp) sp.addEventListener('click', e => { e.stopPropagation(); say(w.zh); });
+    `<div class="srs-inner">` + (srsFlipped ? front + back : front + `<div class="srs-hint">${speakBtn}</div>`) + `</div>`;
+  $('#srs-card').querySelectorAll('.speak').forEach(sp =>
+    sp.addEventListener('click', e => { e.stopPropagation(); say(w.zh); }));
   $('#srs-grade').hidden = !srsFlipped;
   $('#srs-show').hidden = srsFlipped;
   if (srsFlipped) {
+    $('#g-hard-i').textContent = srsPreview(w, 3);
     $('#g-good-i').textContent = srsPreview(w, 4);
     $('#g-easy-i').textContent = srsPreview(w, 5);
   }
@@ -917,6 +1001,7 @@ function srsStart() {
 function srsGradeCur(q) {
   srsGrade(srsCur, q);
   if (q === 0) srsQueue.push(srsCur);              // '다시'는 이번 세션 뒤쪽에 재삽입
+  else srsMarkToday(1);                            // 실제로 넘긴 카드만 오늘 기록에 집계
   srsSessDone++;
   srsStats();
   srsNext();
