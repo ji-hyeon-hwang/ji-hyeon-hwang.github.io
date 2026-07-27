@@ -376,12 +376,6 @@
       <button class="chip" data-lvl="1급" aria-pressed="false">1급 150</button>
     </div>
     <input class="search" id="search" type="search" placeholder="검색 — 한자, 병음(성조 없이 가능), 한글 뜻 모두 가능" aria-label="어휘 검색">
-    <div class="player" id="vocaplayer" hidden>
-      <div style="font-size:13px;color:var(--muted);margin-bottom:10px">
-        중국어–한국어 낭독 음성 (20개씩). 표를 보지 않고 귀로만 따라가는 연습에 쓰세요.</div>
-      <div class="jump" id="vocachunks" style="margin-bottom:12px"></div>
-      <audio id="vaudio" controls preload="none"></audio>
-    </div>
     <div class="tablewrap">
       <table>
         <thead><tr><th>#</th><th>한자</th><th></th><th>병음</th><th>뜻</th><th>품사</th></tr></thead>
@@ -391,28 +385,12 @@
   </section>
 
   <section class="panel" id="p-listen" role="tabpanel" hidden>
-    <h2>듣기 — 공식 음성</h2>
-    <p class="lede">공식 샘플 문제(样卷)의 실제 시험 음성입니다. 40문항 · 약 35분. 각 부분 버튼을 누르면 해당 구간으로 이동합니다.</p>
-    <div class="player">
-      <audio id="player" controls preload="metadata" src="audio/HSK3.mp3"></audio>
-      <div class="jump">
-        <button class="jbtn" data-t="0">처음부터</button>
-        <button class="jbtn" data-t="30">제1부분 (1–10 · 사진)</button>
-        <button class="jbtn" data-t="480">제2부분 (11–20 · 일치)</button>
-        <button class="jbtn" data-t="917">제3부분 (21–30 · 대화)</button>
-        <button class="jbtn" data-t="1416">제4부분 (31–40 · 긴 대화)</button>
-      </div>
-    </div>
-
-    <h3>실전 모의고사 듣기</h3>
-    <p class="lede">해커스 실전모의고사 3회분입니다. 각 37~41분으로 실제 듣기 시험과 같은 길이입니다. 정답은 해당 교재를 참고하세요.</p>
-    <div class="player">
-      <div class="jump" style="margin-bottom:12px">
-        <button class="jbtn mock" data-src="audio/mock/mock1.mp3">모의고사 1 (37분)</button>
-        <button class="jbtn mock" data-src="audio/mock/mock2.mp3">모의고사 2 (41분)</button>
-        <button class="jbtn mock" data-src="audio/mock/mock3.mp3">모의고사 3 (37분)</button>
-      </div>
-      <audio id="mockplayer" controls preload="none"></audio>
+    <h2>듣기 문제</h2>
+    <p class="lede">공식 샘플 문제(样卷)의 듣기 문항입니다. 이 페이지에서는 <b>정답 확인·문제 유형 파악용</b>으로 풉니다. 실제 듣기 음성 연습은 아래 방법을 참고하세요.</p>
+    <div class="warn" style="background:#F4F8F6;border-color:#CFE0D8;color:#33604F">
+      <b>실제 시험 음성으로 듣기 연습하는 법</b> — 이 웹 버전에는 음성 파일이 없습니다.
+      HSK 공식 샘플 음성은 <a href="https://www.chinesetest.cn" target="_blank" rel="noopener">chinesetest.cn</a>의 «样卷»에서, 실전 듣기는 해커스 등 교재 MP3로 연습하세요.
+      단어 발음은 <b>단어 암기·어휘표 탭의 🔊 버튼</b>으로 여기서도 됩니다.
     </div>
     <h3>제1부분 · 사진 고르기 (1–10)</h3>
     <p class="lede">시험지의 사진은 저작권상 포함하지 않았습니다. 정답만 확인하세요 — 음성을 듣고 내용을 파악하는 연습에 집중하면 됩니다.</p>
@@ -464,12 +442,10 @@
         <div class="esec"><b>독해 阅读</b><div class="n">30문항 · 30분</div><div class="bar"><i style="width:75%"></i></div></div>
         <div class="esec"><b>쓰기 书写</b><div class="n">10문항 · 15분</div><div class="bar"><i style="width:25%"></i></div></div>
       </div>
-      <div class="warn mock-only" style="background:#F4F8F6;border-color:#CFE0D8;color:#33604F">
-        듣기는 음성이 자동 재생됩니다. 실제 시험처럼 <b>한 번만</b> 듣고 푸세요 (음성 자체는 각 문제를 두 번 읽어 줍니다).
-        쓰기 제2부분은 종이에 손으로 쓴 뒤 채점에서 직접 대조하세요.
-      </div>
-      <div class="warn" id="mock-noaudio" hidden style="background:#FDF6EC;border-color:#EBD9BC;color:#8A6A2F">
-        이 온라인 버전에는 듣기 음성이 없어, 모의고사에서 듣기 문항은 <b>정답 확인용</b>으로만 쓸 수 있습니다. 실제 듣기 연습은 로컬 버전(<b>열기.bat</b>)에서 하세요.
+      <div class="warn" style="background:#F4F8F6;border-color:#CFE0D8;color:#33604F">
+        듣기 문항은 <b>정답 확인·유형 파악용</b>입니다 (음성은 교재로 별도 연습).
+        타이머로 시간 감각을 익히고, 독해·쓰기는 실제 시험처럼 풀어 보세요.
+        쓰기 제2부분은 종이에 손으로 쓴 뒤 채점에서 대조하면 좋습니다.
       </div>
       <div class="controls" style="max-width:420px">
         <button class="btn know" id="mock-start" style="border-color:var(--jade)">시험 시작</button>
@@ -486,7 +462,6 @@
         <div class="mtime" id="mock-time">35:00</div>
         <button class="reset" id="mock-next">다음 영역으로</button>
       </div>
-      <audio id="mock-audio" hidden></audio>
       <div id="mock-body"></div>
       <div class="controls" style="max-width:420px;margin-top:18px">
         <button class="btn know" id="mock-submit" style="border-color:var(--jade)">채점하기</button>
@@ -714,7 +689,6 @@ function applyVersion() {
     ? `공식 «HSK 고시대강»(2025-11)의 3급 신규 어휘 ${w.length}개입니다. 번호는 공식 누적 순번(501–1000)입니다.`
     : 'HSK 1~3급 누적 필수어휘 600개입니다. 이 중 3급 추가어휘는 301개이며, 급수 버튼으로 나눠 볼 수 있습니다.';
   $('#lvlbar').hidden = VER === 3;
-  $('#vocaplayer').hidden = VER === 3;   // 낭독 음성은 600단어 번호 기준
   $('#gram-lede').textContent = VER === 3
     ? '공식 «어법 대강» 3급 항목과 샘플 문제에서 실제로 출제된 구문입니다. 아래 회색 표시는 해당 문법에 딸린 3급 어휘입니다.'
     : 'HSK 2.0 3급에서 반복 출제되는 구문입니다. 형태보다 예문 하나를 통째로 외우는 편이 빠릅니다.';
@@ -1249,46 +1223,6 @@ function drawWrite() {
   }));
 }
 
-/* ---------- audio ---------- */
-/* 재생 실패 원인을 화면에 그대로 보여줍니다 (file:// 제한, 경로 오류 등). */
-function audioFail(el, msg) {
-  const w = $('#audio-warn');
-  const e = el && el.error;
-  const CODE = { 1: '재생이 중단됨', 2: '네트워크 오류', 3: '디코딩 실패', 4: '파일을 열 수 없음 (경로 또는 브라우저 제한)' };
-  w.innerHTML = `<b>음성을 재생하지 못했습니다.</b><br>${msg || ''}` +
-    (e ? ` <span style="opacity:.8">(${CODE[e.code] || e.code})</span>` : '') +
-    `<br><span style="opacity:.8">경로: ${el && el.currentSrc ? decodeURI(el.currentSrc) : el && el.getAttribute('src') || '—'}</span>` +
-    `<br>브라우저에서 <b>파일을 직접 열면(file://)</b> 음성이 차단될 수 있습니다. 아래 “로컬 서버로 열기” 방법을 쓰세요.`;
-  w.hidden = false;
-}
-
-const player = $('#player');
-document.querySelectorAll('.jbtn[data-t]').forEach(b => b.addEventListener('click', () => {
-  player.currentTime = +b.dataset.t;
-  player.play().catch(err => audioFail(player, err.message));
-}));
-player.addEventListener('error', () => audioFail(player));
-
-/* 실전 모의고사 */
-const mockPlayer = $('#mockplayer');
-mockPlayer.addEventListener('error', () => audioFail(mockPlayer));
-document.querySelectorAll('.jbtn.mock').forEach(b => b.addEventListener('click', () => {
-  mockPlayer.src = b.dataset.src;
-  mockPlayer.play().catch(err => audioFail(mockPlayer, err.message));
-}));
-
-/* 어휘 낭독 음성 — 600단어(HSK 2.0) 목록에만 대응합니다 */
-const vAudio = $('#vaudio');
-$('#vocachunks').innerHTML = Array.from({ length: 30 }, (_, i) => {
-  const a = String(i * 20 + 1).padStart(3, '0'), b = String(i * 20 + 20).padStart(3, '0');
-  return `<button class="jbtn voca" data-src="audio/voca/${a}_${b}.mp3">${+a}–${+b}</button>`;
-}).join('');
-vAudio.addEventListener('error', () => audioFail(vAudio));
-document.querySelectorAll('.jbtn.voca').forEach(b => b.addEventListener('click', () => {
-  vAudio.src = b.dataset.src;
-  vAudio.play().catch(err => audioFail(vAudio, err.message));
-}));
-
 /* ---------- plan ---------- */
 $('#sched').innerHTML = SCHED.map(s => `
   <div class="trow ${s.k}">
@@ -1398,9 +1332,6 @@ function mkLoad() {
   $('#mock-body').scrollIntoView({ block: 'start' });
   mkProgress();
   $('#mock-next').textContent = mkIdx < MOCK_SECTIONS.length - 1 ? '다음 영역으로' : '채점하기';
-  const au = $('#mock-audio');
-  if (s.key === 'listen' && MP3_OK) { au.src = 'audio/HSK3.mp3'; au.currentTime = 0; if (mkTimed) au.play().catch(() => {}); }
-  else { au.pause(); au.removeAttribute('src'); }
   if (mkTimer) clearInterval(mkTimer);
   if (mkTimed) { mkLeft = s.secs; $('#mock-time').textContent = mkFmt(mkLeft); mkTimer = setInterval(mkTick, 1000); }
   else { $('#mock-time').textContent = '연습'; }
@@ -1416,7 +1347,6 @@ function mkStart(timed) {
 }
 function mkFinish() {
   if (mkTimer) clearInterval(mkTimer);
-  $('#mock-audio').pause();
   $('#mock-run').hidden = true;
 
   const norm = s => (s || '').replace(/[\s，。！？、,.!?]/g, '');
@@ -1490,37 +1420,6 @@ $('#mock-start').onclick = () => mkStart(true);
 $('#mock-practice').onclick = () => mkStart(false);
 $('#mock-next').onclick = mkNext;
 $('#mock-submit').onclick = () => { if (confirm('채점하시겠습니까? 남은 영역은 무응답 처리됩니다.')) mkFinish(); };
-
-/* ---------- 음성 파일(MP3) 존재 확인 ----------
-   온라인 배포본에는 용량 문제로 MP3가 없습니다.
-   없으면 MP3 관련 UI를 조용히 숨겨, 재생 실패 경고가 뜨지 않게 합니다.
-   (플래시카드 '발음 듣기'는 브라우저 음성이라 이와 무관하게 동작합니다.) */
-let MP3_OK = false;
-(function () {
-  // 미리 src를 비워, 확인 전에 없는 파일을 로드하려다 error 나는 것을 막습니다.
-  const main = $('#player'); if (main) { main.dataset.src = main.getAttribute('src') || ''; main.removeAttribute('src'); }
-
-  fetch('audio/HSK3.mp3', { method: 'HEAD' })
-    .then(r => {
-      if (!r.ok) throw 0;
-      MP3_OK = true;
-      if (main && main.dataset.src) { main.src = main.dataset.src; }   // 있으면 다시 연결
-    })
-    .catch(() => {
-      MP3_OK = false;
-      // MP3에 의존하는 요소 전부 숨김
-      document.querySelectorAll('.player, .mock-only').forEach(el => el.hidden = true);
-      $('#audio-warn').hidden = true;
-      const note = document.createElement('div');
-      note.className = 'warn';
-      note.style.cssText = 'background:#F4F8F6;border-color:#CFE0D8;color:#33604F';
-      note.innerHTML = `이 온라인 버전에는 시험 음성 파일(약 200MB)이 없습니다. 문제 텍스트와 정답 확인은 그대로 되고,
-        <b>플래시카드·단어장의 발음 듣기는 여기서도 동작합니다.</b> 실제 시험 음성이 필요하면 로컬에서 <b>열기.bat</b>으로 실행하세요.`;
-      const p = $('#p-listen');
-      if (p) p.insertBefore(note, p.querySelector('.player') || p.querySelector('h3'));
-      const mn = $('#mock-noaudio'); if (mn) mn.hidden = false;
-    });
-})();
 
 /* ---------- 시험까지 남은 일수 ---------- */
 (function () {
