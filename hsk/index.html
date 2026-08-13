@@ -89,6 +89,9 @@
   .charchip { font-size: 12px; color: var(--muted); background: var(--wash); border: 1px solid var(--line); border-radius: 4px; padding: 2px 8px; }
   .charchip .cz { font-family: var(--han); color: var(--ink); font-size: 14px; }
   .charchip .cp { color: var(--ochre); margin: 0 3px; }
+  .charchip.link { cursor: pointer; }
+  .charchip.link:hover { border-color: var(--cinnabar); background: var(--card); }
+  .charchip.link .cz { text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 2px; }
 
   /* ===== 단어 학습 ===== */
   .maskbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
@@ -426,10 +429,13 @@ function toggleNotyet(n) { const s = notyet(); s.has(n) ? s.delete(n) : s.add(n)
 function addNotyet(n) { const s = notyet(); if (!s.has(n)) { s.add(n); notyetSave(s); } }
 
 /* ---------- 글자 분해 ---------- */
+/* 2개 이상 단어에서 공유되는 글자는 클릭 가능(그 글자 카테고리로 이동) */
 function charBits(zh) {
   return [...zh].filter(CJK).map(c => {
     const e = CHARS[c];
-    return e ? `<span class="charchip"><span class="cz">${c}</span><span class="cp">${e.py}</span>${e.ko}</span>` : '';
+    if (!e) return '';
+    const clickable = (CHAR2WORDS[c] && CHAR2WORDS[c].length >= 2);
+    return `<span class="charchip${clickable ? ' link' : ''}"${clickable ? ` data-char="${c}"` : ''} title="${clickable ? c + ' 공유 단어 보기' : ''}"><span class="cz">${c}</span><span class="cp">${e.py}</span>${e.ko}</span>`;
   }).join('');
 }
 
@@ -469,7 +475,7 @@ let listCat = 'all', listCatOpen = false;
 function drawListCats() {
   renderCatBar('list-cats', 'cat', listCat, listCatOpen,
     () => { listCatOpen = !listCatOpen; drawListCats(); },
-    v => { listCat = v; listCatOpen = false; drawListCats(); drawList(); });
+    v => { listCat = (v === listCat && v !== 'all') ? 'all' : v; drawListCats(); drawList(); });  // 같은 칩 다시 누르면 해제
 }
 function wordRow(w) {
   return `<div class="wrow">
@@ -500,7 +506,11 @@ function drawList() {
   }
 }
 $('#list-search').addEventListener('input', drawList);
-$('#list-body').addEventListener('click', e => { const b = e.target.closest('.say'); if (b) say(b.dataset.zh); });
+$('#list-body').addEventListener('click', e => {
+  const b = e.target.closest('.say'); if (b) { say(b.dataset.zh); return; }
+  const ch = e.target.closest('.charchip.link');
+  if (ch) { listCat = ch.dataset.char; drawListCats(); drawList(); $('#p-list').scrollIntoView({ block: 'start' }); }
+});
 
 /* ================= 단어 학습 ================= */
 const showField = { zh: true, py: true, ko: true };
@@ -517,7 +527,7 @@ let studyCatOpen = false;
 function drawStudyCats() {
   renderCatBar('study-cats', 'scat', studyCat, studyCatOpen,
     () => { studyCatOpen = !studyCatOpen; drawStudyCats(); },
-    v => { studyCat = v; studyCatOpen = false; drawStudyCats(); drawStudy(); });
+    v => { studyCat = (v === studyCat && v !== 'all') ? 'all' : v; drawStudyCats(); drawStudy(); });  // 다시 누르면 해제
 }
 let studyType = false;   // 적기 모드: 내가 쓰고, 아래에 원본을 보여줘 스스로 비교
 function cell(field, val) {
