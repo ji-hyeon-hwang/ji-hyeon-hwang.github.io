@@ -472,10 +472,16 @@ function renderCatBar(containerId, dataAttr, active, expanded, onToggleExpand, o
 }
 
 let listCat = 'all', listCatOpen = false;
+/* 카테고리 선택 — 검색창과 무관하게 그 글자 공유 단어를 보여줌(검색어는 비움) */
+function selectListCat(v) {
+  listCat = v;
+  $('#list-search').value = '';   // 검색어가 남아 필터링되는 것 방지
+  drawListCats(); drawList();
+}
 function drawListCats() {
   renderCatBar('list-cats', 'cat', listCat, listCatOpen,
     () => { listCatOpen = !listCatOpen; drawListCats(); },
-    v => { listCat = (v === listCat && v !== 'all') ? 'all' : v; drawListCats(); drawList(); });  // 같은 칩 다시 누르면 해제
+    v => selectListCat((v === listCat && v !== 'all') ? 'all' : v));  // 같은 칩 다시 누르면 해제
 }
 function wordRow(w) {
   return `<div class="wrow">
@@ -509,7 +515,7 @@ $('#list-search').addEventListener('input', drawList);
 $('#list-body').addEventListener('click', e => {
   const b = e.target.closest('.say'); if (b) { say(b.dataset.zh); return; }
   const ch = e.target.closest('.charchip.link');
-  if (ch) { listCat = ch.dataset.char; drawListCats(); drawList(); $('#p-list').scrollIntoView({ block: 'start' }); }
+  if (ch) { selectListCat(ch.dataset.char); $('#p-list').scrollIntoView({ block: 'start' }); }
 });
 
 /* ================= 단어 학습 ================= */
