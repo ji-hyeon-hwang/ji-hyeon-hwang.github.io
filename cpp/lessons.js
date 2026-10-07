@@ -375,6 +375,568 @@ while (i < 5) {
   ],
 },
 
+/* ══════════════════ 4. vector ══════════════════ */
+{
+  id: 'u4', group: '자료구조', title: 'vector (배열)',
+  syntax: [
+    { h: '만들기',
+      code: `vector<int> v;                   // 빈 벡터
+vector<int> v(5);                // 크기 5, 전부 0
+vector<int> v(5, -1);            // 크기 5, 전부 -1
+vector<int> v = {1, 2, 3};       // 초기값
+
+vector<vector<int>> g(n, vector<int>(m, 0));   // n×m 2차원`,
+      note: '🔴 2차원 선언을 외우세요. 격자 문제에서 매번 씁니다.' },
+    { h: '쓰기',
+      code: `v.push_back(10);     // 뒤에 추가
+v.pop_back();        // 뒤에서 제거
+v[i]                 // i번째 (0부터)
+v.size()             // 크기
+v.empty()            // 비었나
+v.back()             // 마지막 원소
+v.clear()            // 전부 삭제`,
+      note: '' },
+    { h: '🔴 값을 꺼내고 넣기 — 가장 많이 쓰는 형태',
+      code: `vector<int> v = {10, 20, 30};
+
+// 꺼내기 — 인덱스는 0 부터 시작합니다
+cout << v[0];          // 10   (첫 번째)
+cout << v[2];          // 30   (세 번째)
+cout << v[v.size()-1]; // 30   (마지막)
+cout << v.back();      // 30   (마지막, 더 짧게)
+
+// 넣기 / 바꾸기
+v[1] = 99;             // {10, 99, 30}
+v.push_back(40);       // {10, 99, 30, 40}
+
+// 🔴 N개를 입력받는 정석 패턴 — 이걸 외우세요
+int n;
+cin >> n;
+vector<int> a(n);                      // 크기 n 으로 미리 만들고
+for (int i = 0; i < n; i++)
+    cin >> a[i];                        // 한 칸씩 채웁니다`,
+      note: '🔴 <b>인덱스는 0부터 n−1까지</b>입니다. <code>v[n]</code>은 범위 밖이라 ' +
+            '쓰레기값이 나오거나 크래시합니다 — C++은 <b>범위 검사를 해주지 않습니다</b>.<br>' +
+            '<b>왜 <code>vector&lt;int&gt; a(n)</code>으로 미리 만드나</b>: 크기를 알 때는 ' +
+            '미리 잡아두면 <code>a[i]</code>로 바로 넣을 수 있습니다. ' +
+            '<code>push_back</code>으로 채우려면 빈 벡터에서 시작해야 합니다 ' +
+            '(둘을 섞으면 앞쪽 n칸이 0으로 남습니다).' },
+
+    { h: '순회 — 전체를 훑을 때',
+      code: `vector<int> v = {10, 20, 30};
+
+// ① range-for : 인덱스가 필요 없을 때 (가장 짧음)
+for (int x : v) cout << x << ' ';        // 10 20 30
+
+// ② 수정하려면 & 를 붙입니다
+for (int& x : v) x *= 2;                 // {20, 40, 60}
+
+// ③ 인덱스가 필요할 때
+for (int i = 0; i < (int)v.size(); i++)
+    cout << i << ":" << v[i] << ' ';     // 0:20 1:40 2:60`,
+      note: '🔴 수정할 거면 <code>int&amp;</code> 로 받아야 합니다. <code>int x</code>는 복사라 원본이 안 바뀝니다.' },
+    { h: '🔴 size()의 함정',
+      code: `vector<int> v;             // 비어있음
+v.size() - 1              // → 18446744073709551615 (!)
+
+// ❌ 사실상 무한루프
+for (int i = 0; i < v.size() - 1; i++)
+
+// ✅ int로 캐스팅
+for (int i = 0; i + 1 < (int)v.size(); i++)`,
+      note: '<code>size()</code>는 <b>부호 없는</b> 정수를 반환합니다. <code>0 - 1</code>이 음수가 아니라 엄청 큰 수가 됩니다. 직접 출력해서 확인해보세요.' },
+  ],
+  problems: [
+    { id: 'p4a', title: 'N개 입력받아 거꾸로', diff: 0,
+      desc: 'N과 N개의 정수를 입력받아 역순으로 출력하세요.<br><span class="io">입력: <code>4</code> / <code>1 2 3 4</code> → 출력: <code>4 3 2 1</code></span>',
+      starter: `int main() {
+    int n;
+    cin >> n;
+    vector<int> v(n);
+    for (int i = 0; i < n; i++) cin >> v[i];
+
+    return 0;
+}`,
+      cases: [ { in: '4\n1 2 3 4', out: '4 3 2 1' }, { in: '1\n7', out: '7' } ],
+      solution: `int main() {
+    int n;
+    cin >> n;
+    vector<int> v(n);
+    for (int i = 0; i < n; i++) cin >> v[i];
+    for (int i = n - 1; i >= 0; i--) {
+        cout << v[i];
+        if (i > 0) cout << ' ';
+    }
+    cout << '\\n';
+    return 0;
+}`,
+      hint: '뒤에서부터 순회하거나, <code>reverse(v.begin(), v.end())</code> 후 출력합니다.' },
+
+    { id: 'p4b', title: '최대 최소 합', diff: 0,
+      desc: 'N개의 정수를 입력받아 <code>최대 최소 합</code> 을 공백으로 구분해 출력하세요.<br><span class="io">입력: <code>4</code> / <code>3 1 4 1</code> → 출력: <code>4 1 9</code></span>',
+      starter: `int main() {
+    int n;
+    cin >> n;
+    vector<int> v(n);
+    for (int i = 0; i < n; i++) cin >> v[i];
+
+    return 0;
+}`,
+      cases: [ { in: '4\n3 1 4 1', out: '4 1 9' }, { in: '1\n5', out: '5 5 5' },
+               { in: '3\n-1 -5 -3', out: '-1 -5 -9' } ],
+      solution: `int main() {
+    int n;
+    cin >> n;
+    vector<int> v(n);
+    for (int i = 0; i < n; i++) cin >> v[i];
+    long long sum = accumulate(v.begin(), v.end(), 0LL);
+    cout << *max_element(v.begin(), v.end()) << ' '
+         << *min_element(v.begin(), v.end()) << ' '
+         << sum << '\\n';
+    return 0;
+}`,
+      hint: '<code>*max_element(v.begin(), v.end())</code> — 앞의 <code>*</code>를 빼먹지 마세요 (반복자를 반환하므로). 합은 <code>accumulate(..., 0LL)</code>.',
+      why: '<b>왜 <code>*max_element</code>에 <code>*</code>를 붙이나</b>: 이 함수는 값이 아니라 <b>반복자(위치)</b>를 반환합니다. <code>*</code>로 그 위치의 값을 꺼내야 합니다.<ul><li><code>accumulate(..., 0LL)</code>의 <code>0LL</code>이 중요합니다 — 초기값의 타입이 누적 타입을 결정하므로 <code>0</code>으로 두면 int 로 누적되어 넘칩니다</li></ul>' },
+    { id: 'p4c', title: '2차원 격자 합', diff: 1,
+      desc: 'n, m과 n×m 격자를 입력받아 모든 값의 합을 출력하세요.<br><span class="io">입력: <code>2 3</code> / <code>1 2 3</code> / <code>4 5 6</code> → 출력: <code>21</code></span>',
+      starter: `int main() {
+    int n, m;
+    cin >> n >> m;
+    vector<vector<int>> g(n, vector<int>(m));
+    // 입력받기
+
+    return 0;
+}`,
+      cases: [ { in: '2 3\n1 2 3\n4 5 6', out: '21' }, { in: '1 1\n5', out: '5' } ],
+      solution: `int main() {
+    int n, m;
+    cin >> n >> m;
+    vector<vector<int>> g(n, vector<int>(m));
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < m; j++)
+            cin >> g[i][j];
+    long long sum = 0;
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < m; j++)
+            sum += g[i][j];
+    cout << sum << '\\n';
+    return 0;
+}`,
+      hint: '2중 루프로 입력받고, 2중 루프로 더합니다. 합은 <code>long long</code>.' },
+
+    { id: 'p4d', title: 'size() 함정 확인', diff: 1,
+      desc: '빈 vector의 <code>size() - 1</code> 값을 출력하세요.<br>' +
+            '🔴 왜 이런 값이 나오는지 이해하는 게 목적입니다. 예상과 다를 겁니다.',
+      starter: `int main() {
+    vector<int> v;      // 비어있음
+    cout << v.size() - 1 << '\\n';
+    return 0;
+}`,
+      cases: [ { in: '', out: '18446744073709551615' } ],
+      solution: `int main() {
+    vector<int> v;
+    cout << v.size() - 1 << '\\n';
+    return 0;
+}`,
+      hint: '그냥 실행 버튼을 눌러보세요. <code>size()</code>가 부호 없는 64비트라 <code>0-1</code>이 최대값으로 돌아갑니다. 이게 루프 조건에서 무한루프를 만드는 원인입니다.',
+      why: '<b>왜 이런 값이 나오나</b>: <code>size()</code>는 <code>size_t</code>(부호 없는 64비트)를 반환합니다. 부호가 없으면 음수를 표현할 수 없으므로 <code>0 - 1</code>이 <b>표현 가능한 최대값으로 한 바퀴 돌아갑니다</b>(2⁶⁴−1).<ul><li>그래서 <code>for (int i = 0; i &lt; v.size() - 1; i++)</code>가 빈 벡터에서 사실상 무한 루프가 됩니다</li><li>대책: <code>(int)v.size()</code>로 캐스팅하거나 <code>i + 1 &lt; v.size()</code>로 씁니다</li></ul>' },
+  ],
+},
+
+/* ══════════════════ 5. string ══════════════════ */
+{
+  id: 'u5', group: '자료구조', title: 'string (문자열)',
+  syntax: [
+    { h: '기본',
+      code: `string s = "hello";
+s.size()  또는  s.length()     // 5
+s[0]                            // 'h'
+s += "!";                       // 이어붙이기
+s.substr(1, 3)                  // "ell"  (시작, 개수)
+s.find("ll")                    // 위치, 없으면 string::npos`,
+      note: '🔴 <code>substr(시작, <b>개수</b>)</code> 입니다. Python의 <code>s[1:4]</code>는 (시작, <b>끝</b>)이라 의미가 다릅니다.' },
+    { h: '없음 판정',
+      code: `if (s.find("x") == string::npos) {
+    // 없음
+}`,
+      note: '<code>find</code>는 못 찾으면 <code>string::npos</code>를 반환합니다. <code>-1</code>과 비교하면 안 됩니다.' },
+    { h: '문자 ↔ 숫자',
+      code: `int d = c - '0';       // '7' → 7
+char c = d + '0';      // 7 → '7'
+
+int n = stoi("123");           // 문자열 → int
+long long m = stoll("123456789012");
+string t = to_string(456);     // 숫자 → 문자열`,
+      note: '🔴 <code>c - \'0\'</code> 패턴을 외우세요. 자릿수 분해에 매번 씁니다.' },
+    { h: '문자 판정 · 변환',
+      code: `isdigit(c)  isalpha(c)  isupper(c)  islower(c)
+toupper(c)  tolower(c)
+
+for (char& c : s) c = toupper(c);   // 전부 대문자`,
+      note: '' },
+    { h: '정렬 · 뒤집기',
+      code: `sort(s.begin(), s.end());       // 문자열도 정렬 가능
+reverse(s.begin(), s.end());`,
+      note: '' },
+
+    { h: '🔴 문자를 바꾸려면 &amp; 를 붙입니다',
+      code: `string s = "hello";
+
+for (char c : s)                // ❌ c 는 복사본 — s 는 안 바뀜
+    c = toupper(c);
+
+for (char& c : s)               // ✅ & = 원본을 가리킴
+    c = toupper(c);             //    s 가 "HELLO" 로 바뀜
+
+s[0] = 'H';                     // ✅ 인덱스로 직접 바꿔도 됩니다`,
+      note: '<b>왜 <code>&amp;</code>가 필요한가</b>: <code>for (char c : s)</code>는 ' +
+            '각 문자를 <b>복사해서</b> <code>c</code>에 담습니다. ' +
+            '복사본을 바꿔도 원본 문자열은 그대로입니다.<br>' +
+            '<code>&amp;</code>를 붙이면 <code>c</code>가 <b>원본 문자 자체의 별명</b>이 되어 ' +
+            '바꾸면 문자열이 바뀝니다.<br>' +
+            '💡 <code>&amp;</code>(참조)는 <b>8단원 함수 · 참조</b>에서 자세히 다룹니다. ' +
+            '여기서는 "수정하려면 <code>&amp;</code>" 만 기억하면 됩니다.' },
+  ],
+  problems: [
+    { id: 'p5a', title: '문자열 뒤집기', diff: 0,
+      desc: '문자열을 입력받아 뒤집어 출력하세요.<br><span class="io">입력: <code>hello</code> → 출력: <code>olleh</code></span>',
+      starter: `int main() {
+    string s;
+    cin >> s;
+
+    return 0;
+}`,
+      cases: [ { in: 'hello', out: 'olleh' }, { in: 'a', out: 'a' }, { in: 'ab', out: 'ba' } ],
+      solution: `int main() {
+    string s;
+    cin >> s;
+    reverse(s.begin(), s.end());
+    cout << s << '\\n';
+    return 0;
+}`,
+      hint: '<code>reverse(s.begin(), s.end())</code> 한 줄입니다.' },
+
+    { id: 'p5b', title: '회문 판정', diff: 1,
+      desc: '문자열이 앞뒤로 같으면 <code>yes</code>, 아니면 <code>no</code>.<br><span class="io">입력: <code>level</code> → <code>yes</code> / <code>hello</code> → <code>no</code></span>',
+      starter: `int main() {
+    string s;
+    cin >> s;
+
+    return 0;
+}`,
+      cases: [ { in: 'level', out: 'yes' }, { in: 'hello', out: 'no' },
+               { in: 'a', out: 'yes' }, { in: 'ab', out: 'no' }, { in: 'abba', out: 'yes' } ],
+      solution: `int main() {
+    string s;
+    cin >> s;
+    string t = s;
+    reverse(t.begin(), t.end());
+    cout << (s == t ? "yes" : "no") << '\\n';
+    return 0;
+}`,
+      hint: '뒤집어서 비교하거나, 투포인터로 양쪽에서 좁혀옵니다. 투포인터가 더 효율적입니다: <code>int l=0, r=(int)s.size()-1;</code>' },
+
+    { id: 'p5c', title: '자릿수 합', diff: 1,
+      desc: '숫자를 <b>문자열로</b> 입력받아 각 자리 숫자의 합을 출력하세요.<br><span class="io">입력: <code>12345</code> → 출력: <code>15</code></span>',
+      starter: `int main() {
+    string s;
+    cin >> s;
+
+    return 0;
+}`,
+      cases: [ { in: '12345', out: '15' }, { in: '0', out: '0' }, { in: '999', out: '27' } ],
+      solution: `int main() {
+    string s;
+    cin >> s;
+    int sum = 0;
+    for (char c : s) sum += c - '0';
+    cout << sum << '\\n';
+    return 0;
+}`,
+      hint: '<code>c - \'0\'</code> 으로 문자를 숫자로 바꿔 더합니다.' },
+
+    { id: 'p5d', title: '대소문자 뒤집기', diff: 1,
+      desc: '대문자는 소문자로, 소문자는 대문자로 바꿔 출력하세요.<br><span class="io">입력: <code>Hello</code> → 출력: <code>hELLO</code></span>',
+      starter: `int main() {
+    string s;
+    cin >> s;
+
+    return 0;
+}`,
+      cases: [ { in: 'Hello', out: 'hELLO' }, { in: 'ABC', out: 'abc' }, { in: 'xyz', out: 'XYZ' } ],
+      solution: `int main() {
+    string s;
+    cin >> s;
+    for (char& c : s)
+        c = isupper(c) ? tolower(c) : toupper(c);
+    cout << s << '\\n';
+    return 0;
+}`,
+      hint: '🔴 <code>char&amp; c</code> — 참조로 받아야 원본이 바뀝니다. <code>char c</code>로 받으면 복사라 안 바뀝니다.',
+      why: '<b>왜 <code>char&amp; c</code>인가</b>: <code>for (char c : s)</code>는 각 문자를 <b>복사</b>해서 가져오므로 <code>c</code>를 바꿔도 원본 <code>s</code>는 그대로입니다. <code>&amp;</code>를 붙여 참조로 받아야 원본이 바뀝니다.<br>💡 반대로 <b>읽기만</b> 할 때 <code>string</code>처럼 큰 값은 <code>const string&amp;</code>로 받아야 복사 비용을 피합니다 (실측 39배 차이).' },
+  ],
+},
+
+/* ══════════════════ 신규: 변수 선언 위치 (스코프) ══════════════════ */
+{
+  id: 'us', group: '기초', title: '변수 선언 위치',
+  syntax: [
+    { h: '스코프 — 변수가 살아있는 범위',
+      code: `int main() {
+    int a = 1;                 // main 전체에서 사용 가능
+    {
+        int b = 2;             // 이 블록 안에서만
+        cout << a << b;        // 둘 다 OK
+    }
+    // cout << b;              // ❌ 에러: b 는 이미 사라짐
+}`,
+      note: '변수는 <b>선언된 중괄호 <code>{}</code> 안에서만</b> 살아있습니다. 블록이 끝나면 사라집니다.<br>' +
+            '<b>왜 이런 규칙이 있나</b>: 변수가 필요한 범위를 좁히면 ' +
+            '① 이름 충돌이 줄고 ② 메모리를 바로 회수하고 ③ "이 변수가 어디서 바뀌나"를 추적하기 쉽습니다.' },
+
+    { h: '🔴 for 루프 변수는 루프 안에서만',
+      code: `for (int i = 0; i < n; i++) {
+    cout << i;                 // OK
+}
+// cout << i;                  // ❌ 에러: i 는 루프와 함께 사라짐
+
+int i;                         // 루프 밖에서도 쓰려면 밖에 선언
+for (i = 0; i < n; i++) { }
+cout << i;                     // OK (n 이 됨)`,
+      note: '보통은 <code>for (int i = ...)</code>가 맞습니다. ' +
+            '루프가 끝난 뒤 <b>그 값을 써야 할 때만</b> 밖에 선언하세요.' },
+
+    { h: '🔴 어디에 선언해야 하나 — 3가지 원칙',
+      code: `int main() {
+    int n;
+    cin >> n;
+
+    // ① 쓰는 곳에 최대한 가깝게
+    vector<int> v(n);
+    for (int i = 0; i < n; i++) cin >> v[i];
+
+    // ② 누적 변수는 루프 "밖" — 루프 안이면 매번 초기화됨
+    long long sum = 0;
+    for (int x : v) sum += x;
+
+    // ③ 임시 변수는 루프 "안" — 매번 새로 쓰는 값
+    for (int i = 0; i < n; i++) {
+        int doubled = v[i] * 2;
+        cout << doubled << ' ';
+    }
+}`,
+      note: '<b>②와 ③의 차이가 핵심입니다.</b><br>' +
+            '· <b>누적</b>(합계, 최대값, 개수)은 루프를 넘어 유지되어야 하므로 <b>밖</b><br>' +
+            '· <b>임시</b>(이번 회차에만 쓰는 값)는 <b>안</b>에 두면 의도가 분명하고 실수가 줄어듭니다' },
+
+    { h: '🔴 가장 흔한 실수 — 누적 변수를 루프 안에 선언',
+      code: `// ❌ sum 이 매번 0 으로 초기화되어 마지막 값만 남습니다
+for (int x : v) {
+    long long sum = 0;
+    sum += x;
+}
+
+// ✅ 루프 밖에서 한 번만
+long long sum = 0;
+for (int x : v) sum += x;`,
+      note: '컴파일은 되고 에러도 안 나지만 <b>답이 틀립니다.</b> ' +
+            '이런 버그는 찾기 어려우니 "누적은 밖"을 반사적으로 기억하세요.' },
+
+    { h: '최댓값 찾기 — 초기화 값이 중요합니다',
+      code: `// ❌ 전부 음수인 입력에서 틀립니다
+int best = 0;
+for (int x : v) best = max(best, x);
+
+// ✅ 가능한 최솟값으로 초기화
+int best = INT_MIN;                 // <climits>
+long long best = LLONG_MIN;
+
+// ✅ 또는 첫 원소로 시작 (비어있지 않을 때)
+int best = v[0];
+for (int x : v) best = max(best, x);`,
+      note: '<b>왜</b>: <code>best = 0</code>은 "0보다 큰 값"만 찾습니다. ' +
+            '<code>[-5, -2, -9]</code>의 최댓값은 −2 인데 0 이 나옵니다.<br>' +
+            '💡 <b>최댓값은 최솟값으로, 최솟값은 최댓값으로</b> 초기화합니다.' },
+
+    { h: '전역 변수 — 코테에서 쓸 때와 안 쓸 때',
+      code: `int n, m;                      // 전역: 모든 함수에서 접근
+vector<vector<int>> grid;
+bool visited[1001][1001];      // 🔴 전역 배열은 자동으로 false/0
+
+void dfs(int r, int c) {
+    visited[r][c] = true;      // 인자로 넘기지 않아도 됨
+    // ...
+}
+
+int main() {
+    // 지역 배열은 초기화되지 않습니다 (쓰레기값)
+    bool local[100];           // ❌ 값이 뭔지 모름
+    bool local2[100] = {};     // ✅ 전부 false
+}`,
+      note: '<b>전역을 쓰는 이유</b> (코테 한정):<br>' +
+            '· DFS 재귀에서 인자를 줄일 수 있습니다<br>' +
+            '· 큰 배열을 <b>스택이 아닌 영역</b>에 둬서 스택 오버플로를 피합니다 ' +
+            '(지역 배열 <code>int a[1000000]</code>은 스택 4MB 요구 → 터짐)<br>' +
+            '· 자동으로 0/false 로 초기화됩니다<br><br>' +
+            '🔴 <b>함정 — 전역 변수는 한 번만 초기화됩니다.</b> 같은 함수를 여러 번 호출하면 이전 값이 남아 누적됩니다. 채점기가 여러 테스트케이스를 연속 실행하는 경우 답이 틀어지므로, <b>쓰기 전에 직접 0 으로 초기화</b>하는 습관을 들이세요.<br><br>' +
+            '🔴 <b>실무에서는 피하세요.</b> 어디서 바뀌는지 추적이 안 돼 버그의 원천입니다. ' +
+            '코테는 코드가 짧고 수명이 짧아 예외로 허용됩니다.' },
+
+    { h: '🔴 큰 배열은 어디에 선언하나 — 스택 한계',
+      code: `int main() {
+    int a[1000000];              // ❌ 스택 4MB 요구 → 크래시 가능
+    vector<int> b(1000000);      // ✅ 힙에 할당 (안전)
+}
+
+int c[1000000];                  // ✅ 전역 = 정적 영역 (안전)`,
+      note: '<b>왜</b>: 지역 변수는 <b>스택</b>에 놓이고, 스택은 보통 1~8MB 뿐입니다. ' +
+            '<code>vector</code>는 내부적으로 <b>힙</b>을 쓰고, 전역 변수는 <b>정적 영역</b>에 들어가 ' +
+            '둘 다 훨씬 큰 공간을 씁니다.<br>' +
+            '💡 <b>기준: 원소 10만 개 이상이면 <code>vector</code> 또는 전역으로.</b>' },
+
+    { h: 'const — 바뀌지 않는 값',
+      code: `const int MAX_N = 100000;      // 이름을 주면 의도가 드러납니다
+const int INF = 1e9;
+const long long LINF = 1e18;
+
+int dr[4] = {-1, 1, 0, 0};     // 방향 배열도 const 로 둘 수 있습니다`,
+      note: '<b>왜 쓰나</b>: ① 실수로 바꾸는 것을 컴파일러가 막아줍니다 ' +
+            '② <code>if (x == 4)</code> 대신 <code>if (x == DIRECTIONS)</code>로 읽히게 합니다. ' +
+            '<b>코드 품질 평가에서 유리합니다.</b>' },
+  ],
+  problems: [
+    { id: 'usa', title: '누적 변수 위치 고치기', diff: 0,
+      desc: 'N개의 정수 합을 출력하세요. <b>starter 코드에 버그가 있습니다</b> — ' +
+            '누적 변수가 잘못된 위치에 있어 마지막 값만 나옵니다. 찾아서 고치세요.<br>' +
+            '<span class="io">입력: <code>4</code> / <code>1 2 3 4</code> → 출력: <code>10</code></span>',
+      starter: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    cin >> n;
+
+    for (int i = 0; i < n; i++) {
+        long long sum = 0;        // 🔴 이 위치가 문제입니다
+        int x;
+        cin >> x;
+        sum += x;
+        if (i == n - 1) cout << sum << '\\n';
+    }
+    return 0;
+}`,
+      cases: [ { in: '4\n1 2 3 4', out: '10' }, { in: '1\n7', out: '7' },
+               { in: '3\n-1 -2 -3', out: '-6' } ],
+      solution: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    cin >> n;
+
+    long long sum = 0;            // 루프 밖: 회차를 넘어 유지되어야 함
+    for (int i = 0; i < n; i++) {
+        int x;                    // 루프 안: 이번 회차에만 쓰는 임시값
+        cin >> x;
+        sum += x;
+    }
+    cout << sum << '\\n';
+    return 0;
+}`,
+      hint: '<code>sum</code>을 루프 <b>밖</b>으로 꺼내고, 출력도 루프가 끝난 뒤로 옮깁니다. ' +
+            '반대로 <code>x</code>는 매 회차에 새 값이니 루프 안이 맞습니다.',
+      why: '<b>왜 위치가 중요한가</b>: 루프 안에 <code>long long sum = 0;</code>을 두면 ' +
+           '매 회차마다 <b>새 변수가 만들어지고 0으로 초기화</b>됩니다. ' +
+           '이전 회차의 값이 사라지므로 누적이 되지 않습니다.' +
+           '<ul><li><b>누적값</b>(합·최대·개수)은 루프를 넘어 살아야 하므로 <b>밖</b></li>' +
+           '<li><b>임시값</b>(이번 회차 입력)은 <b>안</b>에 둬야 의도가 분명합니다</li>' +
+           '<li>컴파일 에러가 안 나고 답만 틀리는 유형이라 특히 주의해야 합니다</li></ul>' },
+
+    { id: 'usb', title: '최댓값 초기화', diff: 1,
+      desc: 'N개의 정수 중 최댓값을 출력하세요. <b>음수만 들어오는 경우도 있습니다.</b><br>' +
+            '<span class="io">입력: <code>3</code> / <code>-5 -2 -9</code> → 출력: <code>-2</code></span><br>' +
+            '🔴 <code>best = 0</code> 으로 시작하면 틀립니다. 왜 그런지 생각해보세요.',
+      starter: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    cin >> n;
+
+    // best 를 무엇으로 초기화해야 할까요?
+
+    return 0;
+}`,
+      cases: [ { in: '3\n-5 -2 -9', out: '-2' }, { in: '4\n3 1 4 1', out: '4' },
+               { in: '1\n-7', out: '-7' }, { in: '2\n0 -1', out: '0' } ],
+      solution: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    cin >> n;
+
+    int best = INT_MIN;           // 가능한 최솟값으로 시작
+    for (int i = 0; i < n; i++) {
+        int x;
+        cin >> x;
+        best = max(best, x);
+    }
+    cout << best << '\\n';
+    return 0;
+}`,
+      hint: '<code>INT_MIN</code>(<code>&lt;climits&gt;</code>)으로 초기화하거나, ' +
+            '첫 원소를 읽어 <code>best</code>로 삼고 나머지와 비교합니다.',
+      why: '<b>왜 0 으로 초기화하면 안 되나</b>: <code>best = 0</code>은 사실상 ' +
+           '"0과 비교해서 더 큰 값"을 찾습니다. 모든 값이 음수면 0 이 끝까지 남아 답이 틀립니다.' +
+           '<ul><li><b>최댓값은 가능한 최솟값으로</b>(<code>INT_MIN</code> / <code>LLONG_MIN</code>)</li>' +
+           '<li><b>최솟값은 가능한 최댓값으로</b>(<code>INT_MAX</code> / <code>LLONG_MAX</code>)</li>' +
+           '<li>또는 <b>첫 원소로 시작</b>하면 범위를 신경쓰지 않아도 됩니다 (단 배열이 비어있지 않아야 함)</li></ul>' },
+
+    { id: 'usc', title: '큰 배열은 어디에', diff: 1,
+      desc: '크기 100만의 배열에 <code>0..N-1</code>을 채우고 합을 출력하세요.<br>' +
+            '<span class="io">입력: <code>1000000</code> → 출력: <code>499999500000</code></span><br>' +
+            '🔴 <code>int a[1000000];</code>을 <code>main</code> 안에 선언하면 스택이 터질 수 있습니다.',
+      starter: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    cin >> n;
+
+    // 100만 개 배열을 어디에, 어떻게 선언할까요?
+
+    return 0;
+}`,
+      cases: [ { in: '1000000', out: '499999500000' }, { in: '1', out: '0' },
+               { in: '10', out: '45' } ],
+      solution: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    cin >> n;
+
+    vector<int> a(n);             // 힙에 할당 — 크기가 커도 안전
+    for (int i = 0; i < n; i++) a[i] = i;
+
+    long long sum = 0;            // 합은 long long (5000억)
+    for (int x : a) sum += x;
+
+    cout << sum << '\\n';
+    return 0;
+}`,
+      hint: '<code>vector&lt;int&gt; a(n);</code> 으로 선언하면 힙을 쓰므로 안전합니다. ' +
+            '합이 약 5000억이라 <code>long long</code>이 필요합니다.',
+      why: '<b>왜 지역 배열이 위험한가</b>: 지역 변수는 <b>스택</b>에 놓이고, ' +
+           '스택 크기는 보통 1~8MB 입니다. <code>int a[1000000]</code>은 4MB 를 요구해 ' +
+           '환경에 따라 스택 오버플로로 바로 죽습니다.' +
+           '<ul><li><code>vector</code>는 내부적으로 <b>힙</b>을 씁니다 — 수 GB 까지 가능</li>' +
+           '<li><b>전역 배열</b>은 <b>정적 영역</b>에 들어가 역시 안전하고, 자동으로 0 초기화됩니다</li>' +
+           '<li>기준: <b>원소 10만 개 이상이면 <code>vector</code> 또는 전역</b></li></ul>' },
+  ],
+},
+
 /* ══════════════════ 신규: 함수 · 참조 ══════════════════ */
 {
   id: 'uf', group: '기초', title: '함수 · 참조',
@@ -534,256 +1096,6 @@ int main() {
       hint: 'range-for 로 더합니다. 반환형이 <code>long long</code> 이니 <code>sum</code> 도 <code>long long</code> 으로. ' +
             '<code>const</code> 라서 함수 안에서 <code>v</code> 를 수정하려 하면 컴파일 에러가 납니다 — 한 번 해보세요.',
       why: '<b>왜 <code>const vector&lt;int&gt;&amp;</code>인가</b>: 세 가지를 동시에 얻습니다.<ul><li><b>&amp;</b> — 복사하지 않습니다. 값으로 받으면 원소를 전부 복사합니다 (실측: 100만 원소 100회 전달에서 65.8ms vs 0.0ms)</li><li><b>const</b> — 실수로 수정하는 것을 컴파일러가 막아줍니다</li><li>읽기 전용이라는 <b>의도</b>가 코드에 드러납니다</li></ul>💡 기준: <b>8바이트보다 큰 타입은 참조로</b>. <code>int</code>는 복사가 더 빠릅니다.' },
-  ],
-},
-
-/* ══════════════════ 4. vector ══════════════════ */
-{
-  id: 'u4', group: '자료구조', title: 'vector (배열)',
-  syntax: [
-    { h: '만들기',
-      code: `vector<int> v;                   // 빈 벡터
-vector<int> v(5);                // 크기 5, 전부 0
-vector<int> v(5, -1);            // 크기 5, 전부 -1
-vector<int> v = {1, 2, 3};       // 초기값
-
-vector<vector<int>> g(n, vector<int>(m, 0));   // n×m 2차원`,
-      note: '🔴 2차원 선언을 외우세요. 격자 문제에서 매번 씁니다.' },
-    { h: '쓰기',
-      code: `v.push_back(10);     // 뒤에 추가
-v.pop_back();        // 뒤에서 제거
-v[i]                 // i번째 (0부터)
-v.size()             // 크기
-v.empty()            // 비었나
-v.back()             // 마지막 원소
-v.clear()            // 전부 삭제`,
-      note: '' },
-    { h: '순회',
-      code: `for (int x : v) cout << x;        // 값 복사 (읽기만)
-for (int& x : v) x *= 2;          // 🔴 참조 — 수정하려면 &
-for (int i = 0; i < (int)v.size(); i++) ...`,
-      note: '🔴 수정할 거면 <code>int&amp;</code> 로 받아야 합니다. <code>int x</code>는 복사라 원본이 안 바뀝니다.' },
-    { h: '🔴 size()의 함정',
-      code: `vector<int> v;             // 비어있음
-v.size() - 1              // → 18446744073709551615 (!)
-
-// ❌ 사실상 무한루프
-for (int i = 0; i < v.size() - 1; i++)
-
-// ✅ int로 캐스팅
-for (int i = 0; i + 1 < (int)v.size(); i++)`,
-      note: '<code>size()</code>는 <b>부호 없는</b> 정수를 반환합니다. <code>0 - 1</code>이 음수가 아니라 엄청 큰 수가 됩니다. 직접 출력해서 확인해보세요.' },
-  ],
-  problems: [
-    { id: 'p4a', title: 'N개 입력받아 거꾸로', diff: 0,
-      desc: 'N과 N개의 정수를 입력받아 역순으로 출력하세요.<br><span class="io">입력: <code>4</code> / <code>1 2 3 4</code> → 출력: <code>4 3 2 1</code></span>',
-      starter: `int main() {
-    int n;
-    cin >> n;
-    vector<int> v(n);
-    for (int i = 0; i < n; i++) cin >> v[i];
-
-    return 0;
-}`,
-      cases: [ { in: '4\n1 2 3 4', out: '4 3 2 1' }, { in: '1\n7', out: '7' } ],
-      solution: `int main() {
-    int n;
-    cin >> n;
-    vector<int> v(n);
-    for (int i = 0; i < n; i++) cin >> v[i];
-    for (int i = n - 1; i >= 0; i--) {
-        cout << v[i];
-        if (i > 0) cout << ' ';
-    }
-    cout << '\\n';
-    return 0;
-}`,
-      hint: '뒤에서부터 순회하거나, <code>reverse(v.begin(), v.end())</code> 후 출력합니다.' },
-
-    { id: 'p4b', title: '최대 최소 합', diff: 0,
-      desc: 'N개의 정수를 입력받아 <code>최대 최소 합</code> 을 공백으로 구분해 출력하세요.<br><span class="io">입력: <code>4</code> / <code>3 1 4 1</code> → 출력: <code>4 1 9</code></span>',
-      starter: `int main() {
-    int n;
-    cin >> n;
-    vector<int> v(n);
-    for (int i = 0; i < n; i++) cin >> v[i];
-
-    return 0;
-}`,
-      cases: [ { in: '4\n3 1 4 1', out: '4 1 9' }, { in: '1\n5', out: '5 5 5' },
-               { in: '3\n-1 -5 -3', out: '-1 -5 -9' } ],
-      solution: `int main() {
-    int n;
-    cin >> n;
-    vector<int> v(n);
-    for (int i = 0; i < n; i++) cin >> v[i];
-    long long sum = accumulate(v.begin(), v.end(), 0LL);
-    cout << *max_element(v.begin(), v.end()) << ' '
-         << *min_element(v.begin(), v.end()) << ' '
-         << sum << '\\n';
-    return 0;
-}`,
-      hint: '<code>*max_element(v.begin(), v.end())</code> — 앞의 <code>*</code>를 빼먹지 마세요 (반복자를 반환하므로). 합은 <code>accumulate(..., 0LL)</code>.',
-      why: '<b>왜 <code>*max_element</code>에 <code>*</code>를 붙이나</b>: 이 함수는 값이 아니라 <b>반복자(위치)</b>를 반환합니다. <code>*</code>로 그 위치의 값을 꺼내야 합니다.<ul><li><code>accumulate(..., 0LL)</code>의 <code>0LL</code>이 중요합니다 — 초기값의 타입이 누적 타입을 결정하므로 <code>0</code>으로 두면 int 로 누적되어 넘칩니다</li></ul>' },
-    { id: 'p4c', title: '2차원 격자 합', diff: 1,
-      desc: 'n, m과 n×m 격자를 입력받아 모든 값의 합을 출력하세요.<br><span class="io">입력: <code>2 3</code> / <code>1 2 3</code> / <code>4 5 6</code> → 출력: <code>21</code></span>',
-      starter: `int main() {
-    int n, m;
-    cin >> n >> m;
-    vector<vector<int>> g(n, vector<int>(m));
-    // 입력받기
-
-    return 0;
-}`,
-      cases: [ { in: '2 3\n1 2 3\n4 5 6', out: '21' }, { in: '1 1\n5', out: '5' } ],
-      solution: `int main() {
-    int n, m;
-    cin >> n >> m;
-    vector<vector<int>> g(n, vector<int>(m));
-    for (int i = 0; i < n; i++)
-        for (int j = 0; j < m; j++)
-            cin >> g[i][j];
-    long long sum = 0;
-    for (int i = 0; i < n; i++)
-        for (int j = 0; j < m; j++)
-            sum += g[i][j];
-    cout << sum << '\\n';
-    return 0;
-}`,
-      hint: '2중 루프로 입력받고, 2중 루프로 더합니다. 합은 <code>long long</code>.' },
-
-    { id: 'p4d', title: 'size() 함정 확인', diff: 1,
-      desc: '빈 vector의 <code>size() - 1</code> 값을 출력하세요.<br>' +
-            '🔴 왜 이런 값이 나오는지 이해하는 게 목적입니다. 예상과 다를 겁니다.',
-      starter: `int main() {
-    vector<int> v;      // 비어있음
-    cout << v.size() - 1 << '\\n';
-    return 0;
-}`,
-      cases: [ { in: '', out: '18446744073709551615' } ],
-      solution: `int main() {
-    vector<int> v;
-    cout << v.size() - 1 << '\\n';
-    return 0;
-}`,
-      hint: '그냥 실행 버튼을 눌러보세요. <code>size()</code>가 부호 없는 64비트라 <code>0-1</code>이 최대값으로 돌아갑니다. 이게 루프 조건에서 무한루프를 만드는 원인입니다.',
-      why: '<b>왜 이런 값이 나오나</b>: <code>size()</code>는 <code>size_t</code>(부호 없는 64비트)를 반환합니다. 부호가 없으면 음수를 표현할 수 없으므로 <code>0 - 1</code>이 <b>표현 가능한 최대값으로 한 바퀴 돌아갑니다</b>(2⁶⁴−1).<ul><li>그래서 <code>for (int i = 0; i &lt; v.size() - 1; i++)</code>가 빈 벡터에서 사실상 무한 루프가 됩니다</li><li>대책: <code>(int)v.size()</code>로 캐스팅하거나 <code>i + 1 &lt; v.size()</code>로 씁니다</li></ul>' },
-  ],
-},
-
-/* ══════════════════ 5. string ══════════════════ */
-{
-  id: 'u5', group: '자료구조', title: 'string (문자열)',
-  syntax: [
-    { h: '기본',
-      code: `string s = "hello";
-s.size()  또는  s.length()     // 5
-s[0]                            // 'h'
-s += "!";                       // 이어붙이기
-s.substr(1, 3)                  // "ell"  (시작, 개수)
-s.find("ll")                    // 위치, 없으면 string::npos`,
-      note: '🔴 <code>substr(시작, <b>개수</b>)</code> 입니다. Python의 <code>s[1:4]</code>는 (시작, <b>끝</b>)이라 의미가 다릅니다.' },
-    { h: '없음 판정',
-      code: `if (s.find("x") == string::npos) {
-    // 없음
-}`,
-      note: '<code>find</code>는 못 찾으면 <code>string::npos</code>를 반환합니다. <code>-1</code>과 비교하면 안 됩니다.' },
-    { h: '문자 ↔ 숫자',
-      code: `int d = c - '0';       // '7' → 7
-char c = d + '0';      // 7 → '7'
-
-int n = stoi("123");           // 문자열 → int
-long long m = stoll("123456789012");
-string t = to_string(456);     // 숫자 → 문자열`,
-      note: '🔴 <code>c - \'0\'</code> 패턴을 외우세요. 자릿수 분해에 매번 씁니다.' },
-    { h: '문자 판정 · 변환',
-      code: `isdigit(c)  isalpha(c)  isupper(c)  islower(c)
-toupper(c)  tolower(c)
-
-for (char& c : s) c = toupper(c);   // 전부 대문자`,
-      note: '' },
-    { h: '정렬 · 뒤집기',
-      code: `sort(s.begin(), s.end());       // 문자열도 정렬 가능
-reverse(s.begin(), s.end());`,
-      note: '' },
-  ],
-  problems: [
-    { id: 'p5a', title: '문자열 뒤집기', diff: 0,
-      desc: '문자열을 입력받아 뒤집어 출력하세요.<br><span class="io">입력: <code>hello</code> → 출력: <code>olleh</code></span>',
-      starter: `int main() {
-    string s;
-    cin >> s;
-
-    return 0;
-}`,
-      cases: [ { in: 'hello', out: 'olleh' }, { in: 'a', out: 'a' }, { in: 'ab', out: 'ba' } ],
-      solution: `int main() {
-    string s;
-    cin >> s;
-    reverse(s.begin(), s.end());
-    cout << s << '\\n';
-    return 0;
-}`,
-      hint: '<code>reverse(s.begin(), s.end())</code> 한 줄입니다.' },
-
-    { id: 'p5b', title: '회문 판정', diff: 1,
-      desc: '문자열이 앞뒤로 같으면 <code>yes</code>, 아니면 <code>no</code>.<br><span class="io">입력: <code>level</code> → <code>yes</code> / <code>hello</code> → <code>no</code></span>',
-      starter: `int main() {
-    string s;
-    cin >> s;
-
-    return 0;
-}`,
-      cases: [ { in: 'level', out: 'yes' }, { in: 'hello', out: 'no' },
-               { in: 'a', out: 'yes' }, { in: 'ab', out: 'no' }, { in: 'abba', out: 'yes' } ],
-      solution: `int main() {
-    string s;
-    cin >> s;
-    string t = s;
-    reverse(t.begin(), t.end());
-    cout << (s == t ? "yes" : "no") << '\\n';
-    return 0;
-}`,
-      hint: '뒤집어서 비교하거나, 투포인터로 양쪽에서 좁혀옵니다. 투포인터가 더 효율적입니다: <code>int l=0, r=(int)s.size()-1;</code>' },
-
-    { id: 'p5c', title: '자릿수 합', diff: 1,
-      desc: '숫자를 <b>문자열로</b> 입력받아 각 자리 숫자의 합을 출력하세요.<br><span class="io">입력: <code>12345</code> → 출력: <code>15</code></span>',
-      starter: `int main() {
-    string s;
-    cin >> s;
-
-    return 0;
-}`,
-      cases: [ { in: '12345', out: '15' }, { in: '0', out: '0' }, { in: '999', out: '27' } ],
-      solution: `int main() {
-    string s;
-    cin >> s;
-    int sum = 0;
-    for (char c : s) sum += c - '0';
-    cout << sum << '\\n';
-    return 0;
-}`,
-      hint: '<code>c - \'0\'</code> 으로 문자를 숫자로 바꿔 더합니다.' },
-
-    { id: 'p5d', title: '대소문자 뒤집기', diff: 1,
-      desc: '대문자는 소문자로, 소문자는 대문자로 바꿔 출력하세요.<br><span class="io">입력: <code>Hello</code> → 출력: <code>hELLO</code></span>',
-      starter: `int main() {
-    string s;
-    cin >> s;
-
-    return 0;
-}`,
-      cases: [ { in: 'Hello', out: 'hELLO' }, { in: 'ABC', out: 'abc' }, { in: 'xyz', out: 'XYZ' } ],
-      solution: `int main() {
-    string s;
-    cin >> s;
-    for (char& c : s)
-        c = isupper(c) ? tolower(c) : toupper(c);
-    cout << s << '\\n';
-    return 0;
-}`,
-      hint: '🔴 <code>char&amp; c</code> — 참조로 받아야 원본이 바뀝니다. <code>char c</code>로 받으면 복사라 안 바뀝니다.',
-      why: '<b>왜 <code>char&amp; c</code>인가</b>: <code>for (char c : s)</code>는 각 문자를 <b>복사</b>해서 가져오므로 <code>c</code>를 바꿔도 원본 <code>s</code>는 그대로입니다. <code>&amp;</code>를 붙여 참조로 받아야 원본이 바뀝니다.<br>💡 반대로 <b>읽기만</b> 할 때 <code>string</code>처럼 큰 값은 <code>const string&amp;</code>로 받아야 복사 비용을 피합니다 (실측 39배 차이).' },
   ],
 },
 
@@ -1434,6 +1746,1495 @@ int main() {
       why: '<b>왜 메모이제이션이 필요한가</b>: 단순 재귀는 같은 값을 반복 계산합니다. <code>fib(50)</code>이면 호출 횟수가 약 2⁵⁰(1000조)회라 사실상 끝나지 않습니다.<ul><li>한 번 계산한 값을 저장하면 각 n 을 <b>한 번만</b> 계산 → O(N)</li><li>이게 <b>DP(동적 계획법)의 출발점</b>입니다. "겹치는 부분 문제"를 저장해 재사용하는 것이 DP 의 핵심입니다</li></ul>' },
   ],
 },
+/* ══════════════════ 신규: 완전탐색 ══════════════════ */
+{
+  id: 'ub', group: '알고리즘', title: '완전탐색',
+  syntax: [
+    { h: '🔴 제약조건이 작으면 완전탐색이 정답입니다',
+      code: `N ≤ 10      →  O(N!)   모든 순열    (10! = 362만)
+N ≤ 20      →  O(2^N)  모든 부분집합 (2^20 = 104만)
+N ≤ 100     →  O(N^3)  3중 루프     (100만)
+N ≤ 1,000   →  O(N^2)  2중 루프     (100만)
+N ≤ 100,000 →  O(N log N) 이상이 필요`,
+      note: '<b>왜 이 표가 중요한가</b>: 1초에 약 1억 번 연산이 기준입니다. ' +
+            '제약조건을 보면 <b>허용되는 복잡도가 역산</b>되고, 그게 곧 "어떤 방법을 쓰라는 뜻"입니다.<br>' +
+            '🔴 <code>N ≤ 100</code>이 보이면 영리한 공식을 찾지 말고 <b>다 해보세요</b>. 그게 의도된 풀이입니다.' },
+
+    { h: '조합 — 순서가 무관할 때',
+      code: `// 2개 고르기
+for (int i = 0; i < n; i++)
+    for (int j = i + 1; j < n; j++)        // 🔴 j 는 i+1 부터
+        check(v[i], v[j]);
+
+// 3개 고르기
+for (int i = 0; i < n; i++)
+    for (int j = i + 1; j < n; j++)
+        for (int k = j + 1; k < n; k++)
+            check(v[i], v[j], v[k]);`,
+      note: '<b>왜 <code>j = i + 1</code> 인가</b>: <code>j = 0</code>부터 돌면 ' +
+            '① 같은 원소를 두 번 고르고(<code>i == j</code>) ' +
+            '② <code>(1,2)</code>와 <code>(2,1)</code>을 중복으로 셉니다.<br>' +
+            '뒤 인덱스부터 시작하면 <b>각 조합이 정확히 한 번</b> 나옵니다.' },
+
+    { h: '🔴 비트마스크 — 모든 부분집합',
+      code: `int n = v.size();                     // n ≤ 20
+for (int mask = 0; mask < (1 << n); mask++) {
+    long long sum = 0;
+    for (int i = 0; i < n; i++)
+        if (mask & (1 << i))              // i 번째 비트가 켜졌나
+            sum += v[i];
+    // mask 하나가 부분집합 하나
+}`,
+      note: '<b>원리</b>: n개 원소 각각이 "포함/제외" 2가지 → 전체 2ⁿ가지. ' +
+            '이걸 <b>n비트 이진수</b>로 표현합니다.<br>' +
+            '· <code>mask = 5 = 101₂</code> → 0번, 2번 원소를 선택<br>' +
+            '· <code>1 &lt;&lt; n</code> = 2ⁿ (비트를 n칸 왼쪽으로 = 2를 n번 곱하기)<br>' +
+            '· <code>mask &amp; (1 &lt;&lt; i)</code> = i번째 비트만 남기고 나머지를 0으로 → 켜졌으면 0이 아님<br><br>' +
+            '💡 임베디드에서 레지스터 비트를 다루는 것과 같은 연산입니다.' },
+
+    { h: '순열 — 순서가 중요할 때',
+      code: `sort(v.begin(), v.end());             // 🔴 정렬 상태에서 시작
+do {
+    check(v);                          // 이 순서로 한 번
+} while (next_permutation(v.begin(), v.end()));`,
+      note: '<b>왜 정렬이 필요한가</b>: <code>next_permutation</code>은 ' +
+            '"현재보다 사전순으로 바로 다음인 순열"을 만듭니다. ' +
+            '가장 작은 순열(=정렬된 상태)에서 시작하지 않으면 <b>앞쪽 순열들을 건너뜁니다</b>.<br>' +
+            '· 반환값: 다음 순열이 있으면 <code>true</code>, 마지막이면 <code>false</code><br>' +
+            '· 그래서 <code>do-while</code>을 씁니다 (첫 순열도 검사해야 하므로)' },
+
+    { h: '재귀로 뽑기 (백트래킹)',
+      code: `vector<int> picked;
+
+void pick(int start, int k, const vector<int>& v) {
+    if ((int)picked.size() == k) {      // ① 다 뽑았으면
+        check(picked);
+        return;
+    }
+    for (int i = start; i < (int)v.size(); i++) {
+        picked.push_back(v[i]);         // ② 고르고
+        pick(i + 1, k, v);              // ③ 다음으로
+        picked.pop_back();              // ④ 되돌리기 ← 핵심
+    }
+}`,
+      note: '<b>왜 <code>pop_back()</code>이 필요한가</b>: 재귀가 돌아온 뒤 ' +
+            '<code>picked</code>를 원래대로 되돌려야 다음 <code>i</code>를 올바른 상태에서 시작합니다. ' +
+            '이 "고르고 → 들어가고 → 되돌리기"가 <b>백트래킹</b>입니다.<br>' +
+            '💡 루프로 쓰기 어려운 경우(개수가 가변, 조건부 가지치기)에 씁니다.' },
+  ],
+  problems: [
+    { id: 'uba', title: '세 수의 합이 target', diff: 1,
+      desc: 'N개의 정수 중 <b>서로 다른 세 개</b>를 골라 합이 target이 되는 경우의 수를 출력하세요.<br>' +
+            '<span class="io">입력: <code>5 9</code> / <code>1 2 3 4 5</code> → 출력: <code>2</code> ((1,3,5),(2,3,4))</span><br>' +
+            '제약: N ≤ 100 → 복잡도 표를 보고 어떤 방법이 허용되는지 판단하세요.',
+      starter: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n, target;
+    cin >> n >> target;
+    vector<int> v(n);
+    for (int i = 0; i < n; i++) cin >> v[i];
+
+    return 0;
+}`,
+      cases: [ { in: '5 9\n1 2 3 4 5', out: '2' }, { in: '3 6\n1 2 3', out: '1' },
+               { in: '3 100\n1 2 3', out: '0' }, { in: '4 0\n0 0 0 0', out: '4' } ],
+      solution: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n, target;
+    cin >> n >> target;
+    vector<int> v(n);
+    for (int i = 0; i < n; i++) cin >> v[i];
+
+    int count = 0;
+    for (int i = 0; i < n; i++)
+        for (int j = i + 1; j < n; j++)       // j 는 i+1 부터
+            for (int k = j + 1; k < n; k++)   // k 는 j+1 부터
+                if (v[i] + v[j] + v[k] == target) count++;
+
+    cout << count << '\\n';
+    return 0;
+}`,
+      hint: 'N ≤ 100 이므로 3중 루프(100만)가 허용됩니다. ' +
+            '<code>j = i+1</code>, <code>k = j+1</code> 로 시작해 중복을 막습니다.',
+      why: '<b>왜 3중 루프가 정답인가</b>: N ≤ 100 이면 100³ = 100만 번으로 1초 안에 끝납니다. ' +
+           '제약이 작은 건 "다 해보라"는 신호입니다.' +
+           '<ul><li><b>왜 뒤 인덱스부터</b>: <code>j = 0</code>이면 (1,2,3)과 (3,2,1)을 따로 세고, ' +
+           '<code>i == j</code>로 같은 원소를 두 번 고릅니다</li>' +
+           '<li>마지막 케이스 <code>[0,0,0,0]</code>의 답이 4 입니다 — ' +
+           '값은 같지만 <b>위치가 다른 조합</b>이 4가지(4개 중 3개 고르기)</li></ul>' },
+
+    { id: 'ubb', title: '부분집합의 합', diff: 2,
+      desc: 'N개의 정수 중 일부를 골라(하나도 안 골라도 됨) 합이 target이 되는 경우의 수를 출력하세요.<br>' +
+            '<span class="io">입력: <code>3 3</code> / <code>1 2 3</code> → 출력: <code>2</code> ({3}, {1,2})</span><br>' +
+            '제약: N ≤ 20 → 비트마스크로 모든 부분집합을 돕니다.',
+      starter: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n, target;
+    cin >> n >> target;
+    vector<int> v(n);
+    for (int i = 0; i < n; i++) cin >> v[i];
+
+    // mask 를 0 부터 2^n - 1 까지
+
+    return 0;
+}`,
+      cases: [ { in: '3 3\n1 2 3', out: '2' }, { in: '3 0\n1 2 3', out: '1' },
+               { in: '1 5\n5', out: '1' }, { in: '4 5\n1 2 3 4', out: '2' } ],
+      solution: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n, target;
+    cin >> n >> target;
+    vector<int> v(n);
+    for (int i = 0; i < n; i++) cin >> v[i];
+
+    int count = 0;
+    for (int mask = 0; mask < (1 << n); mask++) {   // 2^n 가지
+        long long sum = 0;
+        for (int i = 0; i < n; i++)
+            if (mask & (1 << i)) sum += v[i];        // i번째 비트가 켜졌으면 포함
+        if (sum == target) count++;
+    }
+
+    cout << count << '\\n';
+    return 0;
+}`,
+      hint: '<code>mask</code>를 0부터 <code>(1 &lt;&lt; n) - 1</code>까지 돌리고, ' +
+            '각 <code>mask</code>에서 <code>mask &amp; (1 &lt;&lt; i)</code>로 i번째 원소 포함 여부를 봅니다.',
+      why: '<b>원리</b>: 원소 n개 각각이 "포함/제외" 2가지이므로 전체 2ⁿ가지입니다. ' +
+           '이걸 n비트 이진수 하나(<code>mask</code>)로 표현합니다.' +
+           '<ul><li><code>1 &lt;&lt; n</code>은 2ⁿ 입니다 (비트를 n칸 왼쪽 이동 = 2를 n번 곱하기)</li>' +
+           '<li><code>mask &amp; (1 &lt;&lt; i)</code>는 i번째 비트만 남깁니다 — 켜져 있으면 0이 아닌 값</li>' +
+           '<li><code>target = 0</code>일 때 답이 1 인 이유: <b>빈 집합</b>(mask=0)의 합이 0 입니다</li>' +
+           '<li>복잡도는 O(2ⁿ × n) — n=20이면 약 2000만으로 통과합니다</li></ul>' },
+
+    { id: 'ubc', title: '순열로 최대 수 만들기', diff: 2,
+      desc: 'N개의 숫자 조각을 모두 이어붙여 만들 수 있는 가장 큰 수를 출력하세요.<br>' +
+            '<span class="io">입력: <code>3</code> / <code>3 30 34</code> → 출력: <code>34330</code></span><br>' +
+            '제약: N ≤ 8 → 8! = 40,320 이므로 모든 순서를 다 만들어볼 수 있습니다.',
+      starter: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    cin >> n;
+    vector<string> v(n);
+    for (int i = 0; i < n; i++) cin >> v[i];
+
+    return 0;
+}`,
+      cases: [ { in: '3\n3 30 34', out: '34330' }, { in: '1\n5', out: '5' },
+               { in: '2\n10 2', out: '210' }, { in: '4\n9 5 34 3', out: '95343' } ],
+      solution: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    cin >> n;
+    vector<string> v(n);
+    for (int i = 0; i < n; i++) cin >> v[i];
+
+    sort(v.begin(), v.end());        // next_permutation 은 정렬에서 시작
+    string best = "";
+    do {
+        string cur = "";
+        for (const string& s : v) cur += s;
+        if (cur.size() > best.size() ||
+           (cur.size() == best.size() && cur > best)) best = cur;
+    } while (next_permutation(v.begin(), v.end()));
+
+    cout << best << '\\n';
+    return 0;
+}`,
+      hint: '<code>sort</code> 후 <code>do-while</code> + <code>next_permutation</code>. ' +
+            '길이가 다를 수 있으니 <b>길이 먼저, 같으면 사전순</b>으로 비교합니다.',
+      why: '<b>왜 정렬부터 하나</b>: <code>next_permutation</code>은 "사전순 다음 순열"을 만듭니다. ' +
+           '정렬된 상태(= 가장 작은 순열)에서 시작해야 모든 순열을 빠뜨리지 않습니다.' +
+           '<ul><li><b>왜 길이를 먼저 비교하나</b>: 문자열 비교 <code>"9" &gt; "34"</code>는 true 지만 ' +
+           '수로는 9 &lt; 34 입니다. 길이가 다르면 <b>긴 쪽이 큰 수</b>이므로 길이를 우선합니다</li>' +
+           '<li>이 문제는 조각을 모두 쓰므로 길이가 항상 같습니다. ' +
+           '하지만 일부만 고르는 변형에서는 길이 비교가 필수입니다</li>' +
+           '<li>💡 N이 크면 순열이 불가능합니다. 그때는 ' +
+           '<code>a+b &gt; b+a</code> 기준으로 <b>정렬</b>하면 O(N log N)에 됩니다</li></ul>' },
+  ],
+},
+
+/* ══════════════════ 신규: 투포인터 · 누적합 ══════════════════ */
+{
+  id: 'ut', group: '알고리즘', title: '투포인터 · 누적합',
+  syntax: [
+    { h: '🔴 누적합 — 구간 합을 O(1)로',
+      code: `vector<long long> pre(n + 1, 0);
+for (int i = 0; i < n; i++)
+    pre[i + 1] = pre[i] + v[i];
+
+// i 부터 j 까지(양끝 포함)의 합
+long long sum = pre[j + 1] - pre[i];`,
+      note: '<b>원리</b>: <code>pre[k]</code> = 처음 k개의 합. ' +
+            '그러면 구간 [i, j]의 합은 <b>(처음 j+1개의 합) − (처음 i개의 합)</b>입니다.<br>' +
+            '· 전처리 O(N) 한 번 → 이후 <b>질의마다 O(1)</b><br>' +
+            '· 질의가 Q개면 매번 더하기는 O(N×Q), 누적합은 O(N+Q)<br><br>' +
+            '🔴 <b>크기를 <code>n+1</code>로 잡고 <code>pre[0] = 0</code>으로 두는 게 핵심</b>입니다. ' +
+            '그러면 <code>i = 0</code>일 때도 <code>pre[0]</code>을 빼면 되어 ' +
+            '별도 조건 분기가 필요 없습니다.' },
+
+    { h: '투포인터 — 정렬된 배열에서 쌍 찾기',
+      code: `sort(v.begin(), v.end());
+int l = 0, r = n - 1;
+while (l < r) {
+    long long sum = (long long)v[l] + v[r];
+    if (sum == target) return true;
+    if (sum < target) l++;          // 합을 키워야 함
+    else r--;                        // 합을 줄여야 함
+}`,
+      note: '<b>왜 되나</b>: 정렬했으므로 ' +
+            '<b>왼쪽을 오른쪽으로 옮기면 합이 커지고, 오른쪽을 왼쪽으로 옮기면 합이 작아집니다.</b> ' +
+            '목표보다 작으면 키우고, 크면 줄이면 되므로 되돌아갈 필요가 없습니다.<br>' +
+            '· O(N²) 2중 루프 → <b>O(N log N)</b> (정렬 비용이 지배)<br>' +
+            '· 각 포인터가 한 방향으로만 움직여 전체 이동이 N번' },
+
+    { h: '슬라이딩 윈도우 — 조건을 만족하는 구간',
+      code: `// 합이 target 이하인 가장 긴 구간
+int l = 0;
+long long sum = 0;
+int best = 0;
+for (int r = 0; r < n; r++) {
+    sum += v[r];                     // 오른쪽 확장
+    while (sum > target) {           // 조건을 넘으면
+        sum -= v[l];                 //   왼쪽을 줄임
+        l++;
+    }
+    best = max(best, r - l + 1);
+}`,
+      note: '<b>원리</b>: 오른쪽을 계속 넓히다가 조건을 깨면 왼쪽을 당깁니다. ' +
+            '두 포인터가 각각 최대 N번만 움직이므로 <b>O(N)</b>입니다 ' +
+            '(안쪽 <code>while</code>이 있어도 <code>l</code>은 되돌아가지 않으므로).<br>' +
+            '🔴 <b>조건: 값이 모두 양수</b>여야 합니다. 음수가 섞이면 ' +
+            '왼쪽을 줄여도 합이 줄어든다는 보장이 없습니다.' },
+
+    { h: '2차원 누적합',
+      code: `vector<vector<long long>> pre(n + 1, vector<long long>(m + 1, 0));
+for (int i = 0; i < n; i++)
+    for (int j = 0; j < m; j++)
+        pre[i+1][j+1] = pre[i][j+1] + pre[i+1][j] - pre[i][j] + g[i][j];
+
+// (r1,c1) ~ (r2,c2) 직사각형 합
+long long sum = pre[r2+1][c2+1] - pre[r1][c2+1] - pre[r2+1][c1] + pre[r1][c1];`,
+      note: '<b>왜 <code>- pre[i][j]</code>를 더하나</b>: ' +
+            '<code>pre[i][j+1]</code>과 <code>pre[i+1][j]</code>를 더하면 ' +
+            '<b>왼쪽 위 영역이 두 번 더해집니다</b>. 그래서 한 번 빼줍니다 (포함-배제 원리).<br>' +
+            '질의 공식도 같은 이유로 네 항이 나옵니다.' },
+  ],
+  problems: [
+    { id: 'uta', title: '구간 합 질의', diff: 1,
+      desc: 'N개의 정수와 Q개의 질의가 주어집니다. 각 질의 <code>i j</code>에 대해 ' +
+            'i번째부터 j번째까지의 합을 출력하세요 (0-based, 양끝 포함).<br>' +
+            '<span class="io">입력: <code>5 2</code> / <code>1 2 3 4 5</code> / <code>0 2</code> / <code>1 3</code><br>' +
+            '출력: <code>6</code> / <code>9</code></span><br>' +
+            '제약: N, Q ≤ 100,000 → 🔴 질의마다 더하면 100억입니다.',
+      starter: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n, q;
+    cin >> n >> q;
+    vector<int> v(n);
+    for (int i = 0; i < n; i++) cin >> v[i];
+
+    // 누적합을 먼저 만들어두면 질의가 O(1)
+
+    return 0;
+}`,
+      cases: [ { in: '5 2\n1 2 3 4 5\n0 2\n1 3', out: '6\n9' },
+               { in: '3 1\n1 2 3\n0 2', out: '6' },
+               { in: '1 1\n7\n0 0', out: '7' },
+               { in: '4 2\n1000000000 1000000000 1000000000 1000000000\n0 3\n1 2', out: '4000000000\n2000000000' } ],
+      solution: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n, q;
+    cin >> n >> q;
+    vector<int> v(n);
+    for (int i = 0; i < n; i++) cin >> v[i];
+
+    vector<long long> pre(n + 1, 0);          // pre[k] = 처음 k개의 합
+    for (int i = 0; i < n; i++)
+        pre[i + 1] = pre[i] + v[i];
+
+    for (int t = 0; t < q; t++) {
+        int i, j;
+        cin >> i >> j;
+        cout << pre[j + 1] - pre[i] << '\\n';   // O(1)
+    }
+    return 0;
+}`,
+      hint: '<code>pre[k]</code>를 "처음 k개의 합"으로 만들면 ' +
+            '구간 [i,j]의 합은 <code>pre[j+1] - pre[i]</code>입니다. ' +
+            '마지막 케이스가 40억이라 <code>long long</code> 필수입니다.',
+      why: '<b>왜 크기를 <code>n+1</code>로 잡나</b>: <code>pre[0] = 0</code>(아무것도 안 더한 상태)을 ' +
+           '두면 <code>i = 0</code>인 질의도 <code>pre[j+1] - pre[0]</code>으로 같은 공식이 적용됩니다. ' +
+           '크기를 n으로 잡으면 <code>i = 0</code>을 따로 처리해야 해 버그가 생깁니다.' +
+           '<ul><li>복잡도: 전처리 O(N) + 질의 O(1)×Q = <b>O(N+Q)</b></li>' +
+           '<li>질의마다 더하면 O(N×Q) = 100억 → 시간초과</li>' +
+           '<li>누적합 배열은 원소가 <code>int</code>라도 <b>합이 넘칠 수 있어</b> <code>long long</code>으로</li></ul>' },
+
+    { id: 'utb', title: '합이 target인 두 수 (투포인터)', diff: 2,
+      desc: '정렬되지 않은 N개의 정수에서 합이 target인 <b>두 수</b>를 찾아 ' +
+            '작은 수부터 출력하세요. 없으면 <code>-1</code>.<br>' +
+            '<span class="io">입력: <code>4 9</code> / <code>2 7 11 15</code> → 출력: <code>2 7</code></span><br>' +
+            '💡 정렬 + 투포인터로 O(N log N)에 풉니다.',
+      starter: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n, target;
+    cin >> n >> target;
+    vector<int> v(n);
+    for (int i = 0; i < n; i++) cin >> v[i];
+
+    return 0;
+}`,
+      cases: [ { in: '4 9\n2 7 11 15', out: '2 7' }, { in: '4 100\n2 7 11 15', out: '-1' },
+               { in: '2 8\n4 4', out: '4 4' }, { in: '5 10\n1 2 3 4 6', out: '4 6' } ],
+      solution: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n, target;
+    cin >> n >> target;
+    vector<int> v(n);
+    for (int i = 0; i < n; i++) cin >> v[i];
+
+    sort(v.begin(), v.end());             // 투포인터는 정렬이 전제
+
+    int l = 0, r = n - 1;
+    while (l < r) {
+        long long sum = (long long)v[l] + v[r];
+        if (sum == target) {
+            cout << v[l] << ' ' << v[r] << '\\n';
+            return 0;
+        }
+        if (sum < target) l++;            // 합을 키운다
+        else r--;                          // 합을 줄인다
+    }
+    cout << -1 << '\\n';
+    return 0;
+}`,
+      hint: '정렬 후 양 끝에서 좁혀옵니다. 합이 작으면 <code>l++</code>(큰 값 쪽으로), ' +
+            '크면 <code>r--</code>(작은 값 쪽으로).',
+      why: '<b>왜 되돌아갈 필요가 없나</b>: 정렬된 배열에서 ' +
+           '<code>l</code>을 오른쪽으로 옮기면 합이 <b>반드시 커지고</b>, ' +
+           '<code>r</code>을 왼쪽으로 옮기면 <b>반드시 작아집니다</b>. ' +
+           '목표와 비교해 한 방향만 선택하면 되므로 각 포인터가 한 번씩만 지나갑니다.' +
+           '<ul><li>복잡도: 정렬 O(N log N) + 탐색 O(N) = <b>O(N log N)</b></li>' +
+           '<li><code>l &lt; r</code> 조건이 "서로 다른 두 원소"를 보장합니다</li>' +
+           '<li>💡 해시(set)를 쓰면 정렬 없이 O(N)입니다. ' +
+           '단 <b>값을 정렬된 순서로 출력</b>해야 하면 정렬이 어차피 필요합니다</li></ul>' },
+
+    { id: 'utc', title: '합이 target 이하인 최장 구간', diff: 2,
+      desc: 'N개의 <b>양의</b> 정수에서, 연속된 구간의 합이 target 이하인 ' +
+            '가장 긴 구간의 길이를 출력하세요.<br>' +
+            '<span class="io">입력: <code>5 7</code> / <code>2 1 3 4 1</code> → 출력: <code>3</code> (2+1+3=6)</span><br>' +
+            '제약: N ≤ 100,000',
+      starter: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    long long target;
+    cin >> n >> target;
+    vector<int> v(n);
+    for (int i = 0; i < n; i++) cin >> v[i];
+
+    return 0;
+}`,
+      cases: [ { in: '5 7\n2 1 3 4 1', out: '3' }, { in: '3 100\n1 2 3', out: '3' },
+               { in: '3 0\n1 2 3', out: '0' }, { in: '4 5\n5 1 1 1', out: '3' } ],
+      solution: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    long long target;
+    cin >> n >> target;
+    vector<int> v(n);
+    for (int i = 0; i < n; i++) cin >> v[i];
+
+    int l = 0, best = 0;
+    long long sum = 0;
+    for (int r = 0; r < n; r++) {
+        sum += v[r];                       // 오른쪽으로 확장
+        while (sum > target && l <= r) {   // 조건을 넘으면 왼쪽을 당김
+            sum -= v[l];
+            l++;
+        }
+        best = max(best, r - l + 1);
+    }
+    cout << best << '\\n';
+    return 0;
+}`,
+      hint: '오른쪽을 한 칸씩 넓히면서, 합이 target을 넘으면 왼쪽을 당깁니다. ' +
+            '매 단계에서 <code>r - l + 1</code>이 현재 구간 길이입니다.',
+      why: '<b>왜 O(N)인가</b>: 안쪽에 <code>while</code>이 있어 O(N²)처럼 보이지만, ' +
+           '<code>l</code>은 <b>절대 되돌아가지 않습니다</b>. ' +
+           '전체 실행에서 <code>l</code>이 움직이는 횟수는 최대 N번이므로 합쳐서 O(N)입니다.' +
+           '<ul><li>🔴 <b>값이 모두 양수여야 성립합니다</b>. 음수가 있으면 ' +
+           '왼쪽을 줄여도 합이 줄어든다는 보장이 없어 이 방법이 깨집니다</li>' +
+           '<li><code>target = 0</code>이고 모든 값이 양수면 답이 0 입니다 — ' +
+           '<code>l &lt;= r</code> 조건이 그걸 처리합니다</li>' +
+           '<li>구간 길이는 <code>r - l + 1</code>입니다 (양끝 포함이므로 +1)</li></ul>' },
+  ],
+},
+
+/* ══════════════════ 신규: 이분탐색 ══════════════════ */
+{
+  id: 'ubs', group: '알고리즘', title: '이분탐색',
+  syntax: [
+    { h: '값 찾기 — 정렬된 배열에서',
+      code: `int l = 0, r = n - 1;
+while (l <= r) {
+    int mid = l + (r - l) / 2;        // 🔴 (l+r)/2 보다 안전
+    if (v[mid] == target) return mid;
+    if (v[mid] < target) l = mid + 1;
+    else r = mid - 1;
+}
+return -1;`,
+      note: '<b>왜 <code>l + (r-l)/2</code> 인가</b>: <code>(l+r)/2</code>는 ' +
+            '<code>l</code>과 <code>r</code>이 큰 값일 때 <b>덧셈에서 오버플로</b>할 수 있습니다. ' +
+            '두 값이 각각 20억이면 합이 40억 → <code>int</code> 초과.<br>' +
+            '· 매 단계에서 범위가 절반이 되므로 <b>O(log N)</b> — 100만 개도 20번만에 끝납니다' },
+
+    { h: '🔴 STL 로 쓰기 — 직접 구현보다 안전',
+      code: `// target 이 들어갈 수 있는 "가장 왼쪽" 위치
+auto it = lower_bound(v.begin(), v.end(), target);
+int idx = it - v.begin();
+
+// target 보다 "처음으로 큰" 위치
+auto it2 = upper_bound(v.begin(), v.end(), target);
+
+// 존재 여부
+bool found = binary_search(v.begin(), v.end(), target);
+
+// target 의 개수
+int cnt = upper_bound(v.begin(), v.end(), target)
+        - lower_bound(v.begin(), v.end(), target);`,
+      note: '<b>반드시 정렬된 상태여야 합니다.</b> 아니면 결과가 무의미합니다.<br>' +
+            '· <code>lower_bound</code>: target <b>이상</b>인 첫 위치<br>' +
+            '· <code>upper_bound</code>: target <b>초과</b>인 첫 위치<br>' +
+            '· 둘의 차이가 곧 <b>target의 개수</b>입니다 — 자주 쓰는 패턴<br>' +
+            '· 없으면 <code>v.end()</code>를 반환하므로 <code>it != v.end()</code>로 확인' },
+
+    { h: '🔴 답을 이분탐색 (매개변수 탐색)',
+      code: `// "조건을 만족하는 최소값" 을 찾는 틀
+long long lo = 1, hi = 1e18, answer = -1;
+while (lo <= hi) {
+    long long mid = lo + (hi - lo) / 2;
+    if (possible(mid)) {           // mid 로 가능한가?
+        answer = mid;              //   가능하면 기록하고
+        hi = mid - 1;              //   더 작은 값을 시도
+    } else {
+        lo = mid + 1;              //   불가능하면 키운다
+    }
+}`,
+      note: '🔴 <b>코테에서 가장 자주 나오는 형태입니다.</b><br>' +
+            '<b>언제 쓰나</b>: "최소 ~로 만들 수 있나", "최대 ~개 가능한가" 처럼 ' +
+            '<b>답을 하나 정하면 가능/불가능을 쉽게 판정할 수 있을 때</b>.<br>' +
+            '<b>왜 되나</b>: 답이 커질수록 가능해지는(또는 반대) <b>단조성</b>이 있으면, ' +
+            '가능/불가능의 경계를 이분탐색으로 찾을 수 있습니다.<br>' +
+            '💡 "최대의 최소" / "최소의 최대" 라는 표현이 보이면 거의 이것입니다.' },
+
+    { h: '탐색 범위 정하기',
+      code: `// lo = 가능한 가장 작은 답 (보통 1 또는 0)
+// hi = 확실히 가능한 큰 답 (넉넉하게)
+long long lo = 1, hi = 1e9;        // 범위를 모르면 넉넉히
+
+// 복잡도 = O(log(hi-lo) × possible 의 비용)
+// hi = 10^9 이면 log 가 30 → possible 이 O(N) 이면 O(30N)`,
+      note: '<b>범위를 넉넉하게 잡아도 괜찮습니다.</b> ' +
+            'log 라서 10억이든 100억이든 30~37번 차이뿐입니다. ' +
+            '좁히려다 답을 범위 밖에 두는 실수가 더 위험합니다.' },
+  ],
+  problems: [
+    { id: 'ubsa', title: '값의 개수 세기', diff: 1,
+      desc: '정렬된 N개의 정수와 Q개의 질의가 주어집니다. 각 질의 값이 배열에 몇 번 나오는지 출력하세요.<br>' +
+            '<span class="io">입력: <code>7 3</code> / <code>1 2 2 2 5 5 9</code> / <code>2 5 7</code><br>' +
+            '출력: <code>3 2 0</code></span><br>' +
+            '제약: N, Q ≤ 100,000',
+      starter: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n, q;
+    cin >> n >> q;
+    vector<int> v(n);
+    for (int i = 0; i < n; i++) cin >> v[i];
+
+    return 0;
+}`,
+      cases: [ { in: '7 3\n1 2 2 2 5 5 9\n2 5 7', out: '3 2 0' },
+               { in: '3 1\n1 1 1\n1', out: '3' },
+               { in: '1 2\n5\n5 6', out: '1 0' } ],
+      solution: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n, q;
+    cin >> n >> q;
+    vector<int> v(n);
+    for (int i = 0; i < n; i++) cin >> v[i];
+
+    for (int t = 0; t < q; t++) {
+        int x;
+        cin >> x;
+        // upper - lower = x 의 개수
+        int cnt = upper_bound(v.begin(), v.end(), x)
+                - lower_bound(v.begin(), v.end(), x);
+        cout << cnt;
+        if (t + 1 < q) cout << ' ';
+    }
+    cout << '\\n';
+    return 0;
+}`,
+      hint: '<code>upper_bound - lower_bound</code>가 그 값의 개수입니다. ' +
+            '각 질의가 O(log N)이므로 전체 O(Q log N).',
+      why: '<b>왜 두 함수의 차이가 개수인가</b>: ' +
+           '<code>lower_bound</code>는 <b>x 이상인 첫 위치</b>, ' +
+           '<code>upper_bound</code>는 <b>x 초과인 첫 위치</b>입니다. ' +
+           '그 사이 구간이 정확히 x 들의 범위입니다.' +
+           '<ul><li><code>[1,2,2,2,5]</code>에서 x=2면 lower=1, upper=4 → 4−1=3개</li>' +
+           '<li>x 가 없으면 두 위치가 같아져 0 이 됩니다 — 별도 분기가 필요 없습니다</li>' +
+           '<li>🔴 <b>반드시 정렬된 배열</b>이어야 합니다. 아니면 결과가 무의미합니다</li></ul>' },
+
+    { id: 'ubsb', title: '랜선 자르기 (답을 이분탐색)', diff: 2,
+      desc: 'N개의 랜선이 있습니다. 이를 잘라서 <b>같은 길이</b>의 랜선 K개 이상을 만들려 합니다. ' +
+            '만들 수 있는 <b>최대 길이</b>를 출력하세요 (길이는 자연수).<br>' +
+            '<span class="io">입력: <code>4 11</code> / <code>802 743 457 539</code> → 출력: <code>200</code></span><br>' +
+            '💡 길이를 L로 정하면 만들 수 있는 개수는 <code>sum(len[i] / L)</code>입니다.',
+      starter: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    long long k;
+    cin >> n >> k;
+    vector<long long> len(n);
+    for (int i = 0; i < n; i++) cin >> len[i];
+
+    // 길이 L 로 가능한가? -> 개수를 세어 k 이상인지 확인
+
+    return 0;
+}`,
+      cases: [ { in: '4 11\n802 743 457 539', out: '200' },
+               { in: '1 1\n10', out: '10' },
+               { in: '2 4\n10 10', out: '5' },
+               { in: '1 3\n7', out: '2' } ],
+      solution: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    long long k;
+    cin >> n >> k;
+    vector<long long> len(n);
+    for (int i = 0; i < n; i++) cin >> len[i];
+
+    long long lo = 1, hi = *max_element(len.begin(), len.end());
+    long long answer = 0;
+
+    while (lo <= hi) {
+        long long mid = lo + (hi - lo) / 2;      // 길이 후보
+
+        long long count = 0;
+        for (long long L : len) count += L / mid;
+
+        if (count >= k) {          // 이 길이로 k개 이상 가능
+            answer = mid;          //   기록하고
+            lo = mid + 1;          //   더 긴 길이를 시도
+        } else {
+            hi = mid - 1;          //   불가능하면 짧게
+        }
+    }
+    cout << answer << '\\n';
+    return 0;
+}`,
+      hint: '길이를 <code>mid</code>로 정하면 개수는 <code>sum(len[i] / mid)</code>입니다. ' +
+            'k개 이상이면 더 긴 길이를 시도(<code>lo = mid+1</code>), 아니면 짧게(<code>hi = mid-1</code>).',
+      why: '<b>왜 이분탐색이 되나</b>: <b>단조성</b>이 있습니다 — ' +
+           '길이를 짧게 하면 만들 수 있는 개수가 늘고, 길게 하면 줍니다. ' +
+           '따라서 "k개 이상 가능한 최대 길이"라는 <b>경계</b>가 하나 존재하고, 그걸 찾는 문제입니다.' +
+           '<ul><li><b>이 문제의 핵심 전환</b>: 답(길이)을 직접 계산하기는 어렵지만, ' +
+           '"길이 L로 k개 가능한가?"는 한 번 순회로 쉽게 판정됩니다. ' +
+           '<b>계산이 어려우면 후보를 찍고 검증하세요</b></li>' +
+           '<li>범위: <code>lo = 1</code>, <code>hi = </code>최대 랜선 길이 (그보다 길면 하나도 못 만듦)</li>' +
+           '<li>복잡도: O(N log(max)) — N=100만, max=10억이어도 약 3000만</li>' +
+           '<li><code>802/200 + 743/200 + 457/200 + 539/200 = 4+3+2+2 = 11</code> ✓</li></ul>' },
+
+    { id: 'ubsc', title: '나무 자르기 (최대의 최소)', diff: 2,
+      desc: 'N개의 나무 높이가 주어집니다. 절단기 높이 H를 정하면 H보다 높은 부분이 잘립니다. ' +
+            '적어도 M만큼의 나무를 얻으려면 <b>H를 최대 몇으로</b> 설정할 수 있는지 출력하세요.<br>' +
+            '<span class="io">입력: <code>4 7</code> / <code>20 15 10 17</code> → 출력: <code>15</code></span><br>' +
+            '💡 H=15면 (20−15)+(17−15)=7 을 얻습니다.',
+      starter: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    long long m;
+    cin >> n >> m;
+    vector<long long> h(n);
+    for (int i = 0; i < n; i++) cin >> h[i];
+
+    return 0;
+}`,
+      cases: [ { in: '4 7\n20 15 10 17', out: '15' },
+               { in: '5 20\n4 42 40 26 46', out: '36' },
+               { in: '1 5\n10', out: '5' },
+               { in: '2 0\n5 5', out: '5' } ],
+      solution: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    long long m;
+    cin >> n >> m;
+    vector<long long> h(n);
+    for (int i = 0; i < n; i++) cin >> h[i];
+
+    long long lo = 0, hi = *max_element(h.begin(), h.end());
+    long long answer = 0;
+
+    while (lo <= hi) {
+        long long mid = lo + (hi - lo) / 2;      // 절단기 높이 후보
+
+        long long got = 0;
+        for (long long x : h)
+            if (x > mid) got += x - mid;          // 넘는 부분만
+
+        if (got >= m) {            // 충분히 얻음
+            answer = mid;          //   기록하고
+            lo = mid + 1;          //   H 를 더 높여본다
+        } else {
+            hi = mid - 1;          //   부족하면 낮춘다
+        }
+    }
+    cout << answer << '\\n';
+    return 0;
+}`,
+      hint: 'H를 <code>mid</code>로 두고 <code>sum(max(0, h[i] - mid))</code>를 계산합니다. ' +
+            'M 이상이면 H를 높이고(<code>lo = mid+1</code>), 부족하면 낮춥니다.',
+      why: '<b>단조성</b>: H를 높이면 얻는 나무가 줄고, 낮추면 늘어납니다. ' +
+           '"M 이상 얻을 수 있는 최대 H"라는 경계를 찾는 문제입니다.' +
+           '<ul><li>🔴 <code>lo = 0</code>부터 시작합니다 — H=0 (바닥까지 자르기)도 유효한 답입니다. ' +
+           '마지막 케이스(M=0)에서 확인할 수 있습니다</li>' +
+           '<li><code>if (x > mid)</code> 검사가 필요합니다 — 빼먹으면 ' +
+           '나무보다 절단기가 높을 때 <b>음수가 더해져</b> 틀립니다</li>' +
+           '<li>합이 크므로 <code>long long</code> (나무 100만 개 × 높이 10억)</li>' +
+           '<li>💡 <b>"최대의 최소", "최소의 최대"</b>는 거의 항상 이 패턴입니다</li></ul>' },
+  ],
+},
+
+/* ══════════════════ 신규: DFS · 백트래킹 ══════════════════ */
+{
+  id: 'ud', group: '알고리즘', title: 'DFS · 백트래킹',
+  syntax: [
+    { h: 'DFS — 한 방향으로 끝까지',
+      code: `vector<vector<int>> adj;
+vector<bool> visited;
+
+void dfs(int cur) {
+    visited[cur] = true;
+    for (int next : adj[cur])
+        if (!visited[next]) dfs(next);
+}`,
+      note: '<b>BFS 와의 차이</b>: BFS 는 가까운 것부터 동심원으로, DFS 는 한 방향으로 끝까지 파고듭니다.<br>' +
+            '· <b>최단거리</b>: BFS 만 보장 (DFS 는 먼 길로 먼저 도달 가능)<br>' +
+            '· <b>연결 요소 개수 / 경로 존재 여부</b>: 둘 다 가능, DFS 가 코드가 짧음<br>' +
+            '· <b>모든 경로 탐색 / 조합 생성</b>: DFS(백트래킹)가 자연스러움' },
+
+    { h: '격자 DFS',
+      code: `int dr[4] = {-1, 1, 0, 0};
+int dc[4] = { 0, 0,-1, 1};
+
+void dfs(int r, int c, vector<vector<int>>& g) {
+    int n = g.size(), m = g[0].size();
+    g[r][c] = 0;                      // 방문 표시 (덮어쓰기)
+    for (int d = 0; d < 4; d++) {
+        int nr = r + dr[d], nc = c + dc[d];
+        if (nr < 0 || nr >= n || nc < 0 || nc >= m) continue;
+        if (g[nr][nc] == 0) continue;
+        dfs(nr, nc, g);
+    }
+}`,
+      note: '💡 <b>방문 배열 대신 원본을 덮어쓰는</b> 기법입니다. ' +
+            '메모리를 아끼고 코드가 짧아지지만, <b>원본이 필요하면 쓸 수 없습니다.</b>' },
+
+    { h: '🔴 재귀 깊이 — DFS 의 가장 큰 위험',
+      code: `// 노드 10만 개가 일자로 연결 → 재귀 깊이 10만
+// C++ 스택은 보통 1MB → 스택 오버플로(크래시)
+
+// 대책 1: BFS 로 바꾼다 (반복문이라 제한 없음)
+// 대책 2: 명시적 스택을 쓴다
+void dfsIterative(int start) {
+    vector<int> st = {start};
+    visited[start] = true;
+    while (!st.empty()) {
+        int cur = st.back(); st.pop_back();
+        for (int next : adj[cur])
+            if (!visited[next]) {
+                visited[next] = true;
+                st.push_back(next);
+            }
+    }
+}`,
+      note: '<b>왜 터지나</b>: 함수 호출마다 <b>스택 프레임</b>(지역변수 + 복귀주소)이 쌓입니다. ' +
+            '프레임이 50바이트여도 10만 깊이면 5MB → 1MB 스택을 넘습니다.<br>' +
+            '🔴 <b>기준: 노드가 10만 이상이고 깊이가 깊을 수 있으면 BFS 또는 반복 DFS 를 쓰세요.</b>' },
+
+    { h: '백트래킹 — 조합·순열 생성',
+      code: `vector<int> picked;
+
+void backtrack(int start, int k, const vector<int>& v) {
+    if ((int)picked.size() == k) {
+        output(picked);
+        return;
+    }
+    for (int i = start; i < (int)v.size(); i++) {
+        picked.push_back(v[i]);         // ① 선택
+        backtrack(i + 1, k, v);         // ② 진행
+        picked.pop_back();              // ③ 되돌리기
+    }
+}`,
+      note: '<b>①②③ 이 백트래킹의 전부입니다.</b> ' +
+            '③ 되돌리기가 없으면 다음 <code>i</code>가 더럽혀진 상태에서 시작해 틀립니다.<br>' +
+            '· <code>start</code>를 쓰면 <b>조합</b>(순서 무관)<br>' +
+            '· <code>visited</code> 배열로 전체를 돌면 <b>순열</b>(순서 중요)' },
+
+    { h: '가지치기 — 백트래킹의 핵심 최적화',
+      code: `void backtrack(int idx, long long sum) {
+    if (sum > target) return;          // 🔴 이미 초과면 더 볼 필요 없음
+    if (idx == n) {
+        if (sum == target) count++;
+        return;
+    }
+    backtrack(idx + 1, sum + v[idx]);  // 포함
+    backtrack(idx + 1, sum);           // 제외
+}`,
+      note: '<b>왜 중요한가</b>: 완전탐색은 2ⁿ인데, 불가능한 가지를 일찍 끊으면 ' +
+            '실제 탐색량이 수십~수천 배 줄어듭니다. ' +
+            '<b>"더 가도 답이 될 수 없다"는 조건을 찾는 것이 핵심</b>입니다.' },
+  ],
+  problems: [
+    { id: 'uda', title: '연결 요소 개수 (DFS)', diff: 1,
+      desc: '노드 1~N과 간선 목록이 주어집니다. 연결 요소의 개수를 출력하세요.<br>' +
+            '<span class="io">입력: <code>5 3</code> / <code>1 2</code> / <code>2 3</code> / <code>4 5</code> → 출력: <code>2</code></span>',
+      starter: `vector<vector<int>> adj;
+vector<bool> visited;
+
+void dfs(int cur) {
+    // 여기에 작성
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n, m;
+    cin >> n >> m;
+    adj.assign(n + 1, {});
+    visited.assign(n + 1, false);
+    for (int i = 0; i < m; i++) {
+        int u, v;
+        cin >> u >> v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+
+    return 0;
+}`,
+      cases: [ { in: '5 3\n1 2\n2 3\n4 5', out: '2' },
+               { in: '3 0', out: '3' },
+               { in: '4 3\n1 2\n2 3\n3 4', out: '1' } ],
+      solution: `vector<vector<int>> adj;
+vector<bool> visited;
+
+void dfs(int cur) {
+    visited[cur] = true;
+    for (int next : adj[cur])
+        if (!visited[next]) dfs(next);
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n, m;
+    cin >> n >> m;
+    adj.assign(n + 1, {});
+    visited.assign(n + 1, false);
+    for (int i = 0; i < m; i++) {
+        int u, v;
+        cin >> u >> v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+
+    int count = 0;
+    for (int i = 1; i <= n; i++)
+        if (!visited[i]) {          // 아직 안 본 노드 = 새 연결 요소
+            count++;
+            dfs(i);
+        }
+    cout << count << '\\n';
+    return 0;
+}`,
+      hint: '<code>dfs</code>는 세 줄입니다: 방문 표시 → 이웃 순회 → 안 가본 곳만 재귀. ' +
+            '<code>main</code>에서 모든 노드를 돌며 안 가본 노드가 나오면 카운트+DFS.',
+      why: '<b>왜 바깥 루프가 필요한가</b>: DFS 한 번은 <b>연결된 영역 하나</b>만 방문합니다. ' +
+           '떨어진 그래프는 닿지 않으므로, 안 가본 노드마다 DFS 를 새로 시작합니다. ' +
+           '<b>DFS 호출 횟수 = 연결 요소 개수</b>입니다.' +
+           '<ul><li>간선이 0개면 모든 노드가 각각 하나의 요소 → 답이 N</li>' +
+           '<li>양방향 그래프라 <code>adj[u]</code>와 <code>adj[v]</code> 둘 다 넣습니다. ' +
+           '단방향이면 한 줄만</li>' +
+           '<li>크기를 <code>n+1</code>로 잡는 이유: 노드 번호가 1부터라 ' +
+           '<code>adj[n]</code>까지 써야 합니다</li></ul>' },
+
+    { id: 'udb', title: 'N개 중 K개 고르기 (백트래킹)', diff: 2,
+      desc: '1부터 N까지 중 K개를 고르는 모든 조합을 <b>사전순</b>으로 출력하세요 (한 줄에 하나).<br>' +
+            '<span class="io">입력: <code>4 2</code> → 출력:<br>' +
+            '<code>1 2</code> / <code>1 3</code> / <code>1 4</code> / <code>2 3</code> / <code>2 4</code> / <code>3 4</code></span>',
+      starter: `int n, k;
+vector<int> picked;
+
+void backtrack(int start) {
+    // ① 다 골랐으면 출력
+    // ② start 부터 순회하며 고르고 -> 진행 -> 되돌리기
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cin >> n >> k;
+    backtrack(1);
+    return 0;
+}`,
+      cases: [ { in: '4 2', out: '1 2\n1 3\n1 4\n2 3\n2 4\n3 4' },
+               { in: '3 1', out: '1\n2\n3' },
+               { in: '3 3', out: '1 2 3' } ],
+      solution: `int n, k;
+vector<int> picked;
+
+void backtrack(int start) {
+    if ((int)picked.size() == k) {          // ① 다 골랐다
+        for (int i = 0; i < k; i++) {
+            cout << picked[i];
+            if (i + 1 < k) cout << ' ';
+        }
+        cout << '\\n';
+        return;
+    }
+    for (int i = start; i <= n; i++) {
+        picked.push_back(i);                 // ② 선택
+        backtrack(i + 1);                    // ③ 진행 (i+1 = 조합)
+        picked.pop_back();                   // ④ 되돌리기
+    }
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cin >> n >> k;
+    backtrack(1);
+    return 0;
+}`,
+      hint: '<code>picked.size() == k</code>면 출력하고 종료. ' +
+            '아니면 <code>start</code>부터 <code>n</code>까지 고르고 <code>backtrack(i+1)</code>로 진행, ' +
+            '돌아오면 <code>pop_back()</code>.',
+      why: '<b>왜 <code>pop_back()</code>이 필요한가</b>: 재귀에서 돌아온 뒤 ' +
+           '<code>picked</code>에 방금 고른 값이 남아있으면, 다음 <code>i</code>를 고를 때 ' +
+           '<b>이전 선택이 섞입니다</b>. 되돌려야 각 가지가 독립적으로 탐색됩니다.' +
+           '<ul><li><b>왜 <code>i + 1</code>로 넘기나</b>: 조합(순서 무관)이므로 ' +
+           '이미 지난 숫자를 다시 고르면 중복입니다. ' +
+           '<code>backtrack(1)</code>로 넘기면 순열이 됩니다</li>' +
+           '<li><b>왜 사전순으로 나오나</b>: <code>start</code>부터 <b>작은 수부터</b> 순회하고 ' +
+           '깊이 우선으로 내려가므로 자연스럽게 사전순이 됩니다</li>' +
+           '<li>전역 변수로 둔 이유: 재귀 인자를 줄여 코드가 짧아집니다 (코테 관례)</li></ul>' },
+
+    { id: 'udc', title: '가지치기로 부분수열 합', diff: 2,
+      desc: 'N개의 <b>양의</b> 정수에서 일부를 골라 합이 정확히 target이 되는 경우의 수를 출력하세요.<br>' +
+            '<span class="io">입력: <code>4 5</code> / <code>1 2 3 4</code> → 출력: <code>2</code> ({1,4},{2,3})</span><br>' +
+            '제약: N ≤ 30 → 2³⁰은 10억이라 그냥 돌리면 느립니다. <b>가지치기</b>를 쓰세요.',
+      starter: `int n;
+long long target;
+vector<long long> v;
+int answer = 0;              // 🔴 count 는 std::count 와 이름이 겹칩니다
+
+void backtrack(int idx, long long sum) {
+    // 가지치기: sum 이 이미 target 을 넘으면?
+
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cin >> n >> target;
+    v.resize(n);
+    for (int i = 0; i < n; i++) cin >> v[i];
+    answer = 0;                  // 전역이므로 쓰기 전에 초기화
+    backtrack(0, 0);
+    cout << answer << '\\n';
+    return 0;
+}`,
+      cases: [ { in: '4 5\n1 2 3 4', out: '2' },
+               { in: '3 0\n1 2 3', out: '1' },
+               { in: '1 5\n5', out: '1' },
+               { in: '5 10\n1 2 3 4 5', out: '3' } ],
+      solution: `int n;
+long long target;
+vector<long long> v;
+int answer = 0;              // 🔴 count 라고 쓰면 std::count 와 모호해져 컴파일 에러
+
+void backtrack(int idx, long long sum) {
+    if (sum > target) return;            // 🔴 가지치기: 양수만 남았으니 더 커질 뿐
+    if (idx == n) {
+        if (sum == target) answer++;
+        return;
+    }
+    backtrack(idx + 1, sum + v[idx]);    // 이 원소를 포함
+    backtrack(idx + 1, sum);             // 포함하지 않음
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cin >> n >> target;
+    v.resize(n);
+    for (int i = 0; i < n; i++) cin >> v[i];
+    answer = 0;                  // 전역이므로 쓰기 전에 초기화
+    backtrack(0, 0);
+    cout << answer << '\\n';
+    return 0;
+}`,
+      hint: '각 원소마다 "포함/제외" 두 가지로 재귀합니다. ' +
+            '<code>sum &gt; target</code>이면 양수만 남았으므로 더 가도 답이 될 수 없어 바로 <code>return</code>.',
+      why: '<b>왜 가지치기가 유효한가</b>: 모든 값이 <b>양수</b>라서 ' +
+           '합은 앞으로 <b>커지기만</b> 합니다. 이미 target 을 넘었다면 ' +
+           '나머지를 어떻게 고르든 답이 될 수 없으므로 그 가지 전체를 버립니다.' +
+           '<ul><li>🔴 <b>음수가 섞이면 이 가지치기는 틀립니다</b> — 나중에 음수를 더해 줄어들 수 있습니다</li>' +
+           '<li><code>target = 0</code>일 때 답이 1 인 이유: <b>아무것도 안 고르는 경우</b></li>' +
+           '<li>복잡도: 최악 O(2ⁿ)이지만 가지치기로 실제 탐색량이 크게 줄어듭니다. ' +
+           '효과는 입력에 따라 달라집니다</li>' +
+           '<li>💡 N이 더 크면 DP(배낭 문제)나 <b>중간에서 만나기</b>(절반씩 나눠 2^(n/2))를 씁니다</li></ul>' },
+  ],
+},
+
+/* ══════════════════ 신규: 우선순위큐 · 그리디 ══════════════════ */
+{
+  id: 'ug', group: '알고리즘', title: '우선순위큐 · 그리디',
+  syntax: [
+    { h: '🔴 우선순위큐 선언 — 외우세요',
+      code: `priority_queue<int> maxHeap;                              // 최대 힙 (기본)
+priority_queue<int, vector<int>, greater<int>> minHeap;   // 최소 힙
+
+maxHeap.push(5);
+maxHeap.top();      // 가장 큰 값 (보기만)
+maxHeap.pop();      // 제거 (값 반환 안 함)`,
+      note: '🔴 <b>C++ 기본은 최대 힙입니다</b> (Python <code>heapq</code>는 최소 힙 — 반대!).<br>' +
+            '<b>왜 <code>greater&lt;int&gt;</code>가 최소 힙인가</b>: 비교 함수가 ' +
+            '"누가 뒤로 갈지"를 정합니다. <code>greater</code>는 큰 값을 뒤로 보내므로 ' +
+            '작은 값이 <code>top</code>에 옵니다.<br>' +
+            '· <code>push</code>/<code>pop</code> 모두 O(log N), <code>top</code>은 O(1)' },
+
+    { h: '언제 쓰나 — 정렬과의 차이',
+      code: `// 정렬: 한 번만 순서가 필요할 때
+sort(v.begin(), v.end());
+
+// 힙: 중간에 데이터가 계속 추가될 때
+priority_queue<int, vector<int>, greater<int>> pq;
+while (조건) {
+    int smallest = pq.top(); pq.pop();
+    pq.push(새로운값);             // 🔴 추가되면서도 순서 유지
+}`,
+      note: '<b>핵심 차이</b>: 정렬은 고정된 데이터를 한 번 줄 세우는 것, ' +
+            '힙은 <b>데이터가 변하는 동안 계속 최소/최대를 꺼내는</b> 것입니다.<br>' +
+            '💡 "매번 가장 작은 둘을 합친다", "가장 급한 일부터 처리한다" 류가 힙입니다.' },
+
+    { h: 'pair 힙 — 다익스트라 등',
+      code: `priority_queue<pair<long long,int>,
+               vector<pair<long long,int>>,
+               greater<>> pq;        // C++14+ 에서 greater<> 생략형
+
+pq.push({cost, node});
+auto [c, u] = pq.top(); pq.pop();`,
+      note: '<code>pair</code>는 <b>first 우선</b>으로 비교되므로 ' +
+            '비용을 <code>first</code>에 두면 비용 기준 힙이 됩니다.<br>' +
+            '💡 <code>greater&lt;&gt;</code>(타입 생략)는 C++14 이상에서 됩니다. 코테 환경은 보통 C++17 이라 안전합니다.' },
+
+    { h: '🔴 그리디 — "지금 최선"이 전체 최선일 때',
+      code: `// 회의실 배정: 최대한 많이 선택
+sort(v.begin(), v.end(), [](auto& a, auto& b) {
+    return a.second < b.second;      // 🔴 "끝나는 시간" 기준
+});
+
+int lastEnd = -1, count = 0;
+for (auto& [start, end] : v)
+    if (start >= lastEnd) { count++; lastEnd = end; }`,
+      note: '<b>왜 끝나는 시간 기준인가</b>: 빨리 끝나는 회의를 고르면 ' +
+            '<b>남는 시간이 가장 많아져</b> 이후 선택지가 최대가 됩니다. ' +
+            '시작 시간이나 길이 기준으로 고르면 반례가 있습니다.<br>' +
+            '🔴 <code>&gt;=</code>냐 <code>&gt;</code>냐로 답이 달라집니다 — ' +
+            '"끝나는 동시에 시작 가능"한지 문제를 확인하세요.' },
+
+    { h: '그리디가 되는지 판단하는 법',
+      code: `// ✅ 그리디가 되는 전형
+거스름돈 (큰 단위부터)       — 단위가 배수 관계일 때만
+회의실 배정 (끝나는 시간)
+가장 작은 둘을 합치기 (허프만)
+
+// ❌ 그리디가 안 되는 전형
+배낭 문제 (무게 대비 가치)   — DP 필요
+동전이 {1, 3, 4} 일 때 6원   — 그리디: 4+1+1(3개), 최적: 3+3(2개)`,
+      note: '🔴 <b>코테에서의 현실적 판단</b>: 증명은 어렵습니다. ' +
+            '대신 ① <b>작은 반례를 만들어보고</b> ② 제약조건이 크면(10만 이상) ' +
+            'DP 가 불가능하니 그리디를 의심합니다.<br>' +
+            '💡 그리디가 의심스러우면 <b>작은 입력으로 완전탐색과 비교</b>해보세요.' },
+  ],
+  problems: [
+    { id: 'uga', title: '가장 작은 둘 합치기', diff: 1,
+      desc: 'N개의 수가 있습니다. 매번 <b>가장 작은 두 수</b>를 꺼내 합친 값을 다시 넣습니다. ' +
+            '하나가 될 때까지 반복했을 때, <b>합친 값들의 총합</b>을 출력하세요.<br>' +
+            '<span class="io">입력: <code>4</code> / <code>1 2 3 9</code> → 출력: <code>24</code><br>' +
+            '(1+2=3 → 3+3=6 → 6+9=15, 총합 3+6+15=24)</span>',
+      starter: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    cin >> n;
+
+    // 최소 힙을 만들어 쓰세요
+
+    return 0;
+}`,
+      cases: [ { in: '4\n1 2 3 9', out: '24' }, { in: '2\n5 5', out: '10' },
+               { in: '1\n7', out: '0' }, { in: '3\n1 1 1', out: '5' } ],
+      solution: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    cin >> n;
+    priority_queue<long long, vector<long long>, greater<long long>> pq;
+    for (int i = 0; i < n; i++) {
+        long long x;
+        cin >> x;
+        pq.push(x);
+    }
+
+    long long total = 0;
+    while (pq.size() >= 2) {              // 둘 이상 남아있을 때
+        long long a = pq.top(); pq.pop();
+        long long b = pq.top(); pq.pop();
+        total += a + b;                    // 합친 값을 누적
+        pq.push(a + b);                    // 다시 넣는다
+    }
+    cout << total << '\\n';
+    return 0;
+}`,
+      hint: '최소 힙에 전부 넣고, <code>size() &gt;= 2</code>인 동안 두 개를 꺼내 합칩니다. ' +
+            '합친 값을 누적하면서 다시 힙에 넣습니다.',
+      why: '<b>왜 힙이 필요한가</b>: 합친 값을 <b>다시 넣어야</b> 하므로 정렬로는 안 됩니다. ' +
+           '새 값이 어디에 들어갈지 매번 다시 정렬하면 O(N² log N)이 됩니다. ' +
+           '힙은 삽입·삭제가 O(log N)이라 전체 O(N log N)입니다.' +
+           '<ul><li><b>왜 가장 작은 둘인가</b>: 먼저 합친 값은 이후에도 계속 더해지므로, ' +
+           '작은 것부터 합쳐야 총합이 최소가 됩니다 (허프만 코딩의 원리)</li>' +
+           '<li>원소가 1개면 합칠 게 없어 답이 0 입니다 — <code>size() &gt;= 2</code>가 처리합니다</li>' +
+           '<li>합이 커지므로 <code>long long</code>. 값이 10억 × 10만 개면 쉽게 넘칩니다</li></ul>' },
+
+    { id: 'ugb', title: '회의실 배정', diff: 2,
+      desc: 'N개의 회의 (시작, 종료)가 주어집니다. 한 회의실에서 <b>최대 몇 개</b>를 ' +
+            '겹치지 않게 열 수 있는지 출력하세요. 회의가 끝나는 동시에 다음 회의를 시작할 수 있습니다.<br>' +
+            '<span class="io">입력: <code>3</code> / <code>1 4</code> / <code>2 3</code> / <code>3 5</code> → 출력: <code>2</code></span>',
+      starter: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    cin >> n;
+    vector<pair<int,int>> v(n);
+    for (int i = 0; i < n; i++)
+        cin >> v[i].first >> v[i].second;
+
+    // 무엇을 기준으로 정렬해야 할까요?
+
+    return 0;
+}`,
+      cases: [ { in: '3\n1 4\n2 3\n3 5', out: '2' },
+               { in: '1\n1 2', out: '1' },
+               { in: '3\n1 2\n2 3\n3 4', out: '3' },
+               { in: '4\n1 10\n2 3\n4 5\n6 7', out: '3' } ],
+      solution: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    cin >> n;
+    vector<pair<int,int>> v(n);
+    for (int i = 0; i < n; i++)
+        cin >> v[i].first >> v[i].second;
+
+    // 끝나는 시간이 빠른 것부터 (같으면 시작이 빠른 것부터)
+    sort(v.begin(), v.end(), [](const auto& a, const auto& b) {
+        if (a.second != b.second) return a.second < b.second;
+        return a.first < b.first;
+    });
+
+    int count = 0, lastEnd = -1;
+    for (const auto& [s, e] : v)
+        if (s >= lastEnd) {            // 끝난 뒤(또는 동시)에 시작 가능
+            count++;
+            lastEnd = e;
+        }
+    cout << count << '\\n';
+    return 0;
+}`,
+      hint: '<b>종료 시간</b> 기준으로 정렬하고, 앞에서부터 "이전 회의가 끝난 뒤 시작하는" 것을 고릅니다. ' +
+            '"동시에 시작 가능"하므로 <code>s &gt;= lastEnd</code>.',
+      why: '<b>왜 종료 시간 기준인가</b>: 빨리 끝나는 회의를 고르면 ' +
+           '<b>남은 시간이 최대가 되어</b> 이후 선택지가 가장 많아집니다.' +
+           '<ul><li><b>시작 시간 기준의 반례</b>: <code>(1,10), (2,3), (4,5)</code> — ' +
+           '시작 기준이면 (1,10)을 골라 1개뿐, 종료 기준이면 (2,3),(4,5)로 2개</li>' +
+           '<li><b>길이 기준의 반례</b>: 짧은 회의가 가운데 있어 양쪽을 막는 경우</li>' +
+           '<li>🔴 <code>&gt;=</code> vs <code>&gt;</code>: 세 번째 케이스 ' +
+           '<code>(1,2),(2,3),(3,4)</code>가 <code>&gt;=</code>면 3개, <code>&gt;</code>면 2개입니다. ' +
+           '<b>문제가 "동시 시작 가능"이라 했으니 <code>&gt;=</code></b></li>' +
+           '<li>복잡도: 정렬 O(N log N) + 한 번 순회 O(N)</li></ul>' },
+
+    { id: 'ugc', title: '거스름돈 — 그리디의 함정', diff: 2,
+      desc: '동전 종류와 금액이 주어집니다. 금액을 만드는 <b>최소 동전 개수</b>를 출력하세요. ' +
+            '불가능하면 <code>-1</code>.<br>' +
+            '<span class="io">입력: <code>3 6</code> / <code>1 3 4</code> → 출력: <code>2</code> (3+3)</span><br>' +
+            '🔴 큰 단위부터 고르는 그리디는 <b>틀립니다</b> (4+1+1 = 3개). 왜 그런지 생각해보세요.',
+      starter: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n, amount;
+    cin >> n >> amount;
+    vector<int> coin(n);
+    for (int i = 0; i < n; i++) cin >> coin[i];
+
+    // 그리디가 안 되면 무엇을 써야 할까요?
+
+    return 0;
+}`,
+      cases: [ { in: '3 6\n1 3 4', out: '2' }, { in: '3 11\n1 5 10', out: '2' },
+               { in: '1 7\n3', out: '-1' }, { in: '2 0\n1 2', out: '0' },
+               { in: '2 7\n2 4', out: '-1' } ],
+      solution: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n, amount;
+    cin >> n >> amount;
+    vector<int> coin(n);
+    for (int i = 0; i < n; i++) cin >> coin[i];
+
+    const int INF = 1e9;
+    vector<int> dp(amount + 1, INF);       // dp[k] = k원을 만드는 최소 개수
+    dp[0] = 0;                              // 0원은 동전 0개
+
+    for (int k = 1; k <= amount; k++)
+        for (int c : coin)
+            if (c <= k && dp[k - c] != INF)
+                dp[k] = min(dp[k], dp[k - c] + 1);
+
+    cout << (dp[amount] == INF ? -1 : dp[amount]) << '\\n';
+    return 0;
+}`,
+      hint: '그리디가 안 되니 <b>DP</b>를 씁니다. ' +
+            '<code>dp[k]</code> = k원을 만드는 최소 개수. ' +
+            '<code>dp[k] = min(dp[k - 동전] + 1)</code>.',
+      why: '<b>왜 그리디가 틀리나</b>: 동전 <code>{1,3,4}</code>로 6원을 만들 때 ' +
+           '큰 것부터 고르면 4 → 1 → 1 (3개)이지만, 최적은 3+3 (2개)입니다. ' +
+           '<b>큰 동전을 쓰는 게 항상 유리하지 않습니다.</b>' +
+           '<ul><li>그리디가 되는 조건: 동전 단위가 <b>배수 관계</b>일 때 (예: 1, 5, 10, 50). ' +
+           '한국 동전이 그래서 그리디가 됩니다</li>' +
+           '<li><b>DP 의 아이디어</b>: k원을 만드는 최소 개수는 ' +
+           '"k−c원을 만드는 최소 개수 + 1" 중 최솟값입니다. ' +
+           '작은 금액부터 채워 올라가면 모든 경우가 고려됩니다</li>' +
+           '<li><code>dp[k-c] != INF</code> 검사가 중요합니다 — ' +
+           '만들 수 없는 금액을 거쳐 계산하면 틀립니다 (마지막 케이스 7원에서 확인)</li>' +
+           '<li>복잡도: O(amount × N)</li></ul>' },
+  ],
+},
+
+/* ══════════════════ 신규: DP 기초 ══════════════════ */
+{
+  id: 'udp', group: '알고리즘', title: 'DP 기초',
+  syntax: [
+    { h: '🔴 DP 란 — 겹치는 부분문제를 저장하기',
+      code: `// 재귀만 쓰면: fib(5) 를 구할 때 fib(3) 을 2번, fib(2) 를 3번 계산
+// → fib(50) 이면 약 2^50 번 (불가능)
+
+// DP: 한 번 계산한 걸 저장해 재사용
+vector<long long> dp(n + 1);
+dp[0] = 0; dp[1] = 1;
+for (int i = 2; i <= n; i++)
+    dp[i] = dp[i-1] + dp[i-2];      // 각 i 를 한 번만 계산 → O(N)`,
+      note: '<b>DP 가 가능한 조건 두 가지</b>:<br>' +
+            '① <b>겹치는 부분문제</b> — 같은 계산이 반복된다<br>' +
+            '② <b>최적 부분구조</b> — 큰 문제의 답이 작은 문제의 답으로 구성된다<br><br>' +
+            '💡 11번 유닛의 메모이제이션이 DP 의 재귀 버전입니다. ' +
+            '여기서는 <b>반복문으로 아래부터 채우는</b> 방식을 씁니다 (바텀업).' },
+
+    { h: 'DP 문제를 푸는 순서',
+      code: `① dp 가 무엇을 뜻하는지 한 문장으로 정의한다
+     "dp[i] = i번째까지 봤을 때의 최대 이익"
+
+② 점화식을 세운다 (dp[i] 를 더 작은 dp 로)
+     dp[i] = max(dp[i-1], dp[i-2] + v[i])
+
+③ 초기값(base case)을 정한다
+     dp[0] = ?,  dp[1] = ?
+
+④ 채우는 순서를 정한다 (작은 것부터)
+     for (i = 2; i <= n; i++)`,
+      note: '🔴 <b>①이 가장 중요하고 가장 어렵습니다.</b> ' +
+            'dp 의 정의가 애매하면 점화식이 안 나옵니다. ' +
+            '"dp[i]가 정확히 무엇인가"를 <b>말로 적어보세요</b>.' },
+
+    { h: '전형 1 — 한 칸씩 올라가며 선택',
+      code: `// 계단 오르기: 1칸 또는 2칸씩, 몇 가지 방법?
+dp[0] = 1;                  // 제자리: 1가지 (아무것도 안 함)
+dp[1] = 1;
+for (int i = 2; i <= n; i++)
+    dp[i] = dp[i-1] + dp[i-2];   // 1칸 전에서 오거나, 2칸 전에서 오거나`,
+      note: '<b>왜 더하나</b>: i번째에 도달하는 방법은 ' +
+            '"i−1에서 1칸" 또는 "i−2에서 2칸"뿐이고 <b>서로 겹치지 않으므로</b> 합이 전체입니다.<br>' +
+            '💡 <b>개수를 세는 문제는 더하기</b>, <b>최적값을 찾는 문제는 min/max</b>입니다.' },
+
+    { h: '전형 2 — 최대/최소 선택',
+      code: `// 연속하지 않게 골라 최대 합
+dp[0] = v[0];
+dp[1] = max(v[0], v[1]);
+for (int i = 2; i < n; i++)
+    dp[i] = max(dp[i-1],            // i 를 안 고름
+                dp[i-2] + v[i]);     // i 를 고름 (i-1 은 못 고름)`,
+      note: '<b>구조</b>: 각 칸에서 "고른다 / 안 고른다" 두 선택지의 <b>더 좋은 쪽</b>을 취합니다. ' +
+            '고르면 이전 칸을 못 쓰므로 <code>dp[i-2]</code>에서 옵니다.' },
+
+    { h: '전형 3 — 2차원 DP (격자)',
+      code: `// 왼쪽 위에서 오른쪽 아래로, 오른쪽·아래로만 이동. 최대 합
+dp[0][0] = g[0][0];
+for (int i = 0; i < n; i++)
+    for (int j = 0; j < m; j++) {
+        if (i == 0 && j == 0) continue;
+        long long best = -1;
+        if (i > 0) best = max(best, dp[i-1][j]);   // 위에서 옴
+        if (j > 0) best = max(best, dp[i][j-1]);   // 왼쪽에서 옴
+        dp[i][j] = best + g[i][j];
+    }`,
+      note: '<b>경계 처리가 핵심</b>입니다. 첫 행은 왼쪽에서만, 첫 열은 위에서만 올 수 있습니다. ' +
+            '<code>if (i &gt; 0)</code>, <code>if (j &gt; 0)</code>로 나눠 처리하면 안전합니다.' },
+
+    { h: '🔴 메모이제이션(탑다운) vs 반복(바텀업)',
+      code: `// 탑다운: 재귀 + 저장. 점화식을 그대로 옮기기 쉽다
+long long solve(int i) {
+    if (i <= 1) return i;
+    if (done[i]) return memo[i];
+    done[i] = true;
+    return memo[i] = solve(i-1) + solve(i-2);
+}
+
+// 바텀업: 반복문. 스택 걱정이 없고 보통 더 빠르다
+for (int i = 2; i <= n; i++) dp[i] = dp[i-1] + dp[i-2];`,
+      note: '<b>어느 쪽을 쓰나</b>:<br>' +
+            '· 점화식이 복잡하거나 "필요한 부분만" 계산하고 싶으면 <b>탑다운</b><br>' +
+            '· 단순하고 전부 계산해야 하면 <b>바텀업</b> (스택 오버플로 위험이 없음)<br>' +
+            '🔴 탑다운은 <b>재귀 깊이</b>를 주의하세요 — N이 10만이면 터질 수 있습니다.' },
+  ],
+  problems: [
+    { id: 'udpa', title: '계단 오르기 방법 수', diff: 1,
+      desc: 'N개의 계단을 1칸 또는 2칸씩 올라갈 때, 올라가는 방법의 수를 출력하세요. ' +
+            '답이 커질 수 있으니 <code>1000000007</code>로 나눈 나머지를 출력합니다.<br>' +
+            '<span class="io">입력: <code>4</code> → 출력: <code>5</code></span><br>' +
+            '(1111, 112, 121, 211, 22)',
+      starter: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    cin >> n;
+    const long long MOD = 1000000007;
+
+    return 0;
+}`,
+      cases: [ { in: '4', out: '5' }, { in: '1', out: '1' }, { in: '2', out: '2' },
+               { in: '3', out: '3' }, { in: '45', out: '836311896' } ],
+      solution: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    cin >> n;
+    const long long MOD = 1000000007;
+
+    vector<long long> dp(n + 1, 0);
+    dp[0] = 1;                             // 제자리에 있는 방법 1가지
+    if (n >= 1) dp[1] = 1;
+
+    for (int i = 2; i <= n; i++)
+        dp[i] = (dp[i-1] + dp[i-2]) % MOD;  // 1칸 전 + 2칸 전
+
+    cout << dp[n] << '\\n';
+    return 0;
+}`,
+      hint: '<code>dp[i] = dp[i-1] + dp[i-2]</code>. ' +
+            '<code>dp[0] = 1</code>(제자리), <code>dp[1] = 1</code>로 시작합니다. ' +
+            '더할 때마다 <code>% MOD</code>를 해야 넘치지 않습니다.',
+      why: '<b>왜 더하기인가</b>: i번째 계단에 도달하는 경우는 ' +
+           '"i−1에서 1칸 올라옴"과 "i−2에서 2칸 올라옴" 두 가지뿐이고, ' +
+           '이 둘은 <b>서로 겹치지 않습니다</b>. 따라서 방법의 수는 두 경우의 합입니다.' +
+           '<ul><li><b>왜 <code>dp[0] = 1</code>인가</b>: "0번째 계단(출발점)에 있는 방법"은 ' +
+           '아무것도 하지 않는 1가지입니다. 0으로 두면 전체가 0이 됩니다</li>' +
+           '<li><b>왜 MOD 를 계속 취하나</b>: 마지막에만 나누면 그 전에 이미 ' +
+           '<code>long long</code>을 넘습니다. 덧셈마다 나눠도 결과는 같습니다 ' +
+           '(모듈러 연산의 성질)</li>' +
+           '<li>이 수열이 피보나치입니다. 11번 유닛의 메모이제이션과 같은 문제를 ' +
+           '<b>반복문(바텀업)</b>으로 푼 것입니다</li></ul>' },
+
+    { id: 'udpb', title: '연속하지 않게 골라 최대 합', diff: 2,
+      desc: 'N개의 정수에서 <b>인접하지 않은</b> 원소들을 골라 합을 최대로 만드세요. ' +
+            '하나도 안 골라도 됩니다(합 0).<br>' +
+            '<span class="io">입력: <code>5</code> / <code>3 2 7 10 12</code> → 출력: <code>22</code> (3+7+12)</span>',
+      starter: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    cin >> n;
+    vector<long long> v(n);
+    for (int i = 0; i < n; i++) cin >> v[i];
+
+    // dp[i] = i번째까지 봤을 때의 최대 합
+
+    return 0;
+}`,
+      cases: [ { in: '5\n3 2 7 10 12', out: '22' }, { in: '1\n5', out: '5' },
+               { in: '3\n-1 -2 -3', out: '0' }, { in: '4\n5 1 1 5', out: '10' },
+               { in: '2\n3 9', out: '9' } ],
+      solution: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    cin >> n;
+    vector<long long> v(n);
+    for (int i = 0; i < n; i++) cin >> v[i];
+
+    // dp[i] = i번째까지 고려했을 때의 최대 합 (안 고르는 것도 허용 -> 0 이상)
+    vector<long long> dp(n, 0);
+    dp[0] = max(0LL, v[0]);
+    if (n >= 2) dp[1] = max(dp[0], max(0LL, v[1]));
+
+    for (int i = 2; i < n; i++)
+        dp[i] = max(dp[i-1],              // i 를 안 고름
+                    dp[i-2] + v[i]);       // i 를 고름 (i-1 은 불가)
+
+    cout << max(0LL, dp[n-1]) << '\\n';
+    return 0;
+}`,
+      hint: '각 칸에서 <b>고른다/안 고른다</b>를 비교합니다. ' +
+            '고르면 <code>dp[i-2] + v[i]</code>, 안 고르면 <code>dp[i-1]</code>. ' +
+            '음수만 있으면 안 고르는 게 최선이라 0 입니다.',
+      why: '<b>왜 <code>dp[i-2]</code>에서 오나</b>: i를 고르면 i−1은 인접해서 못 고릅니다. ' +
+           '그래서 i−2까지의 최적값에 v[i]를 더합니다.' +
+           '<ul><li><b>dp 의 정의를 명확히</b>: "i번째까지 고려했을 때의 최대 합"입니다. ' +
+           '"i를 반드시 포함한 최대 합"으로 정의하면 점화식이 달라지니 ' +
+           '<b>정의를 먼저 말로 적는 게 중요합니다</b></li>' +
+           '<li>음수 처리: "하나도 안 골라도 된다"고 했으므로 ' +
+           '<code>max(0LL, ...)</code>로 하한을 0 으로 둡니다. ' +
+           '세 번째 케이스가 이걸 검사합니다</li>' +
+           '<li>💡 메모리를 줄이려면 변수 2개로도 됩니다 — <code>dp[i-1]</code>과 <code>dp[i-2]</code>만 ' +
+           '필요하므로 배열 전체가 불필요합니다 (O(1) 공간)</li></ul>' },
+
+    { id: 'udpc', title: '격자 최대 경로 합', diff: 2,
+      desc: 'n×m 격자에서 (0,0)에서 (n−1,m−1)까지 <b>오른쪽 또는 아래로만</b> 이동할 때 ' +
+            '지나는 수의 합을 최대로 만드세요.<br>' +
+            '<span class="io">입력: <code>3 3</code> / <code>1 2 3</code> / <code>4 5 6</code> / <code>7 8 9</code> → 출력: <code>29</code></span><br>' +
+            '(1→4→7→8→9 = 29)',
+      starter: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n, m;
+    cin >> n >> m;
+    vector<vector<long long>> g(n, vector<long long>(m));
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < m; j++)
+            cin >> g[i][j];
+
+    // dp[i][j] = (0,0) 에서 (i,j) 까지의 최대 합
+
+    return 0;
+}`,
+      cases: [ { in: '3 3\n1 2 3\n4 5 6\n7 8 9', out: '29' },
+               { in: '1 1\n5', out: '5' },
+               { in: '1 3\n1 2 3', out: '6' },
+               { in: '2 2\n1 100\n1 1', out: '102' } ],
+      solution: `int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n, m;
+    cin >> n >> m;
+    vector<vector<long long>> g(n, vector<long long>(m));
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < m; j++)
+            cin >> g[i][j];
+
+    vector<vector<long long>> dp(n, vector<long long>(m, 0));
+    dp[0][0] = g[0][0];
+
+    for (int i = 0; i < n; i++)              // 행 우선 = 캐시 친화적
+        for (int j = 0; j < m; j++) {
+            if (i == 0 && j == 0) continue;
+            long long best = LLONG_MIN;
+            if (i > 0) best = max(best, dp[i-1][j]);   // 위에서 내려옴
+            if (j > 0) best = max(best, dp[i][j-1]);   // 왼쪽에서 옴
+            dp[i][j] = best + g[i][j];
+        }
+
+    cout << dp[n-1][m-1] << '\\n';
+    return 0;
+}`,
+      hint: '<code>dp[i][j]</code>는 위(<code>dp[i-1][j]</code>)나 왼쪽(<code>dp[i][j-1]</code>) ' +
+            '중 큰 값에 현재 칸을 더합니다. 첫 행·첫 열은 한쪽에서만 올 수 있으니 ' +
+            '<code>if (i &gt; 0)</code>, <code>if (j &gt; 0)</code>로 나눕니다.',
+      why: '<b>왜 위/왼쪽만 보면 되나</b>: 오른쪽·아래로만 이동하므로 ' +
+           '(i,j)에 도달하는 직전 칸은 <b>반드시</b> (i−1,j) 또는 (i,j−1)입니다. ' +
+           '그 두 곳까지의 최적값을 이미 알고 있으면 (i,j)의 최적값이 바로 나옵니다 — ' +
+           '이게 <b>최적 부분구조</b>입니다.' +
+           '<ul><li><b>왜 순서가 이래야 하나</b>: <code>dp[i][j]</code>를 계산할 때 ' +
+           '위와 왼쪽이 <b>이미 채워져 있어야</b> 합니다. ' +
+           '행 우선으로 돌면 자연스럽게 보장됩니다 (그리고 캐시에도 유리합니다 — 12번 유닛)</li>' +
+           '<li>경계 처리를 <code>if</code>로 나눈 이유: ' +
+           '<code>dp[-1][j]</code> 같은 범위 밖 접근을 막습니다. ' +
+           '대안으로 <code>dp</code>를 <code>(n+1)×(m+1)</code>로 잡고 ' +
+           '0행·0열을 <code>LLONG_MIN</code>으로 두는 방법도 있습니다</li>' +
+           '<li>💡 이 문제는 <b>DFS 로도 풀리지만</b> 같은 칸을 여러 번 계산해 ' +
+           '지수 시간이 됩니다. DP 가 그 중복을 제거합니다</li></ul>' },
+  ],
+},
+
 /* ══════════════════ 신규: 효율과 원리 ══════════════════ */
 {
   id: 'up', group: '마무리', title: '효율 · 원리',
