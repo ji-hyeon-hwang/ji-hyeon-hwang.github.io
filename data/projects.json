@@ -2,7 +2,7 @@
   {
     "id": "cpp-trainer",
     "title": "C++ Coding Test Trainer",
-    "short_desc": "C++ syntax reference paired with a live editor: write code, compile it with real g++ 17 in the browser, and check it against test cases. 11 units from first compile through BFS and recursion, 35 problems, 102 test cases.",
+    "short_desc": "C++ syntax reference paired with a live editor: write code, compile it with real g++ 17 in the browser, and check it against test cases. 12 units from first compile through BFS, recursion and performance, 38 problems, 111 test cases.",
     "tags": ["C++", "Coding Test", "Interactive", "Compiler", "Education"],
     "thumbnail": null,
     "thumbnail_type": null,
