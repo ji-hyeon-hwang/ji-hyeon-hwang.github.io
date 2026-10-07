@@ -37,6 +37,12 @@
       renamed,
       '',
       'int main() {',
+      /* 🔴 학습자 코드가 ios::sync_with_stdio(false) 를 호출하면
+            cin/cout 이 C 스트림과 분리되어 아래 rdbuf 리다이렉트가 무력화됩니다
+            (출력이 빈 문자열로 잡힘). 하네스가 먼저 호출해 두면
+            학습자의 호출은 아무 효과가 없는 재호출이 되어 리다이렉트가 유지됩니다. */
+      '    ios::sync_with_stdio(false);',
+      '    cin.tie(nullptr);',
       '    const char* __IN[] = {' + inputs + '};',
       '    for (int __i = 0; __i < ' + cases.length + '; __i++) {',
       '        istringstream __iss(__IN[__i]);',
