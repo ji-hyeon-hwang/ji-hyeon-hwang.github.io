@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C++ Coding Test Trainer | Jihyeon Hwang</title>
+  <meta name="description" content="C++ syntax reference with a live editor — write code, compile with real g++ 17, and check against test cases.">
+  <link rel="icon" href="../assets/img/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/main.css">
+<style>
+  :root{
+    --mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+    --cbg:#1e222b; --cfg:#e6e3dc; --cdim:#7f8798; --ckey:#9ecbff; --cstr:#a3d9a5;
+    --pass:#15803d; --passbg:#f0fdf4; --passbr:#bbf7d0;
+    --fail:#b91c1c; --failbg:#fef2f2; --failbr:#fecaca;
+    --warn:#b45309; --warnbg:#fffbeb; --warnbr:#fde68a;
+  }
+  html[data-theme="dark"]{
+    --cbg:#15181f; --cfg:#e6e3dc; --cdim:#6e7686; --ckey:#8ab4f8; --cstr:#9bd6a0;
+    --pass:#4ade80; --passbg:#0d1f14; --passbr:#1d4a2b;
+    --fail:#f87171; --failbg:#20100f; --failbr:#4d1f1d;
+    --warn:#fbbf24; --warnbg:#211a0c; --warnbr:#4a3917;
+  }
+
+  .tr{max-width:1200px;margin:0 auto;padding:calc(var(--nav-h) + 1.5rem) 1.5rem 4rem}
+
+  /* ── 헤더 ── */
+  .tr-top{display:flex;align-items:flex-end;gap:1rem;flex-wrap:wrap;
+          border-bottom:2px solid var(--border);padding-bottom:.8rem;margin-bottom:1.2rem}
+  .tr-top h1{font-size:1.35rem;font-weight:700;margin:0}
+  .tr-top p{color:var(--text-muted);margin:.2rem 0 0;font-size:.85rem}
+  .prog{margin-left:auto;text-align:right;flex:none}
+  .prog b{font-family:var(--mono);font-size:1.15rem;font-weight:700;color:var(--accent)}
+  .prog span{display:block;font-size:.7rem;color:var(--text-muted);font-family:var(--mono)}
+  .pbar{width:132px;height:4px;background:var(--border);border-radius:2px;margin-top:.3rem;overflow:hidden}
+  .pbar i{display:block;height:100%;background:var(--accent);border-radius:2px;transition:width .3s}
+
+  /* ── 유닛 칩 (상단 가로) ── */
+  .units{display:flex;gap:.3rem;overflow-x:auto;padding-bottom:.6rem;margin-bottom:1rem;
+         border-bottom:1px solid var(--border)}
+  .unit{flex:none;border:1px solid var(--border);background:var(--surface);border-radius:5px;
+        cursor:pointer;font-family:var(--font);font-size:.76rem;color:var(--text);
+        padding:.4rem .65rem;display:flex;align-items:center;gap:.4rem;line-height:1.2}
+  .unit:hover{border-color:var(--accent)}
+  .unit.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+  .unit .num{font-family:var(--mono);font-size:.64rem;opacity:.65}
+  .unit .cnt{font-family:var(--mono);font-size:.64rem;opacity:.75}
+  .unit.full .cnt{color:var(--pass);font-weight:700;opacity:1}
+  .unit.on.full .cnt{color:#fff}
+
+  /* ── 2단: 문법(좌) / 실습(우) ── */
+  .cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.12fr);gap:1.1rem;align-items:start}
+  @media(max-width:950px){.cols{grid-template-columns:1fr}}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+        overflow:hidden}
+  .card-h{display:flex;align-items:center;gap:.5rem;padding:.55rem .85rem;
+          background:var(--bg);border-bottom:1px solid var(--border);
+          font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;
+          color:var(--text-muted);font-weight:600}
+  .card-b{padding:.9rem}
+
+  /* ── 문법 ── */
+  .sy{padding-bottom:1rem;margin-bottom:1rem;border-bottom:1px dashed var(--border)}
+  .sy:last-child{padding-bottom:0;margin-bottom:0;border-bottom:0}
+  .sy h4{font-size:.85rem;font-weight:650;margin:0 0 .45rem}
+  pre.code{margin:0;background:var(--cbg);color:var(--cfg);border-radius:5px;
+           padding:.7rem .85rem;overflow-x:auto;font-family:var(--mono);font-size:.755rem;
+           line-height:1.7;white-space:pre;-webkit-text-size-adjust:100%}
+  pre.code .cm{color:var(--cdim);font-style:italic}
+  pre.code .kw{color:var(--ckey)}
+  pre.code .st{color:var(--cstr)}
+  .sy .nt{font-size:.785rem;color:var(--text-muted);margin-top:.5rem;line-height:1.65}
+  .nt code,.desc code,.tip code,.after code{font-family:var(--mono);font-size:.73rem;
+      background:var(--bg);border:1px solid var(--border);padding:.04rem .27rem;border-radius:3px}
+
+  /* ── 문제 칩 ── */
+  .probs{display:flex;gap:.3rem;flex-wrap:wrap;padding:.55rem .85rem;
+         background:var(--bg);border-bottom:1px solid var(--border)}
+  .prob{border:1px solid var(--border);background:var(--surface);border-radius:4px;cursor:pointer;
+        font-family:var(--font);font-size:.73rem;padding:.25rem .55rem;color:var(--text);
+        display:flex;align-items:center;gap:.32rem}
+  .prob:hover{border-color:var(--accent)}
+  .prob.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+  .prob .lv{font-family:var(--mono);font-size:.6rem;opacity:.6}
+  .prob .ok{color:var(--pass);font-weight:700}
+  .prob.on .ok{color:#fff}
+
+  .desc{font-size:.84rem;line-height:1.7;margin:0 0 .8rem}
+  .desc .io{display:block;margin-top:.45rem;padding:.45rem .6rem;background:var(--bg);
+            border:1px solid var(--border);border-radius:4px;
+            font-family:var(--mono);font-size:.72rem;color:var(--text-muted);line-height:1.8}
+
+  /* ── 에디터 ── */
+  .edit{border:1px solid var(--border);border-radius:5px;overflow:hidden;background:var(--cbg)}
+  .edit-h{display:flex;align-items:center;gap:.5rem;padding:.35rem .65rem;
+          border-bottom:1px solid rgba(255,255,255,.08);
+          font-family:var(--mono);font-size:.65rem;color:var(--cdim)}
+  .edit-h .dot{width:7px;height:7px;border-radius:50%;background:#555;flex:none}
+  textarea#ed{display:block;width:100%;border:0;outline:0;resize:vertical;
+    background:var(--cbg);color:var(--cfg);font-family:var(--mono);font-size:.775rem;
+    line-height:1.75;padding:.75rem .85rem;min-height:250px;tab-size:4;
+    -webkit-text-size-adjust:100%}
+  .edit-f{display:flex;gap:.6rem;align-items:center;padding:.3rem .65rem;
+          border-top:1px solid rgba(255,255,255,.08);
+          font-family:var(--mono);font-size:.64rem;color:var(--cdim)}
+
+  .acts{display:flex;gap:.4rem;margin-top:.7rem;flex-wrap:wrap;align-items:center}
+  .btn{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:4px;
+       cursor:pointer;font-family:var(--font);font-size:.79rem;font-weight:500;padding:.4rem .78rem}
+  .btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+  .btn:disabled{opacity:.42;cursor:default}
+  .btn.main{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn.main:hover:not(:disabled){background:var(--accent-hover);border-color:var(--accent-hover);color:#fff}
+  .btn .sp{display:inline-block;width:10px;height:10px;margin-right:.35rem;
+    border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;
+    animation:spin .7s linear infinite;vertical-align:-1px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @media(prefers-reduced-motion:reduce){.btn .sp{animation-duration:2.4s}}
+  .kbd{font-family:var(--mono);font-size:.66rem;color:var(--text-muted);margin-left:auto}
+
+  /* ── 결과 ── */
+  .out{margin-top:.75rem}
+  .sum{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;font-family:var(--mono);
+       font-size:.76rem;padding:.5rem .7rem;border-radius:5px;border:1px solid var(--border);
+       background:var(--bg);margin-bottom:.5rem}
+  .sum.p{background:var(--passbg);border-color:var(--passbr);color:var(--pass);font-weight:700}
+  .sum.f{background:var(--failbg);border-color:var(--failbr);color:var(--fail);font-weight:700}
+  .sum.w{background:var(--warnbg);border-color:var(--warnbr);color:var(--warn)}
+  .case{border:1px solid var(--border);border-radius:5px;margin-bottom:.3rem;background:var(--bg);
+        overflow:hidden}
+  .case-h{display:flex;align-items:center;gap:.45rem;padding:.35rem .6rem;
+          font-family:var(--mono);font-size:.715rem}
+  .case.y .case-h{color:var(--pass)}
+  .case.n .case-h{color:var(--fail)}
+  .case-b{padding:0 .6rem .5rem;font-family:var(--mono);font-size:.705rem;line-height:1.75}
+  .kv{display:grid;grid-template-columns:44px 1fr;gap:.5rem}
+  .kv .k{color:var(--text-muted)}
+  .kv .v{white-space:pre-wrap;word-break:break-word;color:var(--text)}
+  .kv .v.bad{color:var(--fail)}
+  .cerr{background:var(--cbg);color:#fca5a5;border-radius:5px;padding:.6rem .75rem;
+        font-family:var(--mono);font-size:.705rem;line-height:1.65;white-space:pre-wrap;
+        overflow:auto;max-height:230px}
+
+  /* ── 힌트 / 정답 / 다음 ── */
+  .tip{margin-top:.6rem;font-size:.8rem;line-height:1.7;background:var(--warnbg);
+       border:1px solid var(--warnbr);border-radius:5px;padding:.55rem .7rem}
+  details.sol{margin-top:.5rem;border:1px solid var(--border);border-radius:5px;background:var(--bg)}
+  details.sol summary{cursor:pointer;padding:.45rem .7rem;font-size:.79rem;font-weight:500;list-style:none}
+  details.sol summary::-webkit-details-marker{display:none}
+  details.sol summary::before{content:"▸ ";color:var(--accent)}
+  details.sol[open] summary::before{content:"▾ "}
+  details.sol pre{border-top:1px solid var(--border);border-radius:0}
+  .after{margin-top:.6rem;padding:.6rem .75rem;background:var(--passbg);
+         border:1px solid var(--passbr);border-radius:5px;font-size:.8rem;line-height:1.7}
+  .after .nx{margin-top:.45rem}
+
+  .offl{margin-top:.6rem;font-size:.785rem;line-height:1.7;background:var(--warnbg);
+        border:1px solid var(--warnbr);border-radius:5px;padding:.6rem .75rem}
+  .offl code{font-family:var(--mono);font-size:.72rem}
+</style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="../index.html">Jihyeon Hwang</a>
+    <button class="nav-toggle" aria-label="Menu">&#9776;</button>
+    <ul class="nav-links">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../publications.html">Publications</a></li>
+      <li><a href="../projects.html">Projects</a></li>
+      <li><a href="../experience.html">Experience</a></li>
+      <li><a href="../cv.html">CV</a></li>
+    </ul>
+    <button class="theme-btn" id="theme-btn" aria-label="Toggle dark mode">◐</button>
+  </div>
+</nav>
+
+<main class="tr">
+  <div class="tr-top">
+    <div>
+      <h1>C++ Coding Test Trainer</h1>
+      <p>왼쪽 문법을 보고 오른쪽에서 직접 작성합니다. <b>실제 g++ 17</b>로 컴파일해 채점합니다.</p>
+    </div>
+    <div class="prog">
+      <b id="pgN">0 / 35</b>
+      <span>solved</span>
+      <div class="pbar"><i id="pgBar" style="width:0%"></i></div>
+    </div>
+  </div>
+
+  <div class="units" id="units"></div>
+
+  <div class="cols">
+    <!-- 문법 -->
+    <section class="card">
+      <div class="card-h" id="syTitle">문법</div>
+      <div class="card-b" id="sy"></div>
+    </section>
+
+    <!-- 실습 -->
+    <section class="card">
+      <div class="probs" id="probs"></div>
+      <div class="card-b">
+        <p class="desc" id="desc"></p>
+
+        <div class="edit">
+          <div class="edit-h">
+            <span class="dot"></span><span>main.cpp</span>
+            <span style="margin-left:auto">헤더 자동 포함</span>
+          </div>
+          <textarea id="ed" spellcheck="false" autocomplete="off" autocapitalize="off"
+                    autocorrect="off" aria-label="C++ 코드 편집기"></textarea>
+          <div class="edit-f">
+            <span id="edCases"></span>
+            <span style="margin-left:auto" id="edSaved"></span>
+          </div>
+        </div>
+
+        <div class="acts">
+          <button class="btn main" id="bRun">▶ 컴파일 &amp; 채점</button>
+          <button class="btn" id="bTip">힌트</button>
+          <button class="btn" id="bRst">초기화</button>
+          <button class="btn" id="bCpy">복사</button>
+          <span class="kbd">Ctrl+Enter</span>
+        </div>
+
+        <div id="tipSlot"></div>
+        <div class="out" id="out"></div>
+        <div id="solSlot"></div>
+        <div id="nextSlot"></div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer><p>© 2025 Jihyeon Hwang</p></footer>
+
+<script src="../assets/js/main.js"></script>
+<script src="lessons.js"></script>
+<script src="grader.js"></script>
+<script>
+/* ════════════ 상태 ════════════ */
+let ui = 0, pi = 0;
+const solved = {}, drafts = {};
+const ALL = UNITS.flatMap(u => u.problems);
+
+try {
+  const a = localStorage.getItem('cppt_solved'); if (a) Object.assign(solved, JSON.parse(a));
+  const b = localStorage.getItem('cppt_drafts'); if (b) Object.assign(drafts, JSON.parse(b));
+  const u = localStorage.getItem('cppt_unit');   if (u !== null && UNITS[+u]) ui = +u;
+} catch (e) {}
+
+function save() {
+  try {
+    localStorage.setItem('cppt_solved', JSON.stringify(solved));
+    localStorage.setItem('cppt_drafts', JSON.stringify(drafts));
+    localStorage.setItem('cppt_unit', String(ui));
+  } catch (e) {}
+}
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const U = () => UNITS[ui];
+const P = () => UNITS[ui].problems[pi];
+
+/* 코드 하이라이트: 주석 / 문자열 / 키워드 */
+const KW = /\b(int|long|double|char|bool|void|string|vector|map|set|queue|stack|deque|pair|unordered_map|unordered_set|priority_queue|for|while|if|else|return|break|continue|const|auto|true|false|cin|cout|endl|sort|size|push_back|main|using|namespace|include|struct|class)\b/g;
+function hi(src) {
+  let s = esc(src);
+  const hold = [];
+  // 주석 보호
+  s = s.replace(/(\/\/[^\n]*)/g, m => { hold.push('<span class="cm">'+m+'</span>'); return '\u0000'+(hold.length-1)+'\u0000'; });
+  // 문자열·문자 리터럴 보호 (esc 는 따옴표를 변환하지 않으므로 그대로 매칭)
+  s = s.replace(/("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')/g, m => { hold.push('<span class="st">'+m+'</span>'); return '\u0000'+(hold.length-1)+'\u0000'; });
+  s = s.replace(KW, '<span class="kw">$1</span>');
+  return s.replace(/\u0000(\d+)\u0000/g, (_, i) => hold[+i]);
+}
+
+/* ════════════ 유닛 ════════════ */
+function drawUnits() {
+  $('units').innerHTML = UNITS.map((u, i) => {
+    const got = u.problems.filter(p => solved[p.id]).length;
+    const all = got === u.problems.length;
+    return `<button type="button" class="unit${i===ui?' on':''}${all?' full':''}" data-i="${i}">`+
+           `<span class="num">${String(i+1).padStart(2,'0')}</span>`+
+           `<span>${esc(u.title)}</span>`+
+           `<span class="cnt">${all?'✓':got+'/'+u.problems.length}</span></button>`;
+  }).join('');
+  $('units').querySelectorAll('.unit').forEach(b =>
+    b.onclick = () => { ui = +b.dataset.i; pi = 0; save(); draw(); });
+
+  const n = ALL.filter(p => solved[p.id]).length;
+  $('pgN').textContent = `${n} / ${ALL.length}`;
+  $('pgBar').style.width = (n / ALL.length * 100) + '%';
+}
+
+/* ════════════ 문법 ════════════ */
+function drawSyntax() {
+  const u = U();
+  $('syTitle').textContent = `${String(ui+1).padStart(2,'0')} · ${u.title}`;
+  $('sy').innerHTML = u.syntax.map(s =>
+    `<div class="sy"><h4>${s.h}</h4><pre class="code">${hi(s.code)}</pre>`+
+    (s.note ? `<div class="nt">${s.note}</div>` : '')+`</div>`).join('');
+}
+
+/* ════════════ 문제 ════════════ */
+function drawProbs() {
+  $('probs').innerHTML = U().problems.map((p, i) =>
+    `<button type="button" class="prob${i===pi?' on':''}" data-i="${i}">`+
+    `<span class="lv">${p.diff ? '★'.repeat(p.diff) : '·'}</span>${esc(p.title)}`+
+    (solved[p.id] ? '<span class="ok">✓</span>' : '')+`</button>`).join('');
+  $('probs').querySelectorAll('.prob').forEach(b =>
+    b.onclick = () => { pi = +b.dataset.i; drawProb(); });
+}
+
+function drawProb() {
+  const p = P();
+  drawProbs();
+  $('desc').innerHTML = p.desc;
+  $('ed').value = drafts[p.id] !== undefined ? drafts[p.id] : p.starter;
+  $('edCases').textContent = `테스트케이스 ${p.cases.length}개`;
+  $('edSaved').textContent = drafts[p.id] !== undefined ? '작성 중' : '';
+  $('out').innerHTML = ''; $('tipSlot').innerHTML = '';
+  $('solSlot').innerHTML = ''; $('nextSlot').innerHTML = '';
+  if (solved[p.id]) showSolution();
+}
+
+function draw() { drawUnits(); drawSyntax(); drawProb(); }
+
+/* ════════════ 채점 (grader.js 위임) ════════════ */
+const { buildHarness, judge } = Grader;
+
+async function wandbox(code) {
+  const res = await fetch('https://wandbox.org/api/compile.json', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code, stdin: '', compiler: 'gcc-head', options: 'warning,c++17' }),
+  });
+  const text = await res.text();
+  if (!res.ok) {
+    if (res.status === 429 || /too many/i.test(text)) throw new Error('RATE');
+    throw new Error('HTTP ' + res.status);
+  }
+  try { return JSON.parse(text); }
+  catch (e) { throw new Error('BADJSON'); }
+}
+
+/* ════════════ 채점 ════════════ */
+async function run() {
+  const p = P(), body = $('ed').value;
+
+  const h = buildHarness(HEAD, body, p.cases);
+  if (!h) {
+    $('out').innerHTML = `<div class="sum w">⚠ <code>int main()</code> 함수가 필요합니다.`+
+      ` <b>초기화</b>를 누르면 뼈대를 되돌릴 수 있습니다.</div>`;
+    return;
+  }
+
+  $('bRun').disabled = true;
+  $('bRun').innerHTML = '<span class="sp"></span>컴파일 중';
+  $('out').innerHTML = `<div class="sum">g++ 17 로 컴파일하고 ${p.cases.length}개 케이스를 실행합니다…</div>`;
+
+  try {
+    const raw = await wandbox(h.code);
+    const v = judge(raw, p.cases, body, h.offset);
+
+    if (v.kind === 'compile_error') {
+      $('out').innerHTML = `<div class="sum f">✗ 컴파일 에러</div>`+
+        `<div class="cerr">${esc(v.message)}</div>`;
+      return;
+    }
+    if (v.kind === 'crashed') {
+      $('out').innerHTML = `<div class="sum f">✗ 실행이 중단되었습니다 (종료코드 ${esc(v.status)})</div>`+
+        `<div class="cerr">무한 루프이거나 메모리를 초과했을 수 있습니다.
+반복문의 종료 조건과 배열 인덱스 범위를 확인해보세요.${v.stderr ? "\n\n" + esc(v.stderr) : ''}</div>`;
+      return;
+    }
+
+    let html = '';
+    v.rows.forEach(r => {
+      html += `<div class="case ${r.ok?'y':'n'}"><div class="case-h">`+
+              `<span>${r.ok?'✓':'✗'}</span><span>케이스 ${r.index+1}</span>`+
+              (r.ok ? '' : `<span style="margin-left:auto;opacity:.75">불일치</span>`)+`</div>`;
+      if (!r.ok) {
+        html += `<div class="case-b">`+
+          (r.input ? `<div class="kv"><span class="k">입력</span><span class="v">${esc(r.input)}</span></div>` : '')+
+          `<div class="kv"><span class="k">기대</span><span class="v">${esc(r.want) || '(빈 출력)'}</span></div>`+
+          `<div class="kv"><span class="k">내 답</span><span class="v bad">${esc(r.got) || '(빈 출력)'}</span></div>`+
+          `</div>`;
+      }
+      html += `</div>`;
+    });
+
+    const warnBlock = v.warning
+      ? `<details class="sol"><summary>⚠ 컴파일 경고 — 읽어볼 가치가 있습니다</summary>`+
+        `<div class="cerr" style="border-radius:0">${esc(v.warning)}</div></details>` : '';
+
+    $('out').innerHTML =
+      `<div class="sum ${v.allPassed?'p':'f'}">${v.allPassed?'✓ 전체 통과':'✗ 실패'}`+
+      ` · ${v.passed}/${v.total} 케이스</div>` + html + warnBlock;
+
+    if (v.allPassed) {
+      const first = !solved[p.id];
+      solved[p.id] = true; save();
+      drawUnits(); drawProbs(); showSolution();
+      if (first) showNext();
+    }
+  } catch (err) {
+    const m = err.message;
+    const why = m === 'RATE'
+      ? '컴파일 서버가 요청을 제한하고 있습니다 — 30초쯤 뒤에 다시 눌러보세요.'
+      : m === 'BADJSON' ? '서버가 예상과 다른 응답을 보냈습니다.'
+      : `서버에 연결할 수 없습니다 (${esc(m)}).`;
+    $('out').innerHTML =
+      `<div class="sum w">⚠ ${why}</div>`+
+      `<div class="offl"><b>로컬에서 바로 돌릴 수 있습니다</b> — <b>복사</b>를 누르고 터미널에서:
+       <br><code>g++ -std=c++17 -O2 -Wall -o main main.cpp && ./main</code>
+       <br><span style="color:var(--text-muted)">복사되는 코드는 헤더가 하나씩 명시되어 있습니다 —
+       MinGW 8.1에서 <code>bits/stdc++.h</code> + <code>-std=c++17</code> 조합이 깨지기 때문입니다.</span></div>`;
+  } finally {
+    $('bRun').disabled = false;
+    $('bRun').innerHTML = '▶ 컴파일 &amp; 채점';
+  }
+}
+
+
+function showSolution() {
+  $('solSlot').innerHTML =
+    `<details class="sol"><summary>모범 답안 — 실제 g++로 검증됨</summary>`+
+    `<pre class="code">${hi(P().solution)}</pre></details>`;
+}
+
+function showNext() {
+  const u = U();
+  let msg, btn = '';
+  if (pi + 1 < u.problems.length) {
+    msg = '다음 문제로 넘어갑니다.';
+    btn = `<button class="btn main" id="bNx">다음 문제 ▶</button>`;
+  } else if (ui + 1 < UNITS.length) {
+    msg = `<b>${esc(u.title)}</b> 유닛을 끝냈습니다.`;
+    btn = `<button class="btn main" id="bNx">${esc(UNITS[ui+1].title)} 으로 ▶</button>`;
+  } else {
+    msg = '마지막 유닛까지 끝냈습니다. 전체 진행률을 확인해보세요.';
+  }
+  $('nextSlot').innerHTML = `<div class="after">✓ 통과했습니다. ${msg}<div class="nx">${btn}</div></div>`;
+  const b = $('bNx');
+  if (b) b.onclick = () => {
+    if (pi + 1 < u.problems.length) { pi++; drawProb(); }
+    else { ui++; pi = 0; save(); draw(); }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+}
+
+/* ════════════ 이벤트 ════════════ */
+$('bRun').onclick = run;
+$('bTip').onclick = () => {
+  $('tipSlot').innerHTML = $('tipSlot').innerHTML
+    ? '' : `<div class="tip"><b>힌트</b> · ${P().hint}</div>`;
+};
+$('bRst').onclick = () => {
+  const p = P();
+  delete drafts[p.id]; save();
+  $('ed').value = p.starter;
+  $('edSaved').textContent = '';
+  $('out').innerHTML = ''; $('nextSlot').innerHTML = '';
+};
+$('bCpy').onclick = async () => {
+  const full = HEAD + '\n\n' + $('ed').value + '\n';
+  let ok = false;
+  try { await navigator.clipboard.writeText(full); ok = true; }
+  catch (e) {
+    const ta = document.createElement('textarea');
+    ta.value = full; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { ok = document.execCommand('copy'); } catch (_) {}
+    ta.remove();
+  }
+  $('bCpy').textContent = ok ? '복사됨 ✓' : '복사 실패';
+  setTimeout(() => { $('bCpy').textContent = '복사'; }, 1400);
+};
+
+$('ed').addEventListener('input', () => {
+  drafts[P().id] = $('ed').value; save();
+  $('edSaved').textContent = '작성 중';
+});
+$('ed').addEventListener('keydown', e => {
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    const t = e.target, s = t.selectionStart, n = t.selectionEnd;
+    t.value = t.value.slice(0, s) + '    ' + t.value.slice(n);
+    t.selectionStart = t.selectionEnd = s + 4;
+    drafts[P().id] = t.value; save();
+  }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); run(); }
+});
+
+draw();
+</script>
+</body>
+</html>
