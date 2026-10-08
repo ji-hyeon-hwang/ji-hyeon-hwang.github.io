@@ -218,7 +218,7 @@
 
         <div class="edit">
           <div class="edit-h">
-            <span class="dot"></span><span>main.cpp</span>
+            <span class="dot"></span><span id="edWhich">main.cpp</span>
             <span style="margin-left:auto">헤더 자동 포함</span>
           </div>
           <textarea id="ed" spellcheck="false" autocomplete="off" autocapitalize="off"
@@ -348,9 +348,14 @@ function drawProb() {
   const p = P();
   drawProbs();
   $('desc').innerHTML = p.desc;
-  $('ed').value = drafts[p.id] !== undefined ? drafts[p.id] : p.starter;
+  const hasDraft = drafts[p.id] !== undefined;
+  $('ed').value = hasDraft ? drafts[p.id] : p.starter;
   $('edCases').textContent = `테스트케이스 ${p.cases.length}개`;
-  $('edSaved').textContent = drafts[p.id] !== undefined ? '작성 중' : '';
+  /* 🔴 어느 문제의 어떤 코드인지 분명히 보여줍니다.
+        여러 문제의 뼈대가 비슷해서, 표시가 없으면
+        이전 문제의 코드가 남아있는 것처럼 보입니다. */
+  $('edWhich').textContent = `${String(ui + 1).padStart(2, '0')}-${pi + 1} · ${p.title}`;
+  $('edSaved').textContent = hasDraft ? '내가 쓴 코드 (초기화로 되돌리기)' : '기본 뼈대';
   $('out').innerHTML = ''; $('tipSlot').innerHTML = '';
   $('solSlot').innerHTML = ''; $('nextSlot').innerHTML = '';
   showSolution();          // 🔴 막혔을 때 볼 수 있어야 하므로 항상 제공
@@ -501,7 +506,7 @@ $('bRst').onclick = () => {
   const p = P();
   delete drafts[p.id]; saveDraftSoon();
   $('ed').value = p.starter;
-  $('edSaved').textContent = '';
+  $('edSaved').textContent = '기본 뼈대';
   $('out').innerHTML = ''; $('nextSlot').innerHTML = '';
 };
 $('bCpy').onclick = async () => {
@@ -522,7 +527,7 @@ $('bCpy').onclick = async () => {
 $('ed').addEventListener('input', () => {
   drafts[P().id] = $('ed').value;    // 메모리에는 즉시 (빠름)
   saveDraftSoon();                    // 디스크 저장은 입력이 멈춘 뒤
-  $('edSaved').textContent = '작성 중';
+  $('edSaved').textContent = '내가 쓴 코드 (초기화로 되돌리기)';
 });
 /* ════════════ 에디터: 자동 들여쓰기 ════════════
    textarea 는 기본적으로 Enter 를 누르면 1열로 돌아갑니다.

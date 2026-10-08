@@ -4596,39 +4596,77 @@ x * 2  →  x << 1          // 마찬가지
             '반대로 ①이 맞으면 ③만으로 34배가 빨라질 수 있습니다.' },
   ],
   problems: [
-    { id: 'upa', title: '빠른 입출력으로 대량 처리', diff: 1,
-      desc: 'N개의 정수를 입력받아 합을 출력하세요. N은 최대 50만.<br>' +
-            '<span class="io">입력: <code>5</code> / <code>1 2 3 4 5</code> → 출력: <code>15</code></span><br>' +
-            '🔴 <code>ios::sync_with_stdio(false); cin.tie(nullptr);</code> 를 반드시 넣으세요. ' +
-            '합이 얼마나 커지는지도 계산해보세요.',
+    { id: 'upa', title: '오버플로 경계 판단', diff: 2,
+      desc: 'N개의 정수가 주어집니다. 다음 세 값을 공백으로 구분해 출력하세요.<br>' +
+            '① 전체 <b>합</b> &nbsp; ② 가장 큰 두 수의 <b>곱</b> &nbsp; ③ 전체 <b>평균</b>(내림)<br>' +
+            '<span class="io">입력: <code>4</code> / <code>100000 100000 1 1</code><br>' +
+            '출력: <code>200002 10000000000 50000</code></span><br>' +
+            '제약: N ≤ 200,000, 각 값은 0 이상 10⁹ 이하<br>' +
+            '🔴 <b>세 값 중 어디서 <code>int</code>가 터지는지</b> 미리 계산해보세요.',
       starter: `int main() {
-    // 빠른 입출력 두 줄을 먼저
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
 
     int n;
     cin >> n;
+    vector<int> v(n);
+    for (int i = 0; i < n; i++) cin >> v[i];
+
+    // 🔴 어떤 변수가 long long 이어야 할까요?
+    //    합 = 최대 20만 x 10^9
+    //    곱 = 최대 10^9 x 10^9
 
     return 0;
 }`,
-      cases: [ { in: '5\n1 2 3 4 5', out: '15' }, { in: '1\n1000000000', out: '1000000000' },
-               { in: '3\n1000000000 1000000000 1000000000', out: '3000000000' } ],
+      cases: [ { in: '4\n100000 100000 1 1', out: '200002 10000000000 50000' },
+               { in: '2\n1000000000 1000000000', out: '2000000000 1000000000000000000 1000000000' },
+               { in: '3\n1 2 3', out: '6 6 2' },
+               { in: '2\n0 0', out: '0 0 0' },
+               { in: '3\n7 7 7', out: '21 49 7' } ],
       solution: `int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
     int n;
     cin >> n;
+    vector<int> v(n);
+    for (int i = 0; i < n; i++) cin >> v[i];
+
+    // ① 합: 20만 x 10^9 = 2x10^14  -> long long 필수
     long long sum = 0;
-    for (int i = 0; i < n; i++) {
-        int x;
-        cin >> x;
-        sum += x;
-    }
-    cout << sum << '\\n';
+    for (int x : v) sum += x;
+
+    // ② 곱: 가장 큰 두 수를 찾아 곱하기 전에 캐스팅
+    vector<int> s = v;
+    sort(s.rbegin(), s.rend());                   // 내림차순
+    long long prod = (long long)s[0] * s[1];      // 🔴 곱하기 "전"에 캐스팅
+
+    // ③ 평균(내림): 합이 long long 이므로 안전
+    long long avg = sum / n;
+
+    cout << sum << ' ' << prod << ' ' << avg << '\\n';
     return 0;
 }`,
-      hint: '세 번째 케이스가 <code>int</code>로는 안 됩니다 — 30억은 21억을 넘습니다. ' +
-            '<code>sum</code>을 <code>long long</code>으로. 출력도 <code>endl</code> 대신 <code>\'\\n\'</code>.',
-      why: '<b>왜 두 줄을 넣나</b>: <code>sync_with_stdio(false)</code>는 C 입출력과의 버퍼 공유를 끊어 C++ 전용 버퍼를 쓰게 합니다. <code>cin.tie(nullptr)</code>는 <code>cin</code>을 읽을 때마다 <code>cout</code>을 비우는 기본 동작을 끕니다.<ul><li>실측: 출력 20만 줄에서 <b>516ms → 15ms (34배)</b>, 입력 50만 개에서 <b>4.5배</b></li><li>🔴 대신 <code>printf</code>/<code>scanf</code>를 섞어 쓰면 출력 순서가 뒤바뀝니다</li><li>30억은 <code>int</code>(21억)를 넘으므로 합은 <code>long long</code></li></ul>' },
+      hint: '합과 곱 모두 <code>long long</code>입니다. ' +
+            '곱은 <code>(long long)s[0] * s[1]</code> — <b>곱하기 전에</b> 캐스팅해야 합니다. ' +
+            '가장 큰 두 수는 내림차순 정렬 후 앞의 두 개입니다.',
+      why: '<b>세 값의 경계를 각각 계산해봅니다</b> (제약: N ≤ 2×10⁵, 값 ≤ 10⁹):' +
+           '<ul><li><b>합</b>: 최대 2×10⁵ × 10⁹ = <b>2×10¹⁴</b> → <code>int</code>(2.1×10⁹) 초과 ❌</li>' +
+           '<li><b>곱</b>: 최대 10⁹ × 10⁹ = <b>10¹⁸</b> → <code>int</code> 한참 초과 ❌ ' +
+           '(<code>long long</code> 최대 9.2×10¹⁸ 안에는 들어갑니다)</li>' +
+           '<li><b>평균</b>: 합을 N으로 나눈 값이라 최대 10⁹ → <code>int</code> 범위지만, ' +
+           '<b>합이 이미 <code>long long</code>이라</b> 그대로 두는 게 안전합니다</li></ul>' +
+           '🔴 <b>캐스팅 위치가 핵심입니다</b>:' +
+           '<ul><li><code>long long p = s[0] * s[1];</code> ← ❌ ' +
+           '오른쪽이 <code>int × int</code>로 <b>먼저 계산되어 이미 넘친 뒤</b> 대입됩니다</li>' +
+           '<li><code>long long p = (long long)s[0] * s[1];</code> ← ✅ ' +
+           '한쪽이 64비트면 <b>전체가 64비트로</b> 계산됩니다</li></ul>' +
+           '💡 두 번째 케이스가 정확히 이걸 검사합니다 — ' +
+           '캐스팅을 빼면 곱이 <code>-1486618624</code> 같은 값이 나옵니다.' +
+           '<ul><li><b>"그냥 다 long long 쓰면?"</b> — 이 단원 문법 설명대로 ' +
+           '속도는 거의 차이 없고 <b>메모리만 2배</b>입니다. ' +
+           '변수 몇 개라면 그냥 쓰는 게 맞고, <b>수백만 원소 배열</b>일 때만 범위를 따집니다. ' +
+           '여기서 <code>vector&lt;int&gt;</code>를 유지한 이유가 그것입니다</li></ul>' },
     { id: 'upb', title: '행 우선으로 순회하기', diff: 1,
       desc: 'n×m 격자의 모든 값을 더하세요. 단 <b>행 우선 순서</b>로 순회하세요.<br>' +
             '<span class="io">입력: <code>2 3</code> / <code>1 2 3</code> / <code>4 5 6</code> → 출력: <code>21</code></span><br>' +
