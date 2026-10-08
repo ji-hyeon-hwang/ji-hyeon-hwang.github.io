@@ -622,22 +622,29 @@ $('ed').addEventListener('keydown', e => {
     }
   }
 
-  /* ── 괄호·따옴표 자동 완성 (닫는 쪽을 바로 넣어줌) ── */
-  const PAIRS = { '(': ')', '[': ']', '{': '}', '"': '"', "'": "'" };
+  /* ── 괄호·따옴표 자동 완성 ──
+     🔴 '{' 는 일부러 제외합니다. C++ 에서는 '{' 를 치고 Enter 를 눌러
+        블록을 여는 흐름이 자연스럽고, Enter 처리가 이미 '}' 를 넣어줍니다.
+        '{' 를 자동완성하면 "int main() {" 가 "int main() {}" 가 되어
+        직접 '}' 를 칠 때 중복되고, 초기화 리스트에서도 꼬입니다. */
+  const PAIRS = { '(': ')', '[': ']', '"': '"', "'": "'" };
   if (PAIRS[e.key] && s === n) {
     const nextCh = v[s] || '';
     const isQuote = e.key === '"' || e.key === "'";
-    /* 따옴표는 단어 중간에서 자동완성하지 않습니다 (don't 같은 경우) */
-    const skip = isQuote && /[\w"']/.test(nextCh);
-    if (!skip && (!/[\w]/.test(nextCh))) {
+    /* 따옴표는 단어 옆에서 자동완성하지 않습니다 (don't, a"b 같은 경우) */
+    const prevCh = s > 0 ? v[s - 1] : '';
+    const skip = isQuote && (/[\w"']/.test(nextCh) || /[\w]/.test(prevCh));
+    if (!skip && !/[\w]/.test(nextCh)) {
       e.preventDefault();
       applyEdit(t, s, n, e.key + PAIRS[e.key], s + 1);
       return;
     }
   }
 
-  /* ── 닫는 괄호를 직접 쳤을 때, 바로 뒤가 같은 문자면 통과 ── */
-  if ((e.key === ')' || e.key === ']' || e.key === '"' || e.key === "'")
+  /* ── 닫는 문자를 직접 쳤을 때, 바로 뒤가 같은 문자면 통과만 ──
+     자동완성으로 생긴 짝을 건너뛰기 위한 처리입니다. */
+  if ((e.key === ')' || e.key === ']' || e.key === '}' ||
+       e.key === '"' || e.key === "'")
       && s === n && v[s] === e.key) {
     e.preventDefault();
     t.selectionStart = t.selectionEnd = s + 1;
