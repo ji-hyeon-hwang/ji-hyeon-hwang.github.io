@@ -995,41 +995,69 @@ void dfs(int r, int c) {       // 인자를 줄일 수 있음
       note: '실무에서는 피하지만 코테에서는 관례입니다. 특히 DFS 재귀에서 인자를 줄이는 데 씁니다.' },
   ],
   problems: [
-    { id: 'pfa', title: '최대공약수 함수', diff: 1,
-      desc: '두 수의 최대공약수를 구하는 함수를 만들어 호출하세요.<br>' +
-            '<span class="io">입력: <code>12 18</code> → 출력: <code>6</code></span><br>' +
-            '💡 유클리드 호제법: <code>gcd(a,b) = gcd(b, a%b)</code>, <code>b가 0이면 a</code>',
-      starter: `int gcd(int a, int b) {
+    { id: 'pfa', title: '함수로 나눠 쓰기', diff: 0,
+      desc: '세 정수를 입력받아 <b>두 개의 함수</b>를 만들어 쓰세요.<br>' +
+            '· <code>sum3</code> — 세 수의 합을 반환<br>' +
+            '· <code>maxOf3</code> — 세 수 중 최대를 반환<br>' +
+            '<span class="io">입력: <code>3 9 5</code> → 출력: <code>17 9</code></span><br>' +
+            '💡 같은 계산을 <code>main</code> 안에 늘어놓는 대신 ' +
+            '<b>이름 붙인 함수로 꺼내는</b> 연습입니다.',
+      starter: `int sum3(int a, int b, int c) {
+    // 여기에 작성
+
+}
+
+int maxOf3(int a, int b, int c) {
     // 여기에 작성
 
 }
 
 int main() {
-    int a, b;
-    cin >> a >> b;
-    cout << gcd(a, b) << '\\n';
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int x, y, z;
+    cin >> x >> y >> z;
+    cout << sum3(x, y, z) << ' ' << maxOf3(x, y, z) << '\\n';
     return 0;
 }`,
-      cases: [ { in: '12 18', out: '6' }, { in: '7 13', out: '1' },
-               { in: '100 10', out: '10' }, { in: '5 5', out: '5' } ],
-      solution: `int gcd(int a, int b) {
-    while (b != 0) {
-        int t = a % b;
-        a = b;
-        b = t;
-    }
-    return a;
+      cases: [ { in: '3 9 5', out: '17 9' }, { in: '1 1 1', out: '3 1' },
+               { in: '-5 -2 -9', out: '-16 -2' }, { in: '0 0 10', out: '10 10' } ],
+      solution: `int sum3(int a, int b, int c) {
+    return a + b + c;
+}
+
+int maxOf3(int a, int b, int c) {
+    return max(a, max(b, c));      // max 를 두 번 겹쳐 씁니다
 }
 
 int main() {
-    int a, b;
-    cin >> a >> b;
-    cout << gcd(a, b) << '\\n';
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int x, y, z;
+    cin >> x >> y >> z;
+    cout << sum3(x, y, z) << ' ' << maxOf3(x, y, z) << '\\n';
     return 0;
 }`,
-      hint: '반복문 버전: <code>b</code>가 0이 아닐 동안 <code>(a,b) → (b, a%b)</code> 로 바꿉니다. ' +
-            '재귀로도 됩니다: <code>return b == 0 ? a : gcd(b, a % b);</code>',
-      why: '<b>왜 유클리드 호제법이 되나</b>: <code>gcd(a,b) = gcd(b, a%b)</code>입니다. a와 b의 공약수는 <code>a - kb</code>의 약수이기도 하므로 나머지로 바꿔도 최대공약수가 보존됩니다. 매 단계에서 수가 빠르게 줄어 O(log) 입니다.<ul><li>반복문 버전이 재귀보다 안전합니다 — 스택을 쓰지 않습니다</li></ul>' },
+      hint: '<code>sum3</code>은 <code>return a + b + c;</code> 한 줄입니다. ' +
+            '<code>maxOf3</code>은 <code>max(a, max(b, c))</code> — ' +
+            '<code>max</code>는 두 개만 받으므로 겹쳐 씁니다. ' +
+            'if 문으로 직접 비교해도 됩니다.',
+      why: '<b>함수의 세 부분</b>: <code>int sum3(int a, int b, int c)</code> 에서<br>' +
+           '· <code>int</code> = <b>반환형</b> (이 함수가 내놓는 값의 종류)<br>' +
+           '· <code>sum3</code> = <b>이름</b> (호출할 때 쓰는 것)<br>' +
+           '· <code>(int a, int b, int c)</code> = <b>매개변수</b> (받아올 값들)<br>' +
+           '<code>return</code> 이 값을 돌려주고 함수를 즉시 끝냅니다.' +
+           '<ul><li><b>왜 함수로 꺼내나</b>: ① 같은 계산을 여러 번 쓸 때 한 곳만 고치면 됩니다 ' +
+           '② <code>maxOf3(x,y,z)</code> 가 <code>max(x,max(y,z))</code> 보다 의도가 드러납니다 ' +
+           '③ <code>main</code> 이 짧아져 전체 흐름이 보입니다</li>' +
+           '<li>🔴 <b>함수는 쓰기 전에 정의되어 있어야 합니다.</b> ' +
+           '<code>main</code> 아래에 쓰면 "선언되지 않음" 에러가 납니다 ' +
+           '(위에 프로토타입을 두면 해결됩니다 — 문법 설명 참고)</li>' +
+           '<li>음수 케이스가 있는 이유: <code>maxOf3</code> 을 ' +
+           '<code>best = 0</code> 으로 시작하는 방식으로 짜면 틀립니다. ' +
+           '매개변수로 받은 값끼리만 비교해야 합니다</li></ul>' },
     { id: 'pfb', title: '참조로 두 값 교환', diff: 1,
       desc: '두 변수의 값을 바꾸는 함수를 <b>참조로</b> 만들어 호출하세요.<br>' +
             '<span class="io">입력: <code>3 7</code> → 출력: <code>7 3</code></span><br>' +
@@ -1745,6 +1773,59 @@ int main() {
             '③ 계산해서 <code>memo[n]</code> 에 저장하고 반환. ' +
             '메모 없이 돌리면 같은 값을 수십억 번 다시 계산합니다 — 이게 DP 의 출발점입니다.',
       why: '<b>왜 메모이제이션이 필요한가</b>: 단순 재귀는 같은 값을 반복 계산합니다. <code>fib(50)</code>이면 호출 횟수가 약 2⁵⁰(1000조)회라 사실상 끝나지 않습니다.<ul><li>한 번 계산한 값을 저장하면 각 n 을 <b>한 번만</b> 계산 → O(N)</li><li>이게 <b>DP(동적 계획법)의 출발점</b>입니다. "겹치는 부분 문제"를 저장해 재사용하는 것이 DP 의 핵심입니다</li></ul>' },
+    { id: 'prd', title: '재귀로 최대공약수', diff: 1,
+      desc: '두 수의 최대공약수(GCD)를 <b>재귀</b>로 구하세요.<br>' +
+            '<span class="io">입력: <code>12 18</code> → 출력: <code>6</code></span><br>' +
+            '💡 <b>유클리드 호제법</b>: <code>gcd(a, b) = gcd(b, a % b)</code>, ' +
+            'b가 0이면 답은 a 입니다.',
+      starter: `int gcd(int a, int b) {
+    // 종료 조건부터 — b 가 0 이면?
+
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int a, b;
+    cin >> a >> b;
+    cout << gcd(a, b) << '\\n';
+    return 0;
+}`,
+      cases: [ { in: '12 18', out: '6' }, { in: '7 13', out: '1' },
+               { in: '100 10', out: '10' }, { in: '5 5', out: '5' },
+               { in: '0 7', out: '7' } ],
+      solution: `int gcd(int a, int b) {
+    if (b == 0) return a;          // 종료 조건
+    return gcd(b, a % b);          // 더 작은 문제로
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int a, b;
+    cin >> a >> b;
+    cout << gcd(a, b) << '\\n';
+    return 0;
+}`,
+      hint: '두 줄입니다. <code>b == 0</code>이면 <code>a</code>를 반환(종료 조건), ' +
+            '아니면 <code>gcd(b, a % b)</code>를 반환. ' +
+            '반복문으로도 됩니다 — <code>while (b != 0)</code> 안에서 두 값을 바꿔치기.',
+      why: '<b>왜 <code>gcd(a,b) = gcd(b, a%b)</code> 가 성립하나</b>: ' +
+           'a와 b의 공약수는 <code>a - kb</code>(= 나머지)의 약수이기도 합니다. ' +
+           '따라서 b와 나머지의 최대공약수가 원래 답과 같습니다.' +
+           '<ul><li><b>왜 빠른가</b>: 나머지는 b보다 작고, 매 단계에서 값이 ' +
+           '빠르게 줄어 <b>O(log)</b> 번에 끝납니다. ' +
+           '12,18 → 18,12 → 12,6 → 6,0 으로 네 번입니다</li>' +
+           '<li><b>종료 조건이 <code>b == 0</code>인 이유</b>: 0과 a의 최대공약수는 a 입니다 ' +
+           '(모든 수가 0을 나누므로). 마지막 케이스 <code>0 7</code>이 이걸 검사합니다</li>' +
+           '<li><b>재귀 vs 반복</b>: 이 재귀는 깊이가 O(log)라 ' +
+           '스택이 터질 걱정이 없어 재귀로 써도 안전합니다. ' +
+           '깊이가 입력 크기에 비례하는 재귀라면 반복문이 안전합니다</li>' +
+           '<li>💡 <b>최소공배수</b>는 <code>a / gcd(a,b) * b</code> 입니다. ' +
+           '<code>a * b / gcd</code> 로 쓰면 곱셈에서 오버플로할 수 있어 ' +
+           '<b>나누기를 먼저</b> 합니다</li></ul>' },
   ],
 },
 /* ══════════════════ 신규: 완전탐색 ══════════════════ */
