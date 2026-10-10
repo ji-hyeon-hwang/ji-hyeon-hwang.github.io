@@ -68,8 +68,12 @@
   .sy:last-child{padding-bottom:0;margin-bottom:0;border-bottom:0}
   .sy h4{font-size:.85rem;font-weight:650;margin:0 0 .45rem}
   pre.code{margin:0;background:var(--cbg);color:var(--cfg);border-radius:5px;
-           padding:.7rem .85rem;overflow-x:auto;font-family:var(--mono);font-size:.755rem;
-           line-height:1.7;white-space:pre;-webkit-text-size-adjust:100%}
+           padding:.7rem .85rem;overflow-x:auto;font-family:var(--mono);font-size:.8rem;
+           line-height:1.7;white-space:pre;-webkit-text-size-adjust:100%;
+           /* 문법 설명·모범답안도 같은 이유로 리거처를 끕니다 */
+           font-variant-ligatures:none;
+           font-feature-settings:"liga" 0,"clig" 0,"calt" 0;
+           letter-spacing:.012em}
   pre.code .cm{color:var(--cdim);font-style:italic}
   pre.code .kw{color:var(--ckey)}
   pre.code .st{color:var(--cstr)}
@@ -101,9 +105,15 @@
           font-family:var(--mono);font-size:.65rem;color:var(--cdim)}
   .edit-h .dot{width:7px;height:7px;border-radius:50%;background:#555;flex:none}
   textarea#ed{display:block;width:100%;border:0;outline:0;resize:vertical;
-    background:var(--cbg);color:var(--cfg);font-family:var(--mono);font-size:.775rem;
+    background:var(--cbg);color:var(--cfg);font-family:var(--mono);font-size:.82rem;
     line-height:1.75;padding:.75rem .85rem;min-height:250px;tab-size:4;
-    -webkit-text-size-adjust:100%}
+    -webkit-text-size-adjust:100%;
+    /* 🔴 프로그래밍 리거처 해제.
+          JetBrains Mono 는 '<<' '>>' '->' '!=' 를 하나의 이어진 모양으로 그립니다.
+          코드를 검토할 때 '<<' 가 '<' 하나처럼 보여 혼란스러우므로 끕니다. */
+    font-variant-ligatures:none;
+    font-feature-settings:"liga" 0,"clig" 0,"calt" 0;
+    letter-spacing:.012em}
   .edit-f{display:flex;gap:.6rem;align-items:center;padding:.3rem .65rem;
           border-top:1px solid rgba(255,255,255,.08);
           font-family:var(--mono);font-size:.64rem;color:var(--cdim)}
@@ -616,10 +626,29 @@ $('ed').addEventListener('keydown', e => {
     return;
   }
 
-  /* ── '}' 입력: 줄이 공백뿐이면 한 단계 당겨서 정렬 ── */
+  /* ── '}' 입력 ── */
   if (e.key === '}' && s === n) {
     const { start, line, indent } = lineInfo(v, s);
-    if (/^[ \t]*$/.test(line) && indent.length) {
+    const blankLine = /^[ \t]*$/.test(line);
+
+    /* 🔴 자동완성으로 생긴 '}' 가 아래 줄에 이미 있으면 새로 넣지 않고 그 자리로 이동.
+          '{' 자동완성 + Enter 를 거치면 '}' 가 다음 줄에 있어
+          단순히 v[s] 만 보는 검사로는 잡히지 않습니다. */
+    if (blankLine) {
+      const restMatch = v.slice(s).match(/^[ \t\n]*\}/);
+      if (restMatch) {
+        e.preventDefault();
+        const dedent = indent.endsWith(INDENT)
+          ? indent.slice(0, -INDENT.length)
+          : indent.replace(/[ \t]+$/, '');
+        /* 공백 줄과 그 뒤의 '}' 까지를 한 줄로 합쳐 정렬합니다 */
+        applyEdit(t, start, s + restMatch[0].length, dedent + '}');
+        return;
+      }
+    }
+
+    /* 공백뿐인 줄에서 '}' 를 치면 한 단계 당겨서 정렬 */
+    if (blankLine && indent.length) {
       e.preventDefault();
       const dedent = indent.endsWith(INDENT)
         ? indent.slice(0, -INDENT.length)
@@ -630,20 +659,24 @@ $('ed').addEventListener('keydown', e => {
   }
 
   /* ── 괄호·따옴표 자동 완성 ──
-     🔴 '{' 는 일부러 제외합니다. C++ 에서는 '{' 를 치고 Enter 를 눌러
-        블록을 여는 흐름이 자연스럽고, Enter 처리가 이미 '}' 를 넣어줍니다.
-        '{' 를 자동완성하면 "int main() {" 가 "int main() {}" 가 되어
-        직접 '}' 를 칠 때 중복되고, 초기화 리스트에서도 꼬입니다. */
-  const PAIRS = { '(': ')', '[': ']', '"': '"', "'": "'" };
+     '{' 도 자동완성합니다. 단, 중복을 막는 조건이 두 개 필요합니다:
+       ① 커서 뒤에 이미 '}' 가 있으면 넣지 않습니다
+          (안 그러면 "int main() {}" 를 끝까지 치면 '}' 가 하나 더 생깁니다)
+       ② 닫는 문자를 직접 쳤을 때는 아래 "통과" 로직이 건너뛰게 합니다 */
+  const PAIRS = { '(': ')', '[': ']', '{': '}', '"': '"', "'": "'" };
   if (PAIRS[e.key] && s === n) {
     const nextCh = v[s] || '';
+    const close = PAIRS[e.key];
     const isQuote = e.key === '"' || e.key === "'";
     /* 따옴표는 단어 옆에서 자동완성하지 않습니다 (don't, a"b 같은 경우) */
     const prevCh = s > 0 ? v[s - 1] : '';
-    const skip = isQuote && (/[\w"']/.test(nextCh) || /[\w]/.test(prevCh));
+    let skip = isQuote && (/[\w"']/.test(nextCh) || /[\w]/.test(prevCh));
+    /* 🔴 바로 뒤에 같은 닫는 문자가 이미 있으면 넣지 않습니다 */
+    if (nextCh === close) skip = true;
+    /* 단어 바로 앞에서는 닫는 문자를 넣지 않습니다 (f(x) 중간 입력 등) */
     if (!skip && !/[\w]/.test(nextCh)) {
       e.preventDefault();
-      applyEdit(t, s, n, e.key + PAIRS[e.key], s + 1);
+      applyEdit(t, s, n, e.key + close, s + 1);
       return;
     }
   }
